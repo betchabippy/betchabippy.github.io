@@ -214,7 +214,7 @@ button:active{transform:scale(.98)}
 
     <div class="splash-card" onclick="splashGo('or')">
       <div class="splash-icon" style="background:var(--info-bg);color:var(--info-tx);border-color:var(--info-bd)">🔢</div>
-      <div><div class="splash-title">Orderly!</div><div class="splash-desc">Not very good at following order? This will help!</div></div>
+      <div><div class="splash-title">Orderly!</div><div class="splash-desc">Not very good at following order? Two games to fix that — Sequencer and Scrambler!</div></div>
     </div>
 
     <div class="splash-card" onclick="splashGo('st')">
@@ -669,12 +669,19 @@ button:active{transform:scale(.98)}
 <div id="s-or-home" class="scr">
   <div class="ghdr">
     <div class="gic" style="background:#EEF4FF;color:#1D4ED8;border-color:#93C5FD">OR</div>
-    <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Orderly</p><p style="font-size:12px;color:var(--tx1)">Watch the sequence. Repeat it back. Don't mess up.</p></div>
+    <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Orderly</p><p style="font-size:12px;color:var(--tx1)">Two games. Both about order.</p></div>
   </div>
-  <div class="card" style="cursor:pointer;margin-bottom:8px" onclick="goScr('or-solo')">
-    <div class="st">Solo play</div>
-    <p class="hdesc">Watch the sequence grow round by round. How far can you go?</p>
-    <button style="width:100%;font-size:12px">Play solo</button>
+  <div class="g2" style="margin-bottom:8px">
+    <div class="card" style="cursor:pointer" onclick="goScr('or-solo')">
+      <div class="st">🔢 Sequencer</div>
+      <p class="hdesc">Watch items flash in sequence. Repeat them back in order. Rounds get longer.</p>
+      <button style="width:100%;font-size:12px">Play</button>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="goScr('sc-home')">
+      <div class="st">🔤 Scrambler</div>
+      <p class="hdesc">Words flash scrambled. Find them among decoys and arrange them into a sentence.</p>
+      <button style="width:100%;font-size:12px">Play</button>
+    </div>
   </div>
   <div class="g2">
     <div class="card" style="cursor:pointer" onclick="goScr('or-pass')"><div class="st">Pass the phone</div><p class="hdesc">Two players, one phone. Take turns — last one standing wins.</p><button style="width:100%;font-size:12px">Play</button></div>
@@ -871,6 +878,174 @@ button:active{transform:scale(.98)}
     <div class="tip-body" id="tip-body"></div>
   </div>
 </div>
+
+<!-- ====== SCRAMBLER HOME ====== -->
+<div id="s-sc-home" class="scr">
+  <div class="ghdr">
+    <div class="gic" style="background:#F3E8FF;color:#7C3AED;border-color:#C4B5FD">SC</div>
+    <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Scrambler</p><p style="font-size:12px;color:var(--tx1)">Words flash then vanish. Find them in the picker — and arrange them into a sentence.</p></div>
+  </div>
+  <div class="card" style="cursor:pointer;margin-bottom:8px" onclick="goScr('sc-solo')">
+    <div class="st">Solo play</div>
+    <p class="hdesc">Words flash and disappear. Spot them among decoys and build the sentence. Rounds get longer.</p>
+    <button style="width:100%;font-size:12px">Play solo</button>
+  </div>
+  <div class="g2">
+    <div class="card" style="cursor:pointer" onclick="goScr('sc-send')"><div class="st">Send a challenge</div><p class="hdesc">Pick your words, set decoys, send a code. Can your friend unscramble it?</p><button style="width:100%;font-size:12px">Send</button></div>
+    <div class="card" style="cursor:pointer" onclick="goScr('sc-join')"><div class="st">Join a challenge</div><p class="hdesc">Got a SCRBL code? Enter it here to play.</p><button style="width:100%;font-size:12px">Join</button></div>
+  </div>
+</div>
+
+<!-- ====== SCRAMBLER SOLO SETUP ====== -->
+<div id="s-sc-solo" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <p style="font-size:14px;font-weight:600">Scrambler — Solo</p>
+    <button onclick="goScr('sc-home')" style="font-size:11px;padding:5px 10px">Back</button>
+  </div>
+  <div class="card">
+    <div class="st">Starting sentence length</div>
+    <div class="dr" id="sc-len-btns">
+      <button class="db on" onclick="scSetLen(3,this)">3 words</button>
+      <button class="db dim" onclick="scSetLen(4,this)">4 words</button>
+      <button class="db dim" onclick="scSetLen(5,this)">5 words</button>
+      <button class="db dim" onclick="scSetLen(6,this)">6 words</button>
+    </div>
+    <div class="st" style="margin-top:8px">Decoys per round</div>
+    <div class="dr" id="sc-decoy-btns">
+      <button class="db on" onclick="scSetDecoys(2,this)">2 — Easy</button>
+      <button class="db dim" onclick="scSetDecoys(4,this)">4 — Medium</button>
+      <button class="db dim" onclick="scSetDecoys(6,this)">6 — Hard</button>
+    </div>
+    <div class="st" style="margin-top:8px">Flash speed</div>
+    <div class="dr" id="sc-speed-btns">
+      <button class="db on" onclick="scSetSpeed(1000,this)">Slow</button>
+      <button class="db dim" onclick="scSetSpeed(650,this)">Medium</button>
+      <button class="db dim" onclick="scSetSpeed(400,this)">Fast</button>
+    </div>
+  </div>
+  <button class="btn-p" onclick="scStartSolo()" style="width:100%;padding:10px;font-size:14px">Start →</button>
+</div>
+
+<!-- ====== SCRAMBLER PLAY ====== -->
+<div id="s-sc-play" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div style="display:flex;align-items:center;gap:7px">
+      <span id="sc-round-badge" style="font-size:11px;padding:3px 8px;border-radius:20px;background:#F3E8FF;border:1px solid #C4B5FD;font-weight:600;color:#7C3AED">Round 1</span>
+      <span id="sc-words-badge" style="font-size:10px;padding:2px 7px;border-radius:20px;background:var(--bg2);color:var(--tx1)"></span>
+    </div>
+    <button onclick="scQuit()" style="font-size:11px;padding:5px 10px">Quit</button>
+  </div>
+
+  <!-- score + timer -->
+  <div style="display:flex;gap:8px;margin-bottom:10px">
+    <div class="lsb" style="flex:2;margin:0"><span class="ll">Score</span><span class="lv" id="sc-score">0</span></div>
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:8px;padding:8px">
+      <div style="text-align:center">
+        <div style="font-size:11px;color:var(--warn-tx)">Time</div>
+        <div id="sc-timer" style="font-size:20px;font-weight:800;color:var(--warn-tx);font-family:monospace">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- phase message -->
+  <p id="sc-msg" style="text-align:center;font-size:13px;color:var(--tx1);margin-bottom:10px;min-height:20px;font-weight:500"></p>
+
+  <!-- flash display -->
+  <div id="sc-flash-display" style="min-height:90px;display:flex;align-items:center;justify-content:center;margin-bottom:8px"></div>
+
+  <!-- sentence builder — words tapped go here -->
+  <div id="sc-sentence-area" style="display:none;margin-bottom:10px">
+    <div class="st">Your sentence</div>
+    <div id="sc-sentence-slots" style="display:flex;flex-wrap:wrap;gap:6px;min-height:40px;padding:8px;background:var(--bg1);border-radius:8px;border:1px solid var(--bd);margin-bottom:8px"></div>
+    <button onclick="scUndoLast()" style="font-size:11px;padding:5px 12px;width:100%">↩ Undo last word</button>
+  </div>
+
+  <!-- word picker -->
+  <div id="sc-picker-area" style="display:none">
+    <div class="st">Tap words to build your sentence</div>
+    <div id="sc-word-picker" style="display:flex;flex-wrap:wrap;gap:7px;padding:10px;background:var(--bg1);border-radius:8px;border:1px solid var(--bd)"></div>
+  </div>
+
+  <!-- penalty flash -->
+  <div id="sc-penalty" style="display:none;text-align:center;font-size:12px;font-weight:700;color:var(--err-tx);margin:6px 0">-10 pts</div>
+
+  <!-- submit -->
+  <button id="sc-submit-btn" class="btn-p" onclick="scSubmit()" style="width:100%;padding:10px;font-size:14px;margin-top:10px;display:none">Submit sentence →</button>
+
+  <!-- result -->
+  <div id="sc-result" style="display:none;margin-top:10px">
+    <div class="winbar" id="sc-win" style="display:block"></div>
+    <div class="ai-box" id="sc-ai-box" style="margin-top:8px">Rating...</div>
+    <div class="ctrls" style="margin-top:10px">
+      <button onclick="goScr('sc-home')" style="flex:1;font-size:11px">Change game</button>
+      <button onclick="scNextRound()" id="sc-next-btn" style="flex:2;font-size:11px" class="btn-p">Next round →</button>
+      <button onclick="scStartSolo()" style="flex:1;font-size:11px">Play again</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SCRAMBLER SEND CHALLENGE ====== -->
+<div id="s-sc-send" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <p style="font-size:14px;font-weight:600">Send a challenge</p>
+    <button onclick="goScr('sc-home')" style="font-size:11px;padding:5px 10px">Back</button>
+  </div>
+  <div class="card">
+    <div class="st">Your sentence words (3–6)</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;min-height:24px" id="sc-send-words"></div>
+    <div style="display:flex;gap:6px;margin-bottom:6px">
+      <input id="sc-send-inp" class="wi" style="flex:1;margin:0" placeholder="Type a word..." maxlength="15" onkeydown="if(event.key==='Enter')scAddWord()">
+      <button onclick="scAddWord()" style="font-size:12px">Add</button>
+    </div>
+    <div class="st" style="margin-top:8px">Decoys</div>
+    <div class="dr" id="sc-send-decoy-btns">
+      <button class="db on" onclick="scSendSetDecoys(2,this)">2 — Easy</button>
+      <button class="db dim" onclick="scSendSetDecoys(4,this)">4 — Medium</button>
+      <button class="db dim" onclick="scSendSetDecoys(6,this)">6 — Hard</button>
+    </div>
+    <div class="st" style="margin-top:8px">Flash speed for receiver</div>
+    <div class="dr" id="sc-send-speed-btns">
+      <button class="db on" onclick="scSendSetSpeed(1000,this)">Slow</button>
+      <button class="db dim" onclick="scSendSetSpeed(650,this)">Medium</button>
+      <button class="db dim" onclick="scSendSetSpeed(400,this)">Fast</button>
+    </div>
+  </div>
+  <button class="btn-p" onclick="scCreateChallenge()" style="width:100%;padding:10px;font-size:14px">Generate code</button>
+</div>
+
+<!-- SCRAMBLER CODE -->
+<div id="s-sc-code" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <p style="font-size:14px;font-weight:600">Share this code</p>
+    <button onclick="goScr('sc-home')" style="font-size:11px;padding:5px 10px">Home</button>
+  </div>
+  <div class="card">
+    <div class="code-box" id="sc-code-disp">SCRBL-??????</div>
+    <p style="font-size:11px;color:var(--tx2);text-align:center;margin:8px 0 10px">Send this to your friend.</p>
+    <button onclick="scCopyCode()" style="width:100%;font-size:13px" id="sc-copy-btn">Copy code</button>
+  </div>
+  <div class="card">
+    <div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Words</span><span id="sc-cs-words" style="font-size:12px;font-weight:600">—</span></div>
+    <div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Decoys</span><span id="sc-cs-decoys" style="font-size:12px;font-weight:600">—</span></div>
+    <div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Speed</span><span id="sc-cs-speed" style="font-size:12px;font-weight:600">—</span></div>
+  </div>
+  <button onclick="scPreviewChallenge()" style="width:100%;font-size:13px">Preview receiver</button>
+</div>
+
+<!-- SCRAMBLER JOIN -->
+<div id="s-sc-join" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <p style="font-size:14px;font-weight:600">Join a challenge</p>
+    <button onclick="goScr('sc-home')" style="font-size:11px;padding:5px 10px">Back</button>
+  </div>
+  <div class="card">
+    <div class="st">Enter your code</div>
+    <input class="wi" id="sc-join-inp" placeholder="SCRBL-XXXXXX" style="font-family:monospace;letter-spacing:.1em;text-transform:uppercase;font-size:16px" oninput="this.value=this.value.toUpperCase()">
+  </div>
+  <button class="btn-p" onclick="scJoin()" style="width:100%;padding:10px;font-size:14px">Join challenge</button>
+</div>
+
+
 </div><!-- /main -->
 </div><!-- /app -->
 
@@ -2151,6 +2326,447 @@ async function orRecvTap(val){
       recv_score:score,completed:true,completed_at:new Date().toISOString()
     });
   }catch(e){}
+}
+
+
+
+// ── SCRAMBLER DATA ────────────────────────────────────────────────────────────
+// Word sets: [correct sentence words], each set is a full sentence scrambled
+const SC_SENTENCES = {
+  3: [
+    ['hit','the','gas'],['pet','the','dog'],['eat','your','food'],
+    ['make','some','noise'],['hold','the','line'],['turn','the','page'],
+    ['read','the','map'],['find','the','key'],['pass','the','ball'],
+    ['feel','the','beat'],['dim','the','lights'],['fix','the','leak'],
+    ['set','the','stage'],['save','the','day'],['cut','the','cake'],
+    ['ring','the','bell'],['walk','the','dog'],['feed','the','cat'],
+    ['paint','the','fence'],['close','the','door']
+  ],
+  4: [
+    ['pretty','is','my','kitty'],['bright','shines','the','sun'],
+    ['fast','runs','the','fox'],['slow','ticks','the','clock'],
+    ['cold','blows','the','wind'],['loud','rings','the','bell'],
+    ['high','flies','the','kite'],['deep','flows','the','river'],
+    ['sweet','smells','the','rose'],['soft','falls','the','rain'],
+    ['old','creaks','the','floor'],['wide','opens','the','door'],
+    ['still','stands','the','tree'],['quick','bites','the','snake'],
+    ['sharp','cuts','the','knife'],['brave','stands','the','knight'],
+    ['loud','plays','the','band'],['thin','blows','the','smoke'],
+    ['lost','found','was','key','the'],['blue','sky','the','is']
+  ],
+  5: [
+    ['the','cat','sat','on','mat'],['she','sells','sea','shells','here'],
+    ['he','ran','down','the','hill'],['they','played','in','the','park'],
+    ['the','dog','barked','all','night'],['my','friend','lives','far','away'],
+    ['she','baked','a','sweet','cake'],['the','bird','sang','all','day'],
+    ['he','threw','the','ball','high'],['they','swam','in','the','lake'],
+    ['the','wind','blew','the','hat'],['she','drew','a','big','star'],
+    ['he','climbed','up','the','tree'],['the','snow','fell','very','fast'],
+    ['they','built','a','small','hut']
+  ],
+  6: [
+    ['the','quick','brown','fox','jumps','over'],
+    ['she','walked','alone','down','the','road'],
+    ['he','found','a','note','under','the'],
+    ['they','danced','all','night','in','rain'],
+    ['the','old','clock','struck','midnight','twice'],
+    ['she','baked','fresh','bread','every','morning'],
+    ['he','wrote','a','long','letter','today'],
+    ['the','stars','shone','bright','in','sky'],
+    ['they','sat','quietly','by','the','fire'],
+    ['the','little','girl','chased','the','butterfly']
+  ]
+};
+
+// Decoy pool — words that sound/look similar or are same category
+const SC_DECOYS = {
+  // common decoys by category
+  verbs: ['run','fly','sit','eat','hit','get','put','see','let','set','cut','bit','fit','lit','kit','pit','wit','bat','cat','fat','hat','mat','pat','rat','sat','vat','bay','day','gay','hay','lay','may','pay','ray','say','way'],
+  nouns: ['car','bar','tar','jar','far','gas','has','map','cap','lap','tap','rap','nap','gap','sap','yap','dog','fog','hog','log','bog','cog','jog','tog','bus','fuss','muss','cup','pup','sup','tup','key','pea','sea','tea','bee','fee','lee','see','wee'],
+  adj: ['big','dig','fig','gig','jig','pig','rig','wig','old','bold','cold','fold','gold','hold','mold','told'],
+  common: ['the','a','an','is','are','was','were','has','have','had','be','been','being','do','did','does','will','would','can','could','shall','should','may','might','must','for','and','but','or','nor','so','yet','at','by','in','of','on','to','up','as','if','it','its','him','her','his','our','my','your','their','we','they','he','she','who','that','this','these','those']
+};
+
+function scGetDecoys(realWords, count) {
+  // Generate plausible decoys that aren't the real words
+  const real = new Set(realWords.map(w => w.toLowerCase()));
+  const pool = [...SC_DECOYS.verbs, ...SC_DECOYS.nouns, ...SC_DECOYS.adj, ...SC_DECOYS.common];
+  const candidates = pool.filter(w => !real.has(w));
+  
+  // Prefer similar-length words
+  const avgLen = realWords.reduce((a,w) => a+w.length, 0) / realWords.length;
+  candidates.sort((a,b) => Math.abs(a.length-avgLen) - Math.abs(b.length-avgLen));
+  
+  // Pick unique decoys
+  const decoys = [];
+  const used = new Set(realWords.map(w=>w.toLowerCase()));
+  for(const w of candidates) {
+    if(!used.has(w)) { decoys.push(w); used.add(w); }
+    if(decoys.length >= count) break;
+  }
+  return decoys;
+}
+
+let scStartLen=3, scDecoyCount=2, scFlashSpeed=1000;
+let scSendWords=[], scSendDecoys=2, scSendSpeed=1000, scChalCode='';
+let scRound=1, scTotalScore=0, scCurrentWords=[], scCorrectOrder=[];
+let scBuiltSentence=[], scPickerWords=[], scTimerInterval=null, scTimeLeft=0;
+let scPenaltyTotal=0, scPhase='idle', scIsChallenge=false, scChallengeData=null;
+
+function scSetLen(l,btn){scStartLen=l;dimOthers('sc-len-btns',btn)}
+function scSetDecoys(n,btn){scDecoyCount=n;dimOthers('sc-decoy-btns',btn)}
+function scSetSpeed(s,btn){scFlashSpeed=s;dimOthers('sc-speed-btns',btn)}
+function scSendSetDecoys(n,btn){scSendDecoys=n;dimOthers('sc-send-decoy-btns',btn)}
+function scSendSetSpeed(s,btn){scSendSpeed=s;dimOthers('sc-send-speed-btns',btn)}
+
+// ── SOLO ──────────────────────────────────────────────────────────────────────
+function scStartSolo(){
+  scRound=1; scTotalScore=0; scIsChallenge=false;
+  goScr('sc-play');
+  scDoRound();
+}
+
+function scDoRound(){
+  // Pick a sentence for this round's length
+  const len = Math.min(scStartLen + (scRound-1), 6);
+  const pool = SC_SENTENCES[len] || SC_SENTENCES[3];
+  const sentence = pool[Math.floor(Math.random()*pool.length)];
+  scCurrentWords = [...sentence]; // correct order
+  scCorrectOrder = [...sentence];
+  
+  document.getElementById('sc-round-badge').textContent = 'Round '+scRound;
+  document.getElementById('sc-words-badge').textContent = len+' words';
+  document.getElementById('sc-score').textContent = scTotalScore;
+  document.getElementById('sc-msg').textContent = 'Watch the words carefully...';
+  document.getElementById('sc-sentence-area').style.display='none';
+  document.getElementById('sc-picker-area').style.display='none';
+  document.getElementById('sc-submit-btn').style.display='none';
+  document.getElementById('sc-result').style.display='none';
+  document.getElementById('sc-penalty').style.display='none';
+  document.getElementById('sc-flash-display').innerHTML='';
+  scBuiltSentence=[];
+  scPenaltyTotal=0;
+  scPhase='flash';
+
+  // Flash each word one at a time
+  scFlashWords(scCurrentWords, scFlashSpeed, ()=>scBeginRecall(len));
+}
+
+function scFlashWords(words, speed, onDone){
+  const d = document.getElementById('sc-flash-display');
+  d.innerHTML='';
+  // Shuffle the display order so words appear scrambled
+  const shuffled = [...words].sort(()=>Math.random()-.5);
+  let i=0;
+  
+  // Countdown first
+  let countdown=3;
+  const ctr=document.createElement('div');
+  ctr.style.cssText='font-size:32px;font-weight:800;color:#7C3AED;text-align:center;width:100%;';
+  ctr.textContent=countdown;
+  d.appendChild(ctr);
+  const cdI=setInterval(()=>{
+    countdown--;
+    if(countdown<=0){clearInterval(cdI);d.innerHTML='';flashNext();}
+    else ctr.textContent=countdown;
+  },700);
+
+  function flashNext(){
+    if(i>=shuffled.length){
+      d.innerHTML='';
+      setTimeout(()=>{if(onDone)onDone()},300);
+      return;
+    }
+    d.innerHTML='';
+    const word=shuffled[i];
+    const cell=document.createElement('div');
+    cell.style.cssText=`display:inline-flex;align-items:center;justify-content:center;
+      padding:12px 22px;border-radius:14px;background:#F3E8FF;border:2px solid #7C3AED;
+      font-size:26px;font-weight:800;color:#7C3AED;font-family:inherit;`;
+    cell.textContent=word;
+    d.appendChild(cell);
+    i++;
+    setTimeout(()=>{
+      d.innerHTML='';
+      setTimeout(flashNext, speed*0.25);
+    }, speed*0.75);
+  }
+}
+
+function scBeginRecall(len){
+  scPhase='recall';
+  document.getElementById('sc-msg').textContent='Find the words and arrange them into a sentence!';
+  document.getElementById('sc-flash-display').innerHTML='';
+  document.getElementById('sc-sentence-area').style.display='block';
+  document.getElementById('sc-picker-area').style.display='block';
+  document.getElementById('sc-submit-btn').style.display='block';
+
+  // Build picker: real words + decoys, all shuffled
+  const decoys = scGetDecoys(scCurrentWords, scDecoyCount);
+  scPickerWords = [...scCurrentWords, ...decoys].sort(()=>Math.random()-.5);
+
+  const picker = document.getElementById('sc-word-picker');
+  picker.innerHTML='';
+  scPickerWords.forEach(word=>{
+    const btn=document.createElement('button');
+    btn.className='seq-pk';
+    btn.style.cssText='height:auto;width:auto;padding:8px 14px;font-size:14px;font-weight:600;border-radius:8px;';
+    btn.textContent=word;
+    btn.dataset.word=word;
+    btn.onclick=()=>scTapWord(word,btn);
+    picker.appendChild(btn);
+  });
+
+  // Start countdown timer — more time for longer sentences
+  scTimeLeft = 20 + (len * 5);
+  scUpdateTimer();
+  clearInterval(scTimerInterval);
+  scTimerInterval = setInterval(()=>{
+    scTimeLeft--;
+    scUpdateTimer();
+    if(scTimeLeft<=0){clearInterval(scTimerInterval);scAutoSubmit();}
+  },1000);
+
+  scRenderSentence();
+}
+
+function scUpdateTimer(){
+  const el=document.getElementById('sc-timer');
+  if(el){
+    el.textContent=scTimeLeft;
+    el.style.color=scTimeLeft<=5?'var(--err-tx)':'var(--warn-tx)';
+  }
+}
+
+function scTapWord(word, btn){
+  if(scPhase!=='recall') return;
+  
+  // Check if it's a decoy
+  const isReal = scCurrentWords.includes(word) && !scBuiltSentence.includes(word);
+  if(!isReal){
+    // Decoy or already used — penalty
+    scPenaltyTotal+=10;
+    const p=document.getElementById('sc-penalty');
+    p.textContent='-10 pts';p.style.display='block';
+    btn.style.background='var(--err-bg)';btn.style.borderColor='var(--err-bd)';
+    setTimeout(()=>{p.style.display='none';btn.style.background='';btn.style.borderColor='';},700);
+    return;
+  }
+  
+  // Add to sentence
+  scBuiltSentence.push(word);
+  btn.classList.add('used');
+  scRenderSentence();
+
+  // Auto-submit when all real words placed
+  if(scBuiltSentence.length===scCurrentWords.length){
+    clearInterval(scTimerInterval);
+    scSubmit();
+  }
+}
+
+function scRenderSentence(){
+  const slots=document.getElementById('sc-sentence-slots');
+  slots.innerHTML='';
+  scBuiltSentence.forEach((word,i)=>{
+    const chip=document.createElement('div');
+    chip.style.cssText='padding:6px 12px;background:var(--purple-lt);border:1px solid var(--purple-bd);border-radius:8px;font-size:14px;font-weight:700;color:var(--purple-tx);cursor:pointer;';
+    chip.textContent=word;
+    chip.onclick=()=>scRemoveWord(i);
+    slots.appendChild(chip);
+  });
+  // placeholder
+  if(!scBuiltSentence.length){
+    const ph=document.createElement('span');
+    ph.style.cssText='font-size:12px;color:var(--tx2);padding:8px;';
+    ph.textContent='Tap words below to build your sentence...';
+    slots.appendChild(ph);
+  }
+}
+
+function scRemoveWord(idx){
+  if(scPhase!=='recall') return;
+  const word=scBuiltSentence[idx];
+  scBuiltSentence.splice(idx,1);
+  // Un-use the picker button
+  document.querySelectorAll('#sc-word-picker button').forEach(btn=>{
+    if(btn.dataset.word===word&&btn.classList.contains('used')){
+      btn.classList.remove('used');
+    }
+  });
+  scRenderSentence();
+}
+
+function scUndoLast(){
+  if(!scBuiltSentence.length) return;
+  const word=scBuiltSentence[scBuiltSentence.length-1];
+  scBuiltSentence.pop();
+  document.querySelectorAll('#sc-word-picker button').forEach(btn=>{
+    if(btn.dataset.word===word&&btn.classList.contains('used')){
+      btn.classList.remove('used');
+    }
+  });
+  scRenderSentence();
+}
+
+function scAutoSubmit(){
+  scPhase='done';
+  scSubmit();
+}
+
+async function scSubmit(){
+  if(scPhase==='done') return; // already submitted
+  clearInterval(scTimerInterval);
+  scPhase='done';
+  document.getElementById('sc-submit-btn').style.display='none';
+  document.getElementById('sc-picker-area').style.display='none';
+
+  const built = scBuiltSentence.join(' ');
+  const correct = scCorrectOrder.join(' ');
+  const allCorrect = built.toLowerCase()===correct.toLowerCase();
+  const wordCount = scCurrentWords.length;
+
+  // Score: base=wordCount*30, time bonus, penalty deduction
+  const timeBonus = scTimeLeft * 3;
+  const base = wordCount * 30;
+  const roundScore = Math.max(0, base + timeBonus - scPenaltyTotal);
+  scTotalScore += roundScore;
+  document.getElementById('sc-score').textContent = scTotalScore;
+
+  // Show result bar
+  const win=document.getElementById('sc-win');
+  win.style.display='block';
+  win.style.background=allCorrect?'var(--ok-bg)':'var(--warn-bg)';
+  win.style.borderColor=allCorrect?'var(--ok-bd)':'var(--warn-bd)';
+  win.style.color=allCorrect?'var(--ok-tx)':'var(--warn-tx)';
+  win.innerHTML=`<strong>Your sentence:</strong> "${built}"<br><strong>Original:</strong> "${correct}"<br>+${roundScore} pts (time: +${timeBonus}, penalty: -${scPenaltyTotal})`;
+
+  document.getElementById('sc-result').style.display='block';
+  document.getElementById('sc-timer').textContent='—';
+
+  // AI coherence check
+  const aiBox=document.getElementById('sc-ai-box');
+  aiBox.textContent='Asking AI to rate your sentence...';
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,
+        messages:[{role:'user',content:`The scrambled words were: ${scCurrentWords.join(', ')}. The player arranged them as: "${built}". Rate whether this makes a coherent sentence, 1-3 stars. JSON only: {"rating":2,"comment":"max 10 words"}`}]})});
+    const data=await resp.json();
+    const txt=data.content.map(c=>c.text||'').join('');
+    const p=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    const stars='★'.repeat(p.rating)+'☆'.repeat(3-p.rating);
+    aiBox.innerHTML=`<strong>Coherence ${stars}</strong> — ${p.comment}`;
+  }catch(e){
+    aiBox.textContent='AI unavailable — score based on time and accuracy.';
+  }
+
+  recordOrderly(scTotalScore, scRound, 'Scrambler');
+  SS.scrambler={score:scTotalScore, round:scRound};
+
+  // Hide "next round" if challenge mode (single round)
+  if(scIsChallenge){
+    document.getElementById('sc-next-btn').style.display='none';
+  }
+}
+
+function scNextRound(){
+  scRound++;
+  document.getElementById('sc-result').style.display='none';
+  scDoRound();
+}
+
+function scQuit(){
+  clearInterval(scTimerInterval);
+  scPhase='idle';
+  goScr('sc-home');
+}
+
+// ── SEND CHALLENGE ────────────────────────────────────────────────────────────
+function scAddWord(){
+  const inp=document.getElementById('sc-send-inp');
+  const w=inp.value.trim().toLowerCase();
+  if(!w||scSendWords.length>=6||scSendWords.includes(w)) return;
+  scSendWords.push(w);
+  inp.value='';
+  scRenderSendWords();
+}
+function scRenderSendWords(){
+  const d=document.getElementById('sc-send-words');d.innerHTML='';
+  scSendWords.forEach((w,i)=>{
+    const s=document.createElement('span');s.className='wp';
+    s.innerHTML=`${w}<span onclick="scSendWords.splice(${i},1);scRenderSendWords()" style="cursor:pointer;color:var(--tx2);font-size:13px;margin-left:2px">×</span>`;
+    d.appendChild(s);
+  });
+}
+
+async function scCreateChallenge(){
+  if(scSendWords.length<3){alert('Add at least 3 words.');return}
+  scChalCode=gc('SCRBL');
+  const btn=document.querySelector('#s-sc-send .btn-p');
+  if(btn){btn.textContent='Saving...';btn.disabled=true}
+  try{
+    await sbInsert('scrambler_challenges',{
+      code:scChalCode,
+      words:scSendWords,
+      decoy_count:scSendDecoys,
+      flash_speed:scSendSpeed
+    });
+  }catch(e){
+    if(btn){btn.textContent='Generate code';btn.disabled=false}
+    alert('Could not save challenge. Check connection.');return;
+  }
+  if(btn){btn.textContent='Generate code';btn.disabled=false}
+  document.getElementById('sc-code-disp').textContent=scChalCode;
+  document.getElementById('sc-cs-words').textContent=scSendWords.join(', ');
+  document.getElementById('sc-cs-decoys').textContent=scSendDecoys+' decoys';
+  document.getElementById('sc-cs-speed').textContent={1000:'Slow',650:'Medium',400:'Fast'}[scSendSpeed]||'Medium';
+  goScr('sc-code');
+}
+
+function scCopyCode(){
+  navigator.clipboard.writeText(scChalCode).catch(()=>{});
+  const b=document.getElementById('sc-copy-btn');
+  b.textContent='Copied!';setTimeout(()=>b.textContent='Copy code',1500);
+}
+function scPreviewChallenge(){
+  scLoadChallenge({words:scSendWords,decoy_count:scSendDecoys,flash_speed:scSendSpeed,code:scChalCode});
+}
+
+async function scJoin(){
+  const code=document.getElementById('sc-join-inp').value.trim().toUpperCase();
+  if(!code.startsWith('SCRBL-')||code.length!==12){alert('Enter a valid SCRBL-XXXXXX code.');return}
+  const btn=document.querySelector('#s-sc-join .btn-p');
+  if(btn){btn.textContent='Loading...';btn.disabled=true}
+  try{
+    const ch=await sbGet('scrambler_challenges',code);
+    if(!ch){alert('Challenge not found.');if(btn){btn.textContent='Join challenge';btn.disabled=false}return}
+    if(ch.completed){alert('This challenge has already been played!');if(btn){btn.textContent='Join challenge';btn.disabled=false}return}
+    if(btn){btn.textContent='Join challenge';btn.disabled=false}
+    scLoadChallenge(ch);
+  }catch(e){
+    if(btn){btn.textContent='Join challenge';btn.disabled=false}
+    alert('Could not load challenge — check your connection.');
+  }
+}
+
+function scLoadChallenge(ch){
+  scIsChallenge=true;
+  scRound=1;scTotalScore=0;
+  scCurrentWords=[...ch.words];
+  scCorrectOrder=[...ch.words];
+  scDecoyCount=ch.decoy_count||2;
+  scFlashSpeed=ch.flash_speed||1000;
+  scChalCode=ch.code||'';
+  goScr('sc-play');
+  document.getElementById('sc-round-badge').textContent='Challenge';
+  document.getElementById('sc-words-badge').textContent=ch.words.length+' words';
+  document.getElementById('sc-score').textContent='0';
+  document.getElementById('sc-result').style.display='none';
+  document.getElementById('sc-sentence-area').style.display='none';
+  document.getElementById('sc-picker-area').style.display='none';
+  document.getElementById('sc-submit-btn').style.display='none';
+  scBuiltSentence=[];scPenaltyTotal=0;scPhase='flash';
+  scFlashWords(scCurrentWords,scFlashSpeed,()=>scBeginRecall(scCurrentWords.length));
 }
 
 

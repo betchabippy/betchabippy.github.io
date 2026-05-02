@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="BetchaBippy">
+<meta name="description" content="BetchaBippy® Mind Games — Gotcha, Tippa, Blinka, Wordsy">
+<meta name="theme-color" content="#534AB7">
+<link rel="manifest" href="manifest.json">
+<title>BetchaBippy® Mind Games</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg0:#fff;--bg1:#f5f5f5;--bg2:#eee;--bg3:#e0e0e0;
+--tx0:#111;--tx1:#555;--tx2:#888;--tx3:#aaa;
+--bd:#e0e0e0;--bd2:#c0c0c0;
+--info-bg:#EEF4FF;--info-tx:#1D4ED8;--info-bd:#93C5FD;
+--ok-bg:#ECFDF5;--ok-tx:#065F46;--ok-bd:#6EE7B7;
+--warn-bg:#FFFBEB;--warn-tx:#92400E;--warn-bd:#FCD34D;
+--err-bg:#FEF2F2;--err-tx:#991B1B;--err-bd:#FCA5A5;
+--purple:#534AB7;--purple-lt:#EEEDFE;--purple-bd:#AFA9EC;--purple-tx:#3C3489;
+--teal:#1D9E75;--teal-lt:#E1F5EE;--teal-bd:#5DCAA5;--teal-tx:#085041;
+--amber-lt:#FAEEDA;--amber-bd:#EF9F27;--amber-tx:#633806;
+--coral-lt:#FAECE7;--coral-bd:#F0997B;--coral-tx:#993C1D;
+--rad:10px;--rad-lg:14px;
+}
+@media(prefers-color-scheme:dark){:root{
+--bg0:#1a1a1a;--bg1:#242424;--bg2:#2e2e2e;--bg3:#383838;
+--tx0:#f0f0f0;--tx1:#bbb;--tx2:#888;--tx3:#666;
+--bd:#333;--bd2:#555;
+--info-bg:#1e2a4a;--info-tx:#93C5FD;--info-bd:#1e40af;
+--ok-bg:#052e16;--ok-tx:#6EE7B7;--ok-bd:#065f46;
+--warn-bg:#2d1b00;--warn-tx:#FCD34D;--warn-bd:#92400e;
+--err-bg:#2d0a0a;--err-tx:#FCA5A5;--err-bd:#991b1b;
+--purple-lt:#1a1730;--purple-tx:#AFA9EC;
+--teal-lt:#061a12;--teal-tx:#5DCAA5;
+--amber-lt:#1f1500;--amber-tx:#EF9F27;
+--coral-lt:#1f0f09;--coral-tx:#F0997B;
+}}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg0);color:var(--tx0);font-size:14px}
+#app{display:flex;flex-direction:column;height:100%;height:100dvh}
+.hdr{flex-shrink:0;background:linear-gradient(135deg,#f0f8ff,#fff8ee);border-bottom:1px solid var(--bd);padding:env(safe-area-inset-top) 12px 8px;display:flex;align-items:center;justify-content:center;position:relative}
+@media(prefers-color-scheme:dark){.hdr{background:linear-gradient(135deg,#1a2030,#201a10)}}
+.hdr img{height:80px;width:auto;display:block}
+#ib{position:absolute;right:12px;top:50%;transform:translateY(-50%)}
+.main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 12px 80px}
+.splash{position:fixed;inset:0;background:var(--bg0);z-index:800;overflow-y:auto;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.splash-logo{text-align:center;padding:28px 20px 16px;border-bottom:1px solid var(--bd)}
+.splash-logo img{height:100px;width:auto;display:inline-block}
+.splash-tagline{font-size:12px;color:var(--tx2);margin-top:6px;letter-spacing:.04em}
+.splash-list{flex:1;padding:12px 14px 24px;display:flex;flex-direction:column;gap:10px}
+.splash-card{display:flex;align-items:center;gap:14px;padding:14px;background:var(--bg0);border:1px solid var(--bd);border-radius:var(--rad-lg);cursor:pointer;transition:all .15s;text-align:left}
+.splash-card:hover{border-color:var(--purple);background:var(--purple-lt)}
+.splash-card:active{transform:scale(.98)}
+.splash-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:1px solid}
+.splash-title{font-size:15px;font-weight:700;color:var(--tx0);margin-bottom:3px}
+.splash-desc{font-size:12px;color:var(--tx1);line-height:1.55}
+.bnav{flex-shrink:0;display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid var(--bd);background:var(--bg0);padding-bottom:env(safe-area-inset-bottom)}
+.bn-ic{display:block;font-size:16px;margin-bottom:1px}
+.bn-lb{display:block;font-size:8px}
+.seq-item{display:flex;align-items:center;justify-content:center;border-radius:12px;border:2px solid transparent;transition:all .15s;user-select:none}
+.seq-item.active{transform:scale(1.08);border-color:var(--purple)}
+.seq-item.correct{border-color:var(--teal)!important;background:var(--ok-bg)!important}
+.seq-item.wrong{border-color:var(--err-bd)!important;background:var(--err-bg)!important}
+.seq-picker{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px;background:var(--bg1);border-radius:12px;margin-bottom:10px}
+.seq-pk{display:flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--bd2);background:var(--bg0);cursor:pointer;transition:all .15s;font-weight:700}
+.seq-pk:active{transform:scale(.93)}
+.seq-pk.used{opacity:.3;pointer-events:none}
+.seq-pk.pulse{animation:pk-pulse .18s ease}
+@keyframes pk-pulse{0%{transform:scale(1)}50%{transform:scale(.88)}100%{transform:scale(1)}}
+.st-card{background:var(--bg0);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.st-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd);font-size:13px}
+.st-row:last-child{border-bottom:none}
+.st-num{font-size:22px;font-weight:700;color:var(--purple-tx)}
+.mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.mini-stat{background:var(--bg1);border-radius:8px;padding:8px 4px;text-align:center;font-size:10px;color:var(--tx2)}
+.mini-stat strong{display:block;font-size:18px;font-weight:700;color:var(--tx0);line-height:1.2}
+.hist-item{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.hist-item:last-child{border-bottom:none}
+.bn{padding:8px 4px;background:none;border:none;cursor:pointer;font-family:inherit;text-align:center;color:var(--tx2);transition:color .15s}
+.bn.on{color:var(--purple)}
+.bn-ic{display:block;font-size:18px;margin-bottom:1px}
+.bn-lb{display:block;font-size:9px}
+.scr{display:none}.scr.on{display:block}
+.card{background:var(--bg0);border:1px solid var(--bd);border-radius:var(--rad-lg);padding:14px;margin-bottom:10px}
+.st{font-size:10px;color:var(--tx2);letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+.row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)}
+.row:last-child{border-bottom:none}
+.dr{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap}
+.db{flex:1;min-width:0;padding:7px 4px;font-size:11px;border:1px solid var(--bd2);border-radius:8px;background:var(--bg0);color:var(--tx1);cursor:pointer;font-family:inherit;text-align:center;transition:all .2s;line-height:1.2}
+.db.on{background:var(--info-bg);border-color:var(--info-bd);color:var(--info-tx);font-weight:600}
+.db.dim{background:var(--purple-lt);color:var(--purple-bd);border-color:var(--purple-lt);cursor:default;opacity:.7}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.stat{background:var(--bg1);border-radius:8px;padding:8px 4px;text-align:center;font-size:10px;color:var(--tx2)}
+.stat strong{display:block;font-size:18px;font-weight:600;color:var(--tx0);line-height:1.2}
+.lsb{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--purple-lt);border-radius:8px;margin-bottom:10px;border:1px solid var(--purple-bd)}
+.lsb .ll{font-size:11px;color:var(--purple)}
+.lsb .lv{font-size:20px;font-weight:600;color:var(--purple-tx)}
+.wi{width:100%;font-size:14px;padding:8px 10px;border:1px solid var(--bd2);border-radius:8px;background:var(--bg0);color:var(--tx0);font-family:inherit;margin-bottom:6px}
+.cb{display:flex;align-items:center;gap:6px;width:100%;padding:9px 12px;border:1px solid var(--bd2);border-radius:8px;background:var(--bg1);color:var(--tx0);font-size:13px;cursor:pointer;font-family:inherit;justify-content:center;margin-top:8px}
+.winbar{text-align:center;padding:12px;background:var(--ok-bg);border-radius:var(--rad-lg);color:var(--ok-tx);font-size:13px;font-weight:600;margin-top:10px;display:none;line-height:1.6;border:1px solid var(--ok-bd)}
+.code-box{background:var(--bg1);border:1px solid var(--bd2);border-radius:8px;padding:10px 14px;font-family:monospace;font-size:22px;font-weight:600;letter-spacing:.18em;text-align:center;color:var(--tx0)}
+.pbar-w{height:4px;background:var(--bg2);border-radius:2px;margin-bottom:10px;overflow:hidden}
+.pbar{height:100%;background:var(--teal);border-radius:2px;transition:width .3s}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.g2 .card{margin:0}
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;white-space:nowrap}
+.bp{background:var(--purple-lt);color:var(--purple-tx)}
+.bt{background:var(--teal-lt);color:var(--teal-tx)}
+.ba{background:var(--amber-lt);color:var(--amber-tx)}
+.hdesc{font-size:12px;color:var(--tx1);line-height:1.6;margin-bottom:10px}
+.ghdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--bd)}
+.gic{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;border:1px solid}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.tc{border:1px solid var(--bd);border-radius:var(--rad-lg);padding:10px;cursor:pointer;background:var(--bg0);position:relative;transition:all .2s}
+.tc:hover:not(.dim){border-color:var(--info-bd);background:var(--info-bg)}
+.tc.sel{border:2px solid var(--purple);background:var(--purple-lt)}
+.tc.dim{background:var(--bg1);opacity:.55}
+.tcn{font-size:12px;font-weight:700;color:var(--tx0);margin-bottom:2px}
+.tcd{font-size:10px;color:var(--tx2);line-height:1.4;margin-bottom:8px}
+.tprev{display:flex;gap:3px;flex-wrap:wrap}
+.tpc{width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:15px;border:1px solid var(--bd);background:var(--bg1)}
+.ck{position:absolute;top:6px;right:6px;width:16px;height:16px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700}
+.mc-grid{display:grid;gap:6px}
+.mc{aspect-ratio:1;perspective:600px;cursor:pointer}
+.mci{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .3s}
+.mc.flipped .mci,.mc.matched .mci{transform:rotateY(180deg)}
+.mf{position:absolute;inset:0;border-radius:10px;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.mbk{background:var(--bg2);border:1px solid var(--bd)}
+.mbk::after{content:"?";font-size:18px;font-weight:600;color:var(--tx2)}
+.mfr{background:var(--bg0);border:1px solid var(--bd2);transform:rotateY(180deg)}
+.fg-grid{display:grid;gap:5px;margin-bottom:10px}
+.fc{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;border:1px solid var(--bd);background:var(--bg0);cursor:pointer;transition:all .25s;position:relative;user-select:none}
+.fc.hid{background:var(--bg2)}.fc.hid .fi{opacity:0}
+.fc.cok{background:var(--ok-bg);border-color:var(--ok-bd)}
+.fc.cno{background:var(--err-bg);border-color:var(--err-bd)}
+.fc.csel{outline:2.5px solid var(--purple);outline-offset:1px}
+.fi{font-size:26px;transition:opacity .3s;pointer-events:none}
+.fq{font-size:15px;color:var(--tx2);font-weight:600}
+.picker{display:flex;flex-wrap:wrap;gap:5px;padding:10px;background:var(--bg1);border-radius:8px;margin-bottom:8px}
+.pk{width:46px;height:46px;border:1px solid var(--bd2);border-radius:8px;background:var(--bg0);font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative}
+.pk.used{opacity:.35;cursor:default}
+.pk.used::after{content:'';position:absolute;left:4px;right:4px;top:50%;height:2px;background:#E24B4A;border-radius:2px;transform:translateY(-50%)}
+.lrow{display:flex;gap:6px;align-items:flex-start;margin-bottom:8px}
+.lchip{width:30px;height:30px;min-width:30px;border-radius:8px;background:var(--purple-lt);color:var(--purple-tx);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;border:1px solid var(--purple-bd);flex-shrink:0;margin-top:3px}
+.lwrap{flex:1}
+.li{width:100%;font-size:13px;padding:7px 9px;border:1px solid var(--bd2);border-radius:8px;background:var(--bg0);color:var(--tx0);font-family:inherit}
+.li.ok{border-color:var(--ok-bd)}.li.err{border-color:var(--err-bd);background:var(--err-bg)}
+.lsc{font-size:10px;color:var(--tx2);margin-top:2px}
+.ai-box{padding:10px 12px;background:var(--bg1);border-radius:8px;font-size:12px;color:var(--tx1);line-height:1.6;margin-top:10px}
+.tword{font-size:28px;font-weight:600;letter-spacing:.18em;color:var(--tx0);text-align:center;padding:10px 0 4px;font-family:monospace}
+.sc-hero{text-align:center;padding:20px 10px 14px;border-bottom:1px solid var(--bd);margin-bottom:10px}
+.sc-hero .big{font-size:46px;font-weight:700;color:var(--purple-tx);line-height:1}
+.sc-hero .lbl{font-size:12px;color:var(--tx2);margin-top:4px}
+.ok-tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;background:var(--ok-bg);color:var(--ok-tx)}
+.no-tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;background:var(--err-bg);color:var(--err-tx)}
+.wp{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;background:var(--bg1);border:1px solid var(--bd2);border-radius:20px;font-size:12px;color:var(--tx0);margin:2px}
+.mw{display:inline-flex;align-items:center;justify-content:center;padding:7px 16px;border-radius:8px;background:var(--bg2);border:1px solid var(--bd2);font-size:18px;font-weight:600;color:var(--tx0);margin:3px}
+.hp{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--warn-bg);color:var(--warn-tx);border:1px solid var(--warn-bd)}
+.rl{display:inline-block;opacity:0;transition:opacity .15s}
+.rl.vis{opacity:1}
+.match-w{display:inline-block;padding:1px 5px;border-radius:4px;background:var(--warn-bg);color:var(--warn-tx);font-weight:600}
+.exact-w{display:inline-block;padding:1px 5px;border-radius:4px;background:var(--ok-bg);color:var(--ok-tx);font-weight:600}
+.ctrls{display:flex;gap:8px;margin-top:10px}
+button{font-family:inherit;font-size:13px;padding:8px 14px;border:1px solid var(--bd2);border-radius:8px;background:var(--bg1);color:var(--tx0);cursor:pointer;transition:all .15s}
+button:hover{background:var(--bg2)}
+button:active{transform:scale(.98)}
+.btn-p{background:var(--purple)!important;color:#fff!important;border-color:var(--purple)!important}
+.btn-t{background:var(--teal)!important;color:#fff!important;border-color:var(--teal)!important}
+.install-bar{background:var(--purple-lt);border:1px solid var(--purple-bd);border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--purple-tx);display:none}
+.tip-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900;display:flex;align-items:flex-end;justify-content:center;padding:0 0 80px}
+.tip-box{background:var(--bg0);border-radius:16px 16px 16px 16px;padding:18px 18px 20px;max-width:360px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.18);position:relative}
+.tip-title{font-size:13px;font-weight:700;color:var(--tx0);margin-bottom:8px}
+.tip-body{font-size:13px;color:var(--tx1);line-height:1.65}
+.tip-close{position:absolute;top:12px;right:14px;font-size:18px;color:var(--tx2);cursor:pointer;background:none;border:none;padding:0;line-height:1}
+.tip-btn{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--info-bg);color:var(--info-tx);font-size:10px;font-weight:700;border:1px solid var(--info-bd);cursor:pointer;flex-shrink:0;margin-left:6px;vertical-align:middle;font-family:inherit}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#111;color:#fff;font-size:12px;padding:7px 16px;border-radius:20px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- SPLASH SCREEN -->
+<div class="splash" id="splash">
+  <div class="splash-logo">
+    <img id="splash-logo" alt="BetchaBippy Mind Games">
+    <div class="splash-tagline">Get thinkin'!</div>
+  </div>
+  <div class="splash-list">
+
+    <div class="splash-card" onclick="splashGo('gt')">
+      <div class="splash-icon" style="background:var(--coral-lt);color:var(--coral-tx);border-color:var(--coral-bd)">🃏</div>
+      <div><div class="splash-title">Gotcha!</div><div class="splash-desc">An oldie but goodie. Can you remember what was where?</div></div>
+    </div>
+
+    <div class="splash-card" onclick="splashGo('tp')">
+      <div class="splash-icon" style="background:var(--purple-lt);color:var(--purple-tx);border-color:var(--purple-bd)">💬</div>
+      <div><div class="splash-title">Tippa!</div><div class="splash-desc">Pick up to five words to memorize. In 24 hours, can you recall them? What was that word? It's on the tippa your tongue!</div></div>
+    </div>
+
+    <div class="splash-card" onclick="splashGo('bl')">
+      <div class="splash-icon" style="background:var(--teal-lt);color:var(--teal-tx);border-color:var(--teal-bd)">👁</div>
+      <div><div class="splash-title">Blinka!</div><div class="splash-desc">Test your memory, but don't blink! It goes by fast!</div></div>
+    </div>
+
+    <div class="splash-card" onclick="splashGo('ws')">
+      <div class="splash-icon" style="background:var(--amber-lt);color:var(--amber-tx);border-color:var(--amber-bd)">📝</div>
+      <div><div class="splash-title">Wordsy!</div><div class="splash-desc">The acronym sentence challenge! Fun, wacky, and zany. But not so easy. Get thinkin'!</div></div>
+    </div>
+
+    <div class="splash-card" onclick="splashGo('or')">
+      <div class="splash-icon" style="background:var(--info-bg);color:var(--info-tx);border-color:var(--info-bd)">🔢</div>
+      <div><div class="splash-title">Orderly!</div><div class="splash-desc">Not very good at following order? This will help!</div></div>
+    </div>
+
+    <div class="splash-card" onclick="splashGo('st')">
+      <div class="splash-icon" style="background:var(--bg2);color:var(--tx1);border-color:var(--bd2)">📊</div>
+      <div><div class="splash-title">My Stats</div><div class="splash-desc">Your personal records and history across all games.</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <img src="data:image/webp;base64,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" alt="BetchaBippy Mind Games">
+  <div id="ib" style="display:none"><button class="btn-p" onclick="installApp()" style="font-size:11px;padding:6px 12px">+ Install</button></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="bn on" onclick="goGame('gt')"><span class="bn-ic">🃏</span><span class="bn-lb">Gotcha</span></button>
+  <button class="bn" onclick="goGame('tp')"><span class="bn-ic">💬</span><span class="bn-lb">Tippa</span></button>
+  <button class="bn" onclick="goGame('bl')"><span class="bn-ic">👁</span><span class="bn-lb">Blinka</span></button>
+  <button class="bn" onclick="goGame('ws')"><span class="bn-ic">📝</span><span class="bn-lb">Wordsy</span></button>
+  <button class="bn" onclick="goGame('or')"><span class="bn-ic">🔢</span><span class="bn-lb">Orderly</span></button>
+  <button class="bn" onclick="goGame('st')"><span class="bn-ic">📊</span><span class="bn-lb">Stats</span></button>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main" id="main">
+<div class="toast" id="toast"></div>
+
+<!-- ====== GOTCHA THEME PICKER ====== -->
+<div id="s-gt-themes" class="scr on">
+  <div class="ghdr">
+    <div class="gic" style="background:var(--coral-lt);color:var(--coral-tx);border-color:var(--coral-bd)">G</div>
+    <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Gotcha</p><p style="font-size:12px;color:var(--tx1)">Pick a theme, difficulty, and play</p></div>
+  </div>
+  <div class="tgrid" id="gt-tgrid"></div>
+  <div class="card">
+    <div class="st">Difficulty</div>
+    <div class="dr" id="gt-sizes"></div>
+    <div id="gt-ni-section" style="display:none">
+      <div class="st" style="margin-top:8px">Category</div>
+      <div class="dr" id="gt-cats">
+        <button class="db on" onclick="gtSetCat('food',this)">Food</button>
+        <button class="db dim" onclick="gtSetCat('animals',this)">Animals</button>
+        <button class="db dim" onclick="gtSetCat('sports',this)">Sports</button>
+        <button class="db dim" onclick="gtSetCat('countries',this)">Countries</button>
+        <button class="db dim" onclick="gtSetCat('custom',this)">Custom ✏️</button>
+      </div>
+      <div id="gt-custom-area" style="display:none;margin-top:10px">
+        <div id="gt-custom-pairs" style="margin-bottom:8px"></div>
+        <div style="display:flex;gap:6px;margin-bottom:5px">
+          <input id="gt-wa" class="wi" style="margin:0;flex:1" placeholder="Word A">
+          <span style="line-height:2.5;color:var(--tx2)">↔</span>
+          <input id="gt-wb" class="wi" style="margin:0;flex:1" placeholder="Word B">
+        </div>
+        <button onclick="gtAddPair()" style="font-size:12px;width:100%">Add pair</button>
+      </div>
+    </div>
+  </div>
+  <button class="btn-p" onclick="gtStartGame()" style="width:100%;padding:10px;font-size:14px">Play →</button>
+</div>
+
+<!-- ====== GOTCHA PLAY ====== -->
+<div id="s-gt-play" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div style="display:flex;align-items:center;gap:7px">
+      <span id="gt-theme-badge" style="font-size:11px;padding:3px 8px;border-radius:20px;background:var(--bg2);border:1px solid var(--bd2);font-weight:600"></span>
+      <span id="gt-cat-badge" style="font-size:10px;padding:2px 7px;border-radius:20px;background:var(--warn-bg);color:var(--warn-tx);display:none"></span>
+    </div>
+    <button onclick="goScr('gt-themes')" style="font-size:11px;padding:5px 10px">← Themes</button>
+  </div>
+  <div class="lsb"><span class="ll">Live score</span><span class="lv" id="mc-live">0</span></div>
+  <div class="stats">
+    <div class="stat"><strong id="mc-mv">0</strong>Moves</div>
+    <div class="stat"><strong id="mc-pr">0</strong>Matched</div>
+    <div class="stat"><strong id="mc-tm">0:00</strong>Time</div>
+    <div class="stat"><strong id="mc-ef">—</strong>Accuracy</div>
+  </div>
+  <div class="mc-grid" id="mc-grid"></div>
+  <div class="winbar" id="mc-win"></div>
+  <div id="mc-share" style="display:none"><button class="cb" onclick="shareScore('gotcha')">📤 Share my score</button></div>
+  <div class="ctrls" style="margin-top:10px">
+    <button onclick="goScr('gt-themes')" style="flex:1;font-size:11px">🎨 Theme</button>
+    <button onclick="gtChangeLevel()" style="flex:1;font-size:11px">📊 Level</button>
+    <button onclick="mcNew()" style="flex:2;font-size:11px">▶ Play again</button>
+  </div>
+</div>
+
+<!-- ====== TIPPA HOME ====== -->
+<div id="s-tp-home" class="scr">
+  <div class="ghdr">
+    <div class="gic" style="background:var(--purple-lt);color:var(--purple-tx);border-color:var(--purple-bd)">T</div>
+    <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Tippa</p><p style="font-size:12px;color:var(--tx1)">Memorize words. Recall them 24 hours later.</p></div>
+  </div>
+  <div class="card" style="cursor:pointer;margin-bottom:8px" onclick="tpSoloCheck()">
+    <div class="st">Solo play</div>
+    <p class="hdesc">Get up to 5 random words to memorize. Come back in 24 hrs to recall them. You get one retry per word if you miss.</p>
+    <button style="width:100%;font-size:12px">Play solo</button>
+  </div>
+  <div class="g2">
+    <div class="card" style="cursor:pointer" onclick="goScr('tp-create')"><div class="st">Send a challenge</div><p class="hdesc">Pick 1–5 words. Receiver memorizes then recalls 24 hrs later.</p><button style="width:100%;font-size:12px">Create</button></div>
+    <div class="card" style="cursor:pointer" onclick="goScr('tp-join')"><div class="st">Join a challenge</div><p class="hdesc">Got a TIPPA code? Enter it to start memorizing.</p><button style="width:100%;font-size:12px">Join</button></div>
+  </div>
+  <div class="card"><div class="st">How Tippa works</div>
+    <div class="row"><span class="badge bp">1</span><span style="font-size:12px;color:var(--tx1);flex:1">Sender picks 1–5 words + memo time</span><button class="tip-btn" onclick="showTip('Setting up a challenge','Pick between 1 and 5 words for your friend to memorize. You also choose how long they get to study them — 10, 20, or 30 seconds. Add an optional hint category (Animals, Places, Things) to give them a nudge without giving it away. Then hit Generate Code and share the 6-digit code.')">?</button></div>
+    <div class="row"><span class="badge bp">2</span><span style="font-size:12px;color:var(--tx1);flex:1">Words vanish the instant receiver taps Done</span><button class="tip-btn" onclick="showTip('Memorization phase','The receiver enters the code and sees your words on screen. A countdown arc timer runs — the faster they tap Done, the higher their speed score. The moment they tap Done, every word disappears immediately. No peeking back!')">?</button></div>
+    <div class="row"><span class="badge bp">3</span><span style="font-size:12px;color:var(--tx1);flex:1">Recall anytime — waiting longer earns bonus pts</span><button class="tip-btn" onclick="showTip('Scoring &amp; the wait bonus','Score = speed score × words correct × 1.5 (if all correct). The twist: if the receiver waits more than 26 hours before recalling, they earn up to +25 bonus points. The longer they wait (up to 48 hrs), the bigger the bonus — rewarding genuine long-term memory.')">?</button></div>
+    <div class="row"><span class="badge bp">4</span><span style="font-size:12px;color:var(--tx1);flex:1">Spelling counts — exact match only</span></div>
+  </div>
+</div>
+
+
+<!-- TIPPA SOLO SETUP -->
+<div id="s-tp-solo" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <p style="font-size:14px;font-weight:600">Solo play</p>
+    <button onclick="goScr('tp-home')" style="font-size:11px;padding:5px 10px">Back</button>
+  </div>
+  <div class="card">
+    <div class="st">How many words?</div>
+    <div class="dr" id="tp-solo-count">
+      <button class="db on" onclick="tpSoloSetCount(3,this)">3</button>
+      <button class="db dim" onclick="tpSoloSetCount(4,this)">4</button>
+      <button class="db dim" onclick="tpSoloSetCount(5,this)">5</button>
+    </div>
+    <div class="st" style="margin-top:8px">Memorization time</div>
+    <div class="dr" id="tp-solo-times">
+      <button class="db on" onclick="tpSoloSetTime(10,this)">10s</button>
+      <button class="db dim" onclick="tpSoloSetTime(20,this)">20s</button>
+      <button class="db dim" onclick="tpSoloSetTime(30,this)">30s</button>
+    </div>
+    <div class="st" style="margin-top:8px">Hint category</div>
+    <div class="dr" id="tp-solo-hints">
+      <button class="db on" onclick="tpSoloSetHint('none',this)">None</button>
+      <button class="db dim" onclick="tpSoloSetHint('animals',this)">Animals</button>
+      <button class="db dim" onclick="tpSoloSetHint('places',this)">Places</button>
+      <button class="db dim" onclick="tpSoloSetHint('things',this)">Things</button>
+    </div>
+  </div>
+  <button class="btn-p" onclick="tpSoloStart()" style="width:100%;padding:10px;font-size:14px">Start →</button>
+</div>
+
+<!-- TIPPA SOLO MEMORIZE -->
+<div id="s-tp-solo-mem" class="scr">
+  <div class="card" style="text-align:center">
+    <div class="st" style="text-align:left">Memorize these words</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0 10px" id="tp-solo-words"></div>
+    <div id="tp-solo-hint-row" style="display:none;margin-bottom:10px"></div>
+    <div style="margin:6px auto 10px;width:70px;height:70px">
+      <svg viewBox="0 0 72 72" width="70" height="70">
+        <circle cx="36" cy="36" r="30" fill="none" stroke="var(--bg2)" stroke-width="5"/>
+        <circle cx="36" cy="36" r="30" fill="none" stroke="var(--purple)" stroke-width="5" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="188" id="tp-solo-arc" transform="rotate(-90 36 36)"/>
+        <text x="36" y="42" text-anchor="middle" font-size="17" font-weight="600" fill="var(--tx0)" id="tp-solo-tmr">—</text>
+      </svg>
+    </div>
+    <p style="font-size:11px;color:var(--tx2);margin-bottom:10px">Words vanish when you tap Done. Come back in 24 hrs to recall them.</p>
+    <button class="btn-p" onclick="tpSoloDone()" style="width:100%;padding:10px;font-size:14px">Done memorizing — lock it in</button>
+  </div>
+</div>
+
+<!-- TIPPA SOLO LOCKED -->
+<div id="s-tp-solo-locked" class="scr">
+  <div class="card" style="text-align:center;padding:24px 16px;margin-bottom:10px">
+    <div style="font-size:40px;margin-bottom:10px">🔒</div>
+    <p style="font-size:16px;font-weight:700;margin-bottom:6px">Words locked away</p>
+    <p style="font-size:12px;color:var(--tx1);line-height:1.7;margin-bottom:16px">Your words are sealed. Come back when the countdown hits zero to test your memory.</p>
+    <div style="background:var(--purple-lt);border-radius:12px;padding:14px;border:1px solid var(--purple-bd)">
+      <div style="font-size:11px;color:var(--purple);margin-bottom:4px">Recall unlocks in</div>
+      <div id="tp-solo-countdown" style="font-size:32px;font-weight:800;color:var(--purple-tx);font-family:monospace">—</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Words locked</span><span id="tp-solo-locked-count" style="font-size:12px;font-weight:600">—</span></div>
+    <div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Retries available</span><span id="tp-solo-retries-disp" style="font-size:12px;font-weight:600;color:var(--purple-tx)">—</span></div>
+    <div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Hint</span><span id="tp-solo-locked-hint" style="font-size:12px;font-weight:600">—</span></div>
+  </div>
+  <button onclick="tpSoloTryRecall()" id="tp-solo-recall-btn" style="width:100%;padding:10px;font-size:14px;display:none" class="btn-p">Recall now →</button>
+  <button onclick="if(confirm('Abandon this solo challenge?')){localStorage.removeItem(\'tp_solo\');goScr(\'tp-home\')}" style="width:100%;font-size:12px;color:var(--err-tx);border-color:var(--err-bd);margin-top:8px">Abandon challenge</button>
+</div>
+
+<!-- TIPPA SOLO RECALL -->
+<div id="s-tp-solo-recall" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <p style="font-size:14px;font-weight:600">Time to recall</p>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:11px;color:var(--tx2)">Spelling counts</span>
+      <span id="tp-solo-retries-left" style="font-size:11px;padding:2px 8px;border-radius:20px;background:var(--warn-bg);color:var(--warn-tx);font-weight:600"></span>
+    </div>
+  </div>
+  <div id="tp-solo-hint-rec" style="display:none;margin-bottom:8px"></div>
+  <div id="tp-solo-word-rows" class="card"></div>
+  <button class="btn-p" onclick="tpSoloSubmit()" style="width:100%;padding:10px;font-size:14px;margin-top:8px">Submit answers</button>
+</div>
+
+<!-- TIPPA SOLO RESULT -->
+<div id="s-tp-solo-res" class="scr">
+  <div class="card">
+    <div class="sc-hero">
+      <div class="big" id="tp-solo-tot">—</div>
+      <div class="lbl">total points</div>
+    </div>
+    <div class="st">Results</div>
+    <div id="tp-solo-res-words" style="margin-bottom:10px"></div>
+    <div class="stats" style="margin-bottom:8px">
+      <div class="stat"><strong id="tp-solo-rc">—</strong>Correct</div>
+      <div class="stat"><strong id="tp-solo-rs">—</strong>Speed pts</div>
+      <div class="stat"><strong id="tp-solo-rr">—</strong>Retries used</div>
+    </div>
+    <button class="cb" onclick="shareScore('tippa-solo')">📤 Share my score</button>
+  </div>
+  <div class="ctrls">
+    <button onclick="goScr('tp-home')">Home</button>
+    <button onclick="tpSoloReset()" style="flex:2">Play again</button>
+  </div>
+</div>
+
+<!-- TIPPA CREATE -->
+<div id="s-tp-create" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Create a challenge</p><button onclick="goScr('tp-home')" style="font-size:11px;padding:5px 10px">Back</button></div>
+  <div class="card"><div class="st">Words (1–5)</div><div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;min-height:24px" id="tp-wdisp"></div><div style="display:flex;gap:6px;margin-bottom:5px"><input id="tp-wi" class="wi" style="flex:1;margin:0" placeholder="Type a word..." maxlength="20" onkeydown="if(event.key==='Enter')tpAdd()"><button onclick="tpAdd()" style="font-size:12px">Add</button><button onclick="tpRand()" style="font-size:12px">Random</button></div></div>
+  <div class="card">
+    <div class="st">Memorization time</div>
+    <div class="dr" id="tp-times">
+      <button class="db on" onclick="tpSetT(10,this)">10s</button>
+      <button class="db dim" onclick="tpSetT(20,this)">20s</button>
+      <button class="db dim" onclick="tpSetT(30,this)">30s</button>
+    </div>
+    <div class="st" style="margin-top:8px">Hint category</div>
+    <div class="dr" id="tp-hints">
+      <button class="db on" onclick="tpSetH('none',this)">None</button>
+      <button class="db dim" onclick="tpSetH('animals',this)">Animals</button>
+      <button class="db dim" onclick="tpSetH('places',this)">Places</button>
+      <button class="db dim" onclick="tpSetH('things',this)">Things</button>
+    </div>
+  </div>
+  <button class="btn-p" onclick="tpCreate()" style="width:100%;padding:10px;font-size:14px">Generate code</button>
+</div>
+
+<!-- TIPPA CODE -->
+<div id="s-tp-code" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Share this code</p><button onclick="goScr('tp-home')" style="font-size:11px;padding:5px 10px">Home</button></div>
+  <div class="card"><div class="code-box" id="tp-code">TIPPA-??????</div><p style="font-size:11px;color:var(--tx2);text-align:center;margin:8px 0 10px">Send this to your friend.</p><button onclick="tpCopy()" style="width:100%;font-size:13px" id="tp-copy-btn">Copy code</button></div>
+  <div class="card"><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Words</span><span id="tp-sw" style="font-size:12px;font-weight:600">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Time</span><span id="tp-st" style="font-size:12px;font-weight:600">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Hint</span><span id="tp-sh" style="font-size:12px;font-weight:600">—</span></div></div>
+  <button onclick="tpSimReceiver()" style="width:100%;font-size:13px">Preview receiver view</button>
+</div>
+
+<!-- TIPPA JOIN -->
+<div id="s-tp-join" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Join a challenge</p><button onclick="goScr('tp-home')" style="font-size:11px;padding:5px 10px">Back</button></div>
+  <div class="card"><div class="st">Enter your code</div><input class="wi" id="tp-join-inp" placeholder="TIPPA-XXXXXX" style="font-family:monospace;letter-spacing:.1em;text-transform:uppercase;font-size:16px"></div>
+  <button class="btn-p" onclick="tpJoin()" style="width:100%;padding:10px;font-size:14px">Join</button>
+</div>
+
+<!-- TIPPA MEMORIZE -->
+<div id="s-tp-mem" class="scr">
+  <div class="card" style="text-align:center">
+    <div class="st" style="text-align:left">Memorize these words</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0 10px" id="tp-memwords"></div>
+    <div id="tp-hint-row" style="display:none;margin-bottom:10px"></div>
+    <div style="margin:6px auto 10px;width:70px;height:70px">
+      <svg viewBox="0 0 72 72" width="70" height="70">
+        <circle cx="36" cy="36" r="30" fill="none" stroke="var(--bg2)" stroke-width="5"/>
+        <circle cx="36" cy="36" r="30" fill="none" stroke="var(--purple)" stroke-width="5" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="188" id="tp-arc" transform="rotate(-90 36 36)"/>
+        <text x="36" y="42" text-anchor="middle" font-size="17" font-weight="600" fill="var(--tx0)" id="tp-tmr">—</text>
+      </svg>
+    </div>
+    <p style="font-size:11px;color:var(--tx2);margin-bottom:10px">Words vanish the moment you tap Done.</p>
+    <button class="btn-p" onclick="tpDone()" style="width:100%;padding:10px;font-size:14px">Done memorizing</button>
+  </div>
+</div>
+
+<!-- TIPPA WAITING -->
+<div id="s-tp-wait" class="scr">
+  <div class="card" style="text-align:center;padding:20px 14px;margin-bottom:10px"><p style="font-size:15px;font-weight:600;margin-bottom:6px">Words locked away</p><p style="font-size:12px;color:var(--tx1);line-height:1.7">Memorized in <strong id="tp-spd-disp">—</strong>. Recall opens in 24 hrs.<br>Waiting past hour 26 earns up to +25 bonus pts.</p></div>
+  <div class="lsb"><span class="ll">Score ceiling</span><span class="lv" id="tp-ceil">—</span></div>
+  <div class="card"><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Speed score</span><span id="tp-spd-sc" style="font-size:12px;font-weight:600;color:var(--purple-tx)">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Words</span><span id="tp-wc" style="font-size:12px;font-weight:600">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Full set bonus</span><span style="font-size:12px;font-weight:600;color:var(--warn-tx)">×1.5</span></div></div>
+  <div class="ctrls"><button onclick="goScr('tp-home')">Home</button><button onclick="tpStartRecall()" style="flex:2">Remember now (demo)</button></div>
+</div>
+
+<!-- TIPPA RECALL -->
+<div id="s-tp-recall" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Time to recall</p><span style="font-size:11px;color:var(--tx2)">Spelling counts</span></div>
+  <div class="lsb"><span class="ll">Potential score</span><span class="lv" id="tp-rec-live">—</span></div>
+  <div class="card"><div class="st">What were the words?</div><div id="tp-rec-inputs"></div><div id="tp-hint-rec" style="display:none;margin-top:4px"></div></div>
+  <button class="btn-p" onclick="tpSubmit()" style="width:100%;padding:10px;font-size:14px">Submit answers</button>
+</div>
+
+<!-- TIPPA RESULT -->
+<div id="s-tp-res" class="scr">
+  <div class="card"><div class="sc-hero"><div class="big" id="tp-tot">—</div><div class="lbl">total points</div></div><div class="st">Replay</div><div id="tp-res-words" style="margin-bottom:10px"></div><div class="stats" style="margin-bottom:8px"><div class="stat"><strong id="tp-rc">—</strong>Correct</div><div class="stat"><strong id="tp-rs">—</strong>Speed</div><div class="stat"><strong id="tp-rb">—</strong>Wait bonus</div></div><button class="cb" onclick="shareScore('tippa')">📤 Share my score</button></div>
+  <div class="ctrls"><button onclick="goScr('tp-home')">Home</button><button onclick="goScr('tp-create')" style="flex:2">Send one back</button></div>
+</div>
+
+<!-- ====== BLINKA THEME PICKER ====== -->
+<div id="s-bl-themes" class="scr">
+  <div class="ghdr">
+    <div class="gic" style="background:var(--teal-lt);color:var(--teal-tx);border-color:var(--teal-bd)">BL</div>
+    <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Blinka</p><p style="font-size:12px;color:var(--tx1)">Pick a theme, difficulty, and fade speed</p></div>
+  </div>
+  <div class="tgrid" id="bl-tgrid"></div>
+  <div class="card">
+    <div class="st">Difficulty</div>
+    <div class="dr" id="bl-sizes"></div>
+    <div class="st" style="margin-top:8px">Fade speed</div>
+    <div class="dr" id="bl-speeds">
+      <button class="db on" onclick="blSetSpeed(2400,this)">Slow</button>
+      <button class="db dim" onclick="blSetSpeed(1300,this)">Medium</button>
+      <button class="db dim" onclick="blSetSpeed(650,this)">Fast</button>
+    </div>
+  </div>
+  <button class="btn-t" onclick="blStartGame()" style="width:100%;padding:10px;font-size:14px">Play →</button>
+</div>
+
+<!-- ====== BLINKA PLAY ====== -->
+<div id="s-bl-play" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div style="display:flex;align-items:center;gap:7px">
+      <span id="bl-theme-badge" style="font-size:11px;padding:3px 8px;border-radius:20px;background:var(--teal-lt);border:1px solid var(--teal-bd);font-weight:600;color:var(--teal-tx)"></span>
+      <span id="bl-diff-badge" style="font-size:10px;padding:2px 7px;border-radius:20px;background:var(--bg2);color:var(--tx1)"></span>
+    </div>
+    <button onclick="goScr('bl-themes')" style="font-size:11px;padding:5px 10px">← Themes</button>
+  </div>
+  <div class="lsb"><span class="ll">Live score</span><span class="lv" id="bl-live">0</span></div>
+  <div class="stats"><div class="stat"><strong id="bl-hid">0</strong>Hidden</div><div class="stat"><strong id="bl-vis">0</strong>Visible</div><div class="stat"><strong id="bl-cor">0</strong>Correct</div><div class="stat"><strong id="bl-ph">Study</strong>Phase</div></div>
+  <div class="pbar-w"><div class="pbar" id="bl-pbar" style="width:100%"></div></div>
+  <div class="fg-grid" id="bl-grid"></div>
+  <div id="bl-rec-ui" style="display:none">
+    <p style="font-size:12px;color:var(--tx1);margin-bottom:8px">Tap a <strong>?</strong> cell, then pick its icon below.</p>
+    <div class="picker" id="bl-picker"></div>
+    <p style="font-size:11px;color:var(--tx2);margin-bottom:6px" id="bl-status"></p>
+  </div>
+  <div class="winbar" id="bl-win"></div>
+  <div id="bl-share" style="display:none"><button class="cb" onclick="shareScore('blink')">📤 Share my score</button></div>
+  <div class="ctrls" id="bl-again" style="display:none">
+    <button onclick="goScr('bl-themes')" style="flex:1;font-size:11px">🎨 Theme</button>
+    <button onclick="blChangeLevel()" style="flex:1;font-size:11px">📊 Level</button>
+    <button onclick="blStartGame()" style="flex:2;font-size:11px">▶ Play again</button>
+  </div>
+</div>
+
+<!-- ====== WORDSY HOME ====== -->
+<div id="s-ws-home" class="scr">
+  <div class="ghdr">
+    <div class="gic" style="background:var(--amber-lt);color:var(--amber-tx);border-color:var(--amber-bd)">W</div>
+    <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Wordsy</p><p style="font-size:12px;color:var(--tx1)">Build an acronym sentence. Bigger words score more.</p></div>
+  </div>
+  <div class="g2">
+    <div class="card" style="cursor:pointer" onclick="goScr('ws-solo')"><div class="st">Solo play</div><p class="hdesc">Get a random word, build your best acronym. AI judges coherence.</p><button style="width:100%;font-size:12px">Play solo</button></div>
+    <div class="card" style="cursor:pointer" onclick="goScr('ws-send')"><div class="st">Send a challenge</div><p class="hdesc">Pick a word, write your secret sentence. Bonus for matching.</p><button style="width:100%;font-size:12px">Send challenge</button></div>
+  </div>
+  <div class="card" style="cursor:pointer;margin-bottom:10px" onclick="goScr('ws-join')"><div class="st">Join a challenge</div><p class="hdesc">Got a WRDSY code from a friend? Enter it here to play their challenge.</p><button style="width:100%;font-size:12px">Enter code</button></div>
+  <div class="card"><div class="st">How Wordsy works</div>
+    <div class="row"><span class="badge ba">1</span><span style="font-size:12px;color:var(--tx1);flex:1">Each letter starts a word in your sentence</span></div>
+    <div class="row"><span class="badge ba">2</span><span style="font-size:12px;color:var(--tx1);flex:1">Visibility modes change difficulty &amp; multiplier</span><button class="tip-btn" onclick="showTip('Visibility modes','Always visible ×1 — the word stays on screen the whole time. Easy but lowest score multiplier.&lt;br&gt;&lt;br&gt;Letter by letter ×1.5 — letters reveal one at a time so you build the sentence as you go.&lt;br&gt;&lt;br&gt;Hidden after 5s ×2.5 — you get 5 seconds to memorize the word, then it disappears. Hardest mode, highest multiplier.')">?</button></div>
+    <div class="row"><span class="badge ba">3</span><span style="font-size:12px;color:var(--tx1);flex:1">AI rates your sentence for coherence</span><button class="tip-btn" onclick="showTip('AI scoring','After you submit, Claude rates how coherent and meaningful your sentence is on a 1–3 star scale. ★★★ means it actually makes sense. ★ means... creative. The coherence rating multiplies your base score, so a brilliant sentence beats a random one.')">?</button></div>
+    <div class="row"><span class="badge ba">4</span><span style="font-size:12px;color:var(--tx1);flex:1">Slot match +25 · Shared word +15 · Mind Meld ×3</span><button class="tip-btn" onclick="showTip('Two-player bonuses','When playing against a friend, you each write your own sentence for the same word.&lt;br&gt;&lt;br&gt;Slot match (+25): you used the same word in the same letter position.&lt;br&gt;&lt;br&gt;Shared word (+15): same word appeared anywhere in both sentences.&lt;br&gt;&lt;br&gt;Mind Meld (×3): your entire sentences matched — rare and glorious.')">?</button></div>
+  </div>
+</div>
+
+<!-- WORDSY SOLO -->
+<div id="s-ws-solo" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Solo play</p><button onclick="goScr('ws-home')" style="font-size:11px;padding:5px 10px">Back</button></div>
+  <div class="card">
+    <div class="st">Visibility mode</div>
+    <div class="dr" id="ws-modes">
+      <button class="db on" onclick="wsSetMode('always',this)">Always ×1</button>
+      <button class="db dim" onclick="wsSetMode('reveal',this)">Letter by letter ×1.5</button>
+      <button class="db dim" onclick="wsSetMode('hide',this)">Hidden 5s ×2.5</button>
+    </div>
+    <div class="st" style="margin-top:8px">Word length</div>
+    <div class="dr" id="ws-lens">
+      <button class="db on" onclick="wsSetLen(4,this)">Short (4–5)</button>
+      <button class="db dim" onclick="wsSetLen(6,this)">Medium (6–7)</button>
+      <button class="db dim" onclick="wsSetLen(8,this)">Long (8–10)</button>
+    </div>
+  </div>
+  <button onclick="wsStartSolo()" style="width:100%;padding:8px;font-size:13px;margin-bottom:12px">Get a word</button>
+  <div id="ws-play" style="display:none">
+    <div class="lsb"><span class="ll">Live score <span id="ws-mult-lbl" style="opacity:.7"></span></span><span class="lv" id="ws-live">0</span></div>
+    <div class="card"><div class="st">Your word</div><div class="tword" id="ws-word-disp"></div><div id="ws-timer-row" style="text-align:center;font-size:11px;color:var(--tx2);margin-bottom:10px;min-height:14px"></div><div id="ws-letter-rows"></div></div>
+    <div class="ctrls"><button onclick="wsStartSolo()">New word</button><button onclick="wsSubmitSolo()" style="flex:2">Submit for AI scoring</button></div>
+    <div class="ai-box" id="ws-ai" style="display:none"></div>
+    <div id="ws-share" style="display:none"><button class="cb" onclick="shareScore('wordsy')">📤 Share my score</button></div>
+  </div>
+</div>
+
+<!-- WORDSY SEND -->
+<div id="s-ws-send" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Create a challenge</p><button onclick="goScr('ws-home')" style="font-size:11px;padding:5px 10px">Back</button></div>
+  <div class="card">
+    <div class="st">Challenge word</div>
+    <div style="display:flex;gap:6px;margin-bottom:6px">
+      <input id="ws-send-inp" class="wi" style="margin:0;flex:1;font-family:monospace;letter-spacing:.12em;text-transform:uppercase;font-size:16px" placeholder="e.g. PHONE" maxlength="10" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z]/g,'');wsBuildSender()">
+      <button onclick="wsRandWord()" style="font-size:12px">Random</button>
+    </div>
+    <div class="st" style="margin-top:8px">Receiver visibility</div>
+    <div class="dr" id="ws-send-modes">
+      <button class="db on" onclick="wsSetSendMode('always',this)">Always ×1</button>
+      <button class="db dim" onclick="wsSetSendMode('reveal',this)">Letter by letter ×1.5</button>
+      <button class="db dim" onclick="wsSetSendMode('hide',this)">Hidden 5s ×2.5</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="st">Your secret sentence</div>
+    <p style="font-size:11px;color:var(--tx2);margin-bottom:10px">Receiver earns bonus for matching your words.</p>
+    <div id="ws-sender-rows"><p style="font-size:12px;color:var(--tx2)">Type a word above to begin.</p></div>
+    <div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--bd);font-size:12px;color:var(--tx1)">Score: <strong id="ws-sender-score">0</strong> pts</div>
+  </div>
+  <button onclick="wsCreateChallenge()" style="width:100%;padding:10px;font-size:14px">Generate code</button>
+</div>
+
+<!-- WORDSY CODE -->
+<div id="s-ws-code" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Share this code</p><button onclick="goScr('ws-home')" style="font-size:11px;padding:5px 10px">Home</button></div>
+  <div class="card"><div class="code-box" id="ws-code">WRDSY-??????</div><p style="font-size:11px;color:var(--tx2);text-align:center;margin:8px 0 10px">Your friend enters this to play.</p><button onclick="wsCopyCode()" style="width:100%;font-size:13px" id="ws-copy-btn">Copy code</button></div>
+  <div class="card"><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Word</span><span id="ws-cs-word" style="font-size:12px;font-weight:600;font-family:monospace;letter-spacing:.1em">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Mode</span><span id="ws-cs-mode" style="font-size:12px;font-weight:600">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Your score</span><span id="ws-cs-score" style="font-size:12px;font-weight:600;color:var(--amber-tx)">—</span></div></div>
+  <button onclick="wsSimReceiver()" style="width:100%;font-size:13px">Preview receiver</button>
+</div>
+
+<!-- WORDSY RECV -->
+<div id="s-ws-recv" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Your challenge</p><span id="ws-recv-mode-badge" style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--warn-bg);color:var(--warn-tx)"></span></div>
+  <div class="lsb"><span class="ll">Live base score</span><span class="lv" id="ws-recv-live">0</span></div>
+  <div class="card"><div class="tword" id="ws-recv-word"></div><div id="ws-recv-timer" style="text-align:center;font-size:11px;color:var(--tx2);margin-bottom:10px;min-height:14px"></div><div id="ws-recv-rows"></div></div>
+  <button class="btn-p" onclick="wsSubmitRecv()" style="width:100%;padding:10px;font-size:14px">Submit my sentence</button>
+</div>
+
+<!-- WORDSY RESULT -->
+<div id="s-ws-res" class="scr">
+  <div class="card"><div class="sc-hero"><div class="big" id="ws-res-tot">—</div><div class="lbl">total points</div></div><div class="st">Your sentence</div><div id="ws-res-recv" style="font-size:14px;line-height:2;margin-bottom:10px"></div><div class="st">Sender's secret</div><div id="ws-res-sender" style="font-size:13px;color:var(--tx1);line-height:1.8;margin-bottom:8px"></div><div class="ai-box" id="ws-res-ai">Scoring...</div><button class="cb" onclick="shareScore('wordsy-res')">📤 Share my score</button></div>
+  <div id="ws-mindmeld" style="display:none;text-align:center;padding:10px;background:var(--ok-bg);border-radius:10px;font-size:13px;color:var(--ok-tx);font-weight:600;margin-bottom:10px">Mind Meld! ×3 bonus!</div>
+  <div class="card"><div class="st">Score breakdown</div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Base</span><span id="ws-r-base">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Visibility ×</span><span id="ws-r-mult">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Slot matches</span><span id="ws-r-slot" style="color:var(--ok-tx)">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">AI coherence</span><span id="ws-r-coh" style="color:var(--purple-tx)">—</span></div></div>
+  <div class="ctrls"><button onclick="goScr('ws-home')">Home</button><button onclick="goScr('ws-send')" style="flex:2">Send one back</button></div>
+</div>
+
+<!-- hidden helpers for Wordsy sender rows -->
+
+<!-- WORDSY JOIN -->
+<div id="s-ws-join" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Join a challenge</p><button onclick="goScr('ws-home')" style="font-size:11px;padding:5px 10px">Back</button></div>
+  <div class="card"><div class="st">Enter your code</div><input class="wi" id="ws-join-inp" placeholder="WRDSY-XXXXXX" style="font-family:monospace;letter-spacing:.1em;text-transform:uppercase;font-size:16px" oninput="this.value=this.value.toUpperCase()"><p style="font-size:11px;color:var(--tx2);margin-top:4px">Ask your friend to share their WRDSY code with you.</p></div>
+  <button class="btn-p" onclick="wsJoin()" style="width:100%;padding:10px;font-size:14px">Join challenge</button>
+</div>
+
+<div id="ws-send-disp-h" style="display:none"></div>
+<div id="ws-send-timer-h" style="display:none"></div>
+
+
+
+<!-- ====== ORDERLY HOME ====== -->
+<div id="s-or-home" class="scr">
+  <div class="ghdr">
+    <div class="gic" style="background:#EEF4FF;color:#1D4ED8;border-color:#93C5FD">OR</div>
+    <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Orderly</p><p style="font-size:12px;color:var(--tx1)">Watch the sequence. Repeat it back. Don't mess up.</p></div>
+  </div>
+  <div class="card" style="cursor:pointer;margin-bottom:8px" onclick="goScr('or-solo')">
+    <div class="st">Solo play</div>
+    <p class="hdesc">Watch the sequence grow round by round. How far can you go?</p>
+    <button style="width:100%;font-size:12px">Play solo</button>
+  </div>
+  <div class="g2">
+    <div class="card" style="cursor:pointer" onclick="goScr('or-pass')"><div class="st">Pass the phone</div><p class="hdesc">Two players, one phone. Take turns — last one standing wins.</p><button style="width:100%;font-size:12px">Play</button></div>
+    <div class="card" style="cursor:pointer" onclick="goScr('or-send')"><div class="st">Send a challenge</div><p class="hdesc">Send a sequence to a friend. See if they can beat you.</p><button style="width:100%;font-size:12px">Send</button></div>
+  </div>
+  <div class="card"><div class="st">Join a challenge</div><p class="hdesc">Got an ORDLY code? Enter it here.</p>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <input class="wi" id="or-join-inp" style="margin:0;flex:1;font-family:monospace;letter-spacing:.1em;text-transform:uppercase;font-size:14px" placeholder="ORDLY-XXXXXX" oninput="this.value=this.value.toUpperCase()">
+      <button onclick="orJoin()" style="white-space:nowrap">Join</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== ORDERLY SETUP ====== -->
+<div id="s-or-solo" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Solo play</p><button onclick="goScr('or-home')" style="font-size:11px;padding:5px 10px">Back</button></div>
+  <div class="card">
+    <div class="st">Theme</div>
+    <div class="tgrid" id="or-theme-grid" style="margin-bottom:0"></div>
+  </div>
+  <div class="card">
+    <div class="st">Starting length</div>
+    <div class="dr" id="or-len-btns">
+      <button class="db on" onclick="orSetLen(3,this)">3 — Easy</button>
+      <button class="db dim" onclick="orSetLen(4,this)">4 — Medium</button>
+      <button class="db dim" onclick="orSetLen(5,this)">5 — Hard</button>
+    </div>
+    <div class="st" style="margin-top:8px">Show speed</div>
+    <div class="dr" id="or-speed-btns">
+      <button class="db on" onclick="orSetSpeed(900,this)">Slow</button>
+      <button class="db dim" onclick="orSetSpeed(600,this)">Medium</button>
+      <button class="db dim" onclick="orSetSpeed(350,this)">Fast</button>
+    </div>
+    <div class="st" style="margin-top:8px">Show style</div>
+    <div class="dr" id="or-style-btns">
+      <button class="db on" onclick="orSetStyle('flash',this)">⚡ Flash <span style="font-size:9px;display:block;opacity:.7">one at a time</span></button>
+      <button class="db dim" onclick="orSetStyle('liner',this)">📋 Liner <span style="font-size:9px;display:block;opacity:.7">all then highlight</span></button>
+    </div>
+  </div>
+  <button class="btn-p" onclick="orStartSolo()" style="width:100%;padding:10px;font-size:14px">Start →</button>
+</div>
+
+<!-- ====== ORDERLY PLAY ====== -->
+<div id="s-or-play" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div style="display:flex;align-items:center;gap:7px">
+      <span id="or-theme-badge" style="font-size:11px;padding:3px 8px;border-radius:20px;background:var(--info-bg);border:1px solid var(--info-bd);font-weight:600;color:var(--info-tx)"></span>
+      <span id="or-round-badge" style="font-size:11px;padding:3px 8px;border-radius:20px;background:var(--bg2);color:var(--tx1)">Round 1</span>
+    </div>
+    <button onclick="orQuit()" style="font-size:11px;padding:5px 10px">Quit</button>
+  </div>
+  <div class="lsb"><span class="ll">Score</span><span class="lv" id="or-score">0</span></div>
+  <div class="stats">
+    <div class="stat"><strong id="or-round">1</strong>Round</div>
+    <div class="stat"><strong id="or-len">3</strong>Length</div>
+    <div class="stat"><strong id="or-streak">0</strong>Streak</div>
+    <div class="stat"><strong id="or-phase">Watch</strong>Phase</div>
+  </div>
+  <!-- Sequence display -->
+  <div id="or-seq-display" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:10px 0;margin-bottom:8px;min-height:60px"></div>
+  <p id="or-msg" style="text-align:center;font-size:13px;color:var(--tx1);margin-bottom:10px;min-height:20px"></p>
+  <!-- Picker -->
+  <div class="seq-picker" id="or-picker" style="display:none"></div>
+  <!-- Progress dots -->
+  <div id="or-progress" style="display:flex;gap:4px;justify-content:center;margin-bottom:10px;flex-wrap:wrap"></div>
+  <div class="winbar" id="or-fail" style="background:var(--err-bg);border-color:var(--err-bd);color:var(--err-tx)"></div>
+  <div id="or-next-wrap" style="display:none">
+    <button class="btn-p" onclick="orNextRound()" style="width:100%;padding:10px;font-size:14px">Next round →</button>
+  </div>
+  <div id="or-done-wrap" style="display:none">
+    <button class="cb" onclick="shareScore('orderly')">📤 Share my score</button>
+    <div class="ctrls" style="margin-top:8px">
+      <button onclick="goScr('or-home')" style="flex:1;font-size:11px">🎨 Theme</button>
+      <button onclick="orChangeLevel()" style="flex:1;font-size:11px">📊 Level</button>
+      <button onclick="orStartSolo()" style="flex:2;font-size:11px">▶ Play again</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== ORDERLY PASS THE PHONE ====== -->
+<div id="s-or-pass" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Pass the phone</p><button onclick="goScr('or-home')" style="font-size:11px;padding:5px 10px">Back</button></div>
+  <div class="card">
+    <div class="st">Theme</div>
+    <div class="tgrid" id="or-pass-theme-grid" style="margin-bottom:0"></div>
+  </div>
+  <div class="card">
+    <div class="st">Starting length</div>
+    <div class="dr" id="or-pass-len-btns">
+      <button class="db on" onclick="orPassSetLen(3,this)">3 — Easy</button>
+      <button class="db dim" onclick="orPassSetLen(4,this)">4 — Medium</button>
+      <button class="db dim" onclick="orPassSetLen(5,this)">5 — Hard</button>
+    </div>
+
+    <div class="st" style="margin-top:8px">Player names (optional)</div>
+    <div style="display:flex;gap:8px">
+      <input class="wi" id="or-p1-name" style="margin:0;flex:1" placeholder="Player 1">
+      <input class="wi" id="or-p2-name" style="margin:0;flex:1" placeholder="Player 2">
+    </div>
+  </div>
+  <button class="btn-p" onclick="orStartPass()" style="width:100%;padding:10px;font-size:14px">Start →</button>
+</div>
+
+<!-- ORDERLY PASS PLAY -->
+<div id="s-or-pass-play" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <span id="or-pass-who" style="font-size:14px;font-weight:600;color:var(--purple-tx)"></span>
+    <button onclick="orQuitPass()" style="font-size:11px;padding:5px 10px">Quit</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><strong id="or-pass-round">1</strong>Round</div>
+    <div class="stat"><strong id="or-pass-len">3</strong>Length</div>
+    <div class="stat"><strong id="or-p1-score">0</strong><span id="or-p1-lbl">P1</span></div>
+    <div class="stat"><strong id="or-p2-score">0</strong><span id="or-p2-lbl">P2</span></div>
+  </div>
+  <div id="or-pass-seq-display" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:10px 0;margin-bottom:8px;min-height:60px"></div>
+  <p id="or-pass-msg" style="text-align:center;font-size:13px;color:var(--tx1);margin-bottom:10px;min-height:20px"></p>
+  <div class="seq-picker" id="or-pass-picker" style="display:none"></div>
+  <div id="or-pass-progress" style="display:flex;gap:4px;justify-content:center;margin-bottom:10px;flex-wrap:wrap"></div>
+  <div class="winbar" id="or-pass-fail" style="background:var(--err-bg);border-color:var(--err-bd);color:var(--err-tx)"></div>
+  <div id="or-pass-done" style="display:none">
+    <div class="ctrls"><button onclick="orStartPass()" style="flex:1">Play again</button><button onclick="goScr('or-home')">Home</button></div>
+  </div>
+</div>
+
+<!-- ====== ORDERLY SEND CHALLENGE ====== -->
+<div id="s-or-send" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Send a challenge</p><button onclick="goScr('or-home')" style="font-size:11px;padding:5px 10px">Back</button></div>
+  <div class="card">
+    <div class="st">Theme</div>
+    <div class="tgrid" id="or-send-theme-grid" style="margin-bottom:0"></div>
+  </div>
+  <div class="card">
+    <div class="st">Sequence length</div>
+    <div class="dr" id="or-send-len-btns">
+      <button class="db on" onclick="orSendSetLen(4,this)">4</button>
+      <button class="db dim" onclick="orSendSetLen(5,this)">5</button>
+      <button class="db dim" onclick="orSendSetLen(6,this)">6</button>
+      <button class="db dim" onclick="orSendSetLen(8,this)">8</button>
+    </div>
+    <div class="st" style="margin-top:8px">Show style</div>
+    <div class="dr" id="or-send-style-btns">
+      <button class="db on" onclick="orSetSendStyle('flash',this)">⚡ Flash <span style="font-size:9px;display:block;opacity:.7">one at a time</span></button>
+      <button class="db dim" onclick="orSetSendStyle('liner',this)">📋 Liner <span style="font-size:9px;display:block;opacity:.7">all then highlight</span></button>
+    </div>
+  </div>
+  <button class="btn-p" onclick="orCreateChallenge()" style="width:100%;padding:10px;font-size:14px">Generate code</button>
+</div>
+
+<!-- ORDERLY CHALLENGE CODE -->
+<div id="s-or-code" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Share this code</p><button onclick="goScr('or-home')" style="font-size:11px;padding:5px 10px">Home</button></div>
+  <div class="card"><div class="code-box" id="or-code-disp">ORDLY-??????</div><p style="font-size:11px;color:var(--tx2);text-align:center;margin:8px 0 10px">Send this to your friend.</p><button onclick="orCopyCode()" style="width:100%;font-size:13px" id="or-copy-btn">Copy code</button></div>
+  <div class="card">
+    <div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Theme</span><span id="or-cs-theme" style="font-size:12px;font-weight:600">—</span></div>
+    <div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Length</span><span id="or-cs-len" style="font-size:12px;font-weight:600">—</span></div>
+    <div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Style</span><span id="or-cs-style" style="font-size:12px;font-weight:600">—</span></div>
+    <div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Your score</span><span id="or-cs-score" style="font-size:12px;font-weight:600;color:var(--info-tx)">—</span></div>
+  </div>
+  <button onclick="orPreviewChallenge()" style="width:100%;font-size:13px">Preview receiver</button>
+</div>
+
+<!-- ORDERLY CHALLENGE PLAY (receiver) -->
+<div id="s-or-recv" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <p style="font-size:14px;font-weight:600">Your challenge</p>
+    <span id="or-recv-badge" style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--info-bg);color:var(--info-tx)"></span>
+  </div>
+  <div id="or-recv-seq-display" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:10px 0;margin-bottom:8px;min-height:60px"></div>
+  <p id="or-recv-msg" style="text-align:center;font-size:13px;color:var(--tx1);margin-bottom:10px;min-height:20px"></p>
+  <div class="seq-picker" id="or-recv-picker" style="display:none"></div>
+  <div id="or-recv-progress" style="display:flex;gap:4px;justify-content:center;margin-bottom:10px;flex-wrap:wrap"></div>
+  <div class="winbar" id="or-recv-result"></div>
+  <div id="or-recv-done" style="display:none">
+    <button class="cb" onclick="shareScore('orderly-recv')">📤 Share my score</button>
+    <div class="ctrls" style="margin-top:8px"><button onclick="goScr('or-home')" style="flex:1">Home</button></div>
+  </div>
+</div>
+
+<!-- ====== STATS HOME ====== -->
+<div id="s-st-home" class="scr">
+  <div class="ghdr">
+    <div class="gic" style="background:var(--bg2);color:var(--tx1);border-color:var(--bd2)">📊</div>
+    <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Stats</p><p style="font-size:12px;color:var(--tx1)">Your personal records across all games</p></div>
+  </div>
+  <div id="st-content"></div>
+  <button onclick="if(confirm('Reset ALL stats?'))resetAllStats()" style="width:100%;font-size:12px;color:var(--err-tx);border-color:var(--err-bd);margin-top:4px">Reset all stats</button>
+</div>
+<!-- TOOLTIP OVERLAY -->
+<div class="tip-overlay" id="tip-overlay" style="display:none" onclick="closeTip()">
+  <div class="tip-box" onclick="event.stopPropagation()">
+    <button class="tip-close" onclick="closeTip()">✕</button>
+    <div class="tip-title" id="tip-title"></div>
+    <div class="tip-body" id="tip-body"></div>
+  </div>
+</div>
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+// ── UTILITY ──────────────────────────────────────────────────────────────────
+const p2=n=>n<10?'0'+n:''+n;
+let SS={};
+const APP='BetchaBippy\u00AE Mind Games';
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function goScr(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));const el=document.getElementById('s-'+id);if(el)el.classList.add('on')}
+function goGame(g){
+  const screens={gt:'gt-themes',tp:'tp-home',bl:'bl-themes',ws:'ws-home',or:'or-home',st:'st-home'};
+  goScr(screens[g]);
+  if(g==='st')renderStats();
+  document.querySelectorAll('.bn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.bn').forEach((b,i)=>['gt','tp','bl','ws','or','st'][i]===g&&b.classList.add('on'));
+}
+function dimOthers(container,chosen){document.querySelectorAll('#'+container+' .db').forEach(b=>{b.classList.remove('on','dim');b.classList.add(b===chosen?'on':'dim')})}
+function dimThemes(grid,chosenId){document.querySelectorAll('#'+grid+' .tc').forEach(tc=>{tc.classList.remove('sel','dim');tc.classList.add(tc.dataset.id===chosenId?'sel':'dim')})}
+function gc(pfx){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<6;i++)s+=c[Math.floor(Math.random()*c.length)];return pfx+'-'+s}
+
+function shareScore(game){
+  const d=SS[game]||{};let txt='';
+  if(game==='gotcha')txt=`🧠 ${APP}\n🃏 Gotcha — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ⏱ ${d.time||'—'} · 🎯 ${d.acc||'—'}\n\nCan you beat it?`;
+  else if(game==='tippa-solo')txt=`🧠 ${APP}
+💬 Tippa Solo
+
+🏆 ${d.score||0} pts · ✅ ${d.correct||'—'} recalled
+
+Can you beat it?`;
+  else if(game==='tippa')txt=`🧠 ${APP}\n💬 Tippa\n\n🏆 ${d.score||0} pts · ✅ ${d.correct||'—'} recalled\n\nCan you beat it?`;
+  else if(game==='blink')txt=`🧠 ${APP}\n👁 Blinka — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ✅ ${d.acc||'—'}\n\nCan you beat it?`;
+  else txt=`🧠 ${APP}\n📝 Wordsy\n\n🏆 ${d.score||0} pts · 📖 ${d.word||'—'}\n\nCan you beat it?`;
+  if(navigator.share){navigator.share({text:txt}).catch(()=>{})}else{navigator.clipboard.writeText(txt).then(()=>showToast('Score copied!')).catch(()=>{})}
+}
+
+// ── GOTCHA DATA ───────────────────────────────────────────────────────────────
+const GTA=['🐶','🐱','🦊','🐻','🐼','🦁','🐸','🦋','🐙','🦜','🦉','🐬','🦒','🐊','🦘','🦔','🐺','🦅','🦈','🦚'];
+const GTC=[{n:'Red',h:'#FF5252'},{n:'Blue',h:'#448AFF'},{n:'Green',h:'#4CAF50'},{n:'Yellow',h:'#FFD740'},{n:'Orange',h:'#FF6D00'},{n:'Purple',h:'#7C4DFF'},{n:'Pink',h:'#FF4081'},{n:'Teal',h:'#00BCD4'},{n:'Lime',h:'#8BC34A'},{n:'Magenta',h:'#E040FB'}];
+const GTK=[{v:'A',s:'♠',c:'#111'},{v:'K',s:'♠',c:'#111'},{v:'Q',s:'♠',c:'#111'},{v:'J',s:'♠',c:'#111'},{v:'A',s:'♥',c:'#E53935'},{v:'K',s:'♥',c:'#E53935'},{v:'Q',s:'♥',c:'#E53935'},{v:'J',s:'♥',c:'#E53935'},{v:'A',s:'♦',c:'#E53935'},{v:'K',s:'♦',c:'#E53935'}];
+const GTN=[{n:'1',bg:'#EEEDFE',fg:'#3C3489'},{n:'2',bg:'#E1F5EE',fg:'#085041'},{n:'3',bg:'#FAEEDA',fg:'#633806'},{n:'4',bg:'#FAECE7',fg:'#993C1D'},{n:'5',bg:'#FDE8F5',fg:'#8B0060'},{n:'6',bg:'#E8F4FD',fg:'#0D47A1'},{n:'7',bg:'#F3F9E1',fg:'#33691E'},{n:'8',bg:'#FFF3E0',fg:'#E65100'},{n:'9',bg:'#EDE7F6',fg:'#4527A0'},{n:'10',bg:'#FCE4EC',fg:'#880E4F'}];
+const GTNI={food:[['🍕','PIZZA'],['🍔','BURGER'],['🌮','TACO'],['🍣','SUSHI'],['🍩','DONUT'],['🥑','AVOCADO'],['🌽','CORN'],['🧁','CUPCAKE'],['🥐','CROISSANT'],['🍇','GRAPES'],['🍓','STRAWBERRY'],['🥩','STEAK'],['🌶','PEPPER'],['🧀','CHEESE'],['🍱','BENTO'],['🥭','MANGO'],['🍎','APPLE'],['🥦','BROCCOLI'],['🍋','LEMON'],['🥕','CARROT']],animals:[['🐶','DOG'],['🐱','CAT'],['🦊','FOX'],['🐻','BEAR'],['🦁','LION'],['🐸','FROG'],['🦋','BUTTERFLY'],['🐙','OCTOPUS'],['🦜','PARROT'],['🐬','DOLPHIN'],['🦉','OWL'],['🦅','EAGLE'],['🐺','WOLF'],['🦒','GIRAFFE'],['🐊','CROC'],['🦘','KANGAROO'],['🦔','HEDGEHOG'],['🦈','SHARK'],['🦚','PEACOCK'],['🦦','OTTER']],sports:[['⚽','SOCCER'],['🏀','BASKETBALL'],['🎾','TENNIS'],['🏈','FOOTBALL'],['⚾','BASEBALL'],['🏐','VOLLEYBALL'],['🎱','BILLIARDS'],['🏑','HOCKEY'],['🏄','SURFING'],['🎿','SKIING'],['🥊','BOXING'],['🏹','ARCHERY'],['🤿','DIVING'],['🤸','GYMNASTICS'],['🎯','DARTS'],['🏋','WEIGHTLIFT'],['🥋','KARATE'],['🎣','FISHING'],['🧗','CLIMBING'],['🤺','FENCING']],countries:[['🇺🇸','USA'],['🇯🇵','JAPAN'],['🇫🇷','FRANCE'],['🇩🇪','GERMANY'],['🇧🇷','BRAZIL'],['🇨🇳','CHINA'],['🇮🇳','INDIA'],['🇬🇧','BRITAIN'],['🇮🇹','ITALY'],['🇪🇸','SPAIN'],['🇦🇺','AUSTRALIA'],['🇨🇦','CANADA'],['🇲🇽','MEXICO'],['🇰🇷','KOREA'],['🇦🇷','ARGENTINA'],['🇳🇬','NIGERIA'],['🇿🇦','S.AFRICA'],['🇹🇭','THAILAND'],['🇸🇪','SWEDEN'],['🇧🇪','BELGIUM']]};
+const GT_THEMES=[
+  {id:'animals',n:'Animals',ic:'🐾',d:'Match the animal emoji pairs',pv:['🐶','🦊','🦁','🐸'],sizes:[{r:1,cols:4,l:'1×4 Easiest'},{r:2,cols:2,l:'2×2 Easier'},{r:2,cols:3,l:'2×3 Easy'},{r:2,cols:4,l:'2×4 Less Easy'},{r:3,cols:4,l:'3×4 Harder'},{r:4,cols:4,l:'4×4 Hardest'}],mult:1},
+  {id:'colors',n:'Colors',ic:'🎨',d:'Match the solid color pairs',pvc:['#FF5252','#448AFF','#4CAF50','#FFD740'],sizes:[{r:1,cols:4,l:'1×4 Easiest'},{r:2,cols:2,l:'2×2 Easier'},{r:2,cols:3,l:'2×3 Easy'},{r:2,cols:4,l:'2×4 Less Easy'},{r:3,cols:4,l:'3×4 Harder'},{r:4,cols:4,l:'4×4 Hardest'}],mult:1},
+  {id:'cards',n:'Cards',ic:'♠',d:'Match the playing card pairs',pvk:['A♠','K♥','Q♠','J♥'],sizes:[{r:1,cols:4,l:'1×4 Easiest'},{r:2,cols:2,l:'2×2 Easier'},{r:2,cols:3,l:'2×3 Easy'},{r:2,cols:4,l:'2×4 Less Easy'},{r:3,cols:4,l:'3×4 Harder'},{r:4,cols:4,l:'4×4 Hardest'}],mult:1},
+  {id:'numbers',n:'Numbers',ic:'🔢',d:'Match the numbered tile pairs',pvn:['1','2','3','4'],sizes:[{r:1,cols:4,l:'1×4 Easiest'},{r:2,cols:2,l:'2×2 Easier'},{r:2,cols:3,l:'2×3 Easy'},{r:2,cols:4,l:'2×4 Less Easy'},{r:3,cols:4,l:'3×4 Harder'},{r:4,cols:4,l:'4×4 Hardest'}],mult:1},
+  {id:'nameit',n:'Name It!',ic:'🏷',d:'Match emoji ↔ word (different faces)',pvni:true,sizes:[{r:1,cols:4,l:'1×4 Easiest'},{r:2,cols:2,l:'2×2 Easier'},{r:2,cols:3,l:'2×3 Easy'},{r:2,cols:4,l:'2×4 Less Easy'},{r:3,cols:4,l:'3×4 Harder'},{r:4,cols:4,l:'4×4 Hardest'},{r:5,cols:4,l:'Expert 5×4'}],mult:1.3}
+];
+let gtTheme='animals',gtRows=2,gtCols=4,gtCat='food',gtCustomPairs=[],gtDiffName='1×4 Easiest';
+
+function gtBuildThemes(){
+  const g=document.getElementById('gt-tgrid');g.innerHTML='';
+  GT_THEMES.forEach(t=>{
+    const div=document.createElement('div');
+    div.className='tc'+(gtTheme===t.id?' sel':' dim');
+    div.dataset.id=t.id;
+    div.onclick=()=>{gtTheme=t.id;gtBuildThemes()};
+    let ph='<div class="tprev">';
+    if(t.pv)t.pv.forEach(e=>{ph+=`<div class="tpc">${e}</div>`});
+    else if(t.pvc)t.pvc.forEach(c=>{ph+=`<div class="tpc" style="background:${c};border-color:${c}"></div>`});
+    else if(t.pvk)t.pvk.forEach(c=>{const r=c.includes('♥')||c.includes('♦');ph+=`<div class="tpc" style="font-size:9px;font-weight:700;color:${r?'#E53935':'#111'};flex-direction:column;gap:0"><span>${c.replace(/[♠♥♦♣]/,'')}</span><span>${c.match(/[♠♥♦♣]/)[0]}</span></div>`});
+    else if(t.pvn)t.pvn.forEach((n,i)=>{const nb=GTN[i];ph+=`<div class="tpc" style="background:${nb.bg};color:${nb.fg};font-size:12px;font-weight:700;border-color:${nb.bg}">${n}</div>`});
+    else if(t.pvni)ph+=`<div class="tpc">🍕</div><div class="tpc" style="font-size:8px;font-weight:700">PIZZA</div><div class="tpc">🐶</div><div class="tpc" style="font-size:8px;font-weight:700">DOG</div>`;
+    ph+='</div>';
+    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}${gtTheme===t.id?'<div class="ck">✓</div>':''}`;
+    g.appendChild(div);
+  });
+  gtBuildSizes();
+  document.getElementById('gt-ni-section').style.display=gtTheme==='nameit'?'block':'none';
+}
+function gtBuildSizes(){
+  const t=GT_THEMES.find(x=>x.id===gtTheme);
+  const c=document.getElementById('gt-sizes');c.innerHTML='';
+  t.sizes.forEach((s,i)=>{
+    const b=document.createElement('button');b.className='db'+(i===0?' on':' dim');b.textContent=s.l;
+    b.onclick=function(){dimOthers('gt-sizes',this);gtRows=s.r;gtCols=s.cols||4;gtDiffName=s.l};
+    c.appendChild(b);
+  });
+  // only set defaults if no size chosen yet
+  if(!gtDiffName){gtRows=t.sizes[0].r;gtCols=t.sizes[0].cols||4;gtDiffName=t.sizes[0].l;}
+}
+function gtSetCat(cat,btn){gtCat=cat;dimOthers('gt-cats',btn);document.getElementById('gt-custom-area').style.display=cat==='custom'?'block':'none'}
+function gtAddPair(){
+  const a=document.getElementById('gt-wa').value.trim().toUpperCase();
+  const b=document.getElementById('gt-wb').value.trim().toUpperCase();
+  if(!a||!b)return;gtCustomPairs.push([a,b]);document.getElementById('gt-wa').value='';document.getElementById('gt-wb').value='';gtRenderPairs();
+}
+function gtRenderPairs(){
+  const d=document.getElementById('gt-custom-pairs');d.innerHTML='';
+  gtCustomPairs.forEach((p,i)=>{
+    const s=document.createElement('div');s.style.cssText='display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:12px';
+    s.innerHTML=`<span style="padding:2px 7px;background:var(--bg1);border-radius:20px">${p[0]}</span><span>↔</span><span style="padding:2px 7px;background:var(--info-bg);border-radius:20px;color:var(--info-tx)">${p[1]}</span><span onclick="gtCustomPairs.splice(${i},1);gtRenderPairs()" style="cursor:pointer;margin-left:auto">×</span>`;
+    d.appendChild(s);
+  });
+}
+function gtStartGame(){
+  const nPairs=mcPairs;
+  if(gtTheme==='nameit'&&gtCat==='custom'&&gtCustomPairs.length<nPairs){alert(`Add at least ${nPairs} custom pairs.`);return}
+  const t=GT_THEMES.find(x=>x.id===gtTheme);
+  document.getElementById('gt-theme-badge').textContent=t.ic+' '+t.n;
+  const cb=document.getElementById('gt-cat-badge');
+  if(gtTheme==='nameit'){cb.style.display='inline';cb.textContent={food:'Food',animals:'Animals',sports:'Sports',countries:'Countries',custom:'Custom'}[gtCat]}else cb.style.display='none';
+  goScr('gt-play');mcNew();
+}
+
+// Gotcha game
+let mcCards=[],mcFlipped=[],mcMatched=0,mcMoves=0,mcLocked=false,mcTimer,mcSec=0,mcStarted=false,mcPairs=2;
+function mcCalcScore(){if(mcMoves===0)return 0;const pairs=mcPairs;const t=GT_THEMES.find(x=>x.id===gtTheme);const m=(t?t.mult:1)*(gtTheme==='nameit'&&gtCat==='custom'?1.15:1);return Math.round((pairs*100*(pairs/mcMoves)+Math.max(0,300-mcSec*2))*m)}
+function mcNew(){
+  clearInterval(mcTimer);mcSec=0;mcMoves=0;mcMatched=0;mcFlipped=[];mcLocked=false;mcStarted=false;
+  ['mc-mv','mc-pr'].forEach(id=>{document.getElementById(id).textContent='0'});
+  document.getElementById('mc-tm').textContent='0:00';document.getElementById('mc-ef').textContent='—';
+  document.getElementById('mc-live').textContent='0';document.getElementById('mc-win').style.display='none';document.getElementById('mc-share').style.display='none';
+  const g=document.getElementById('mc-grid');g.style.gridTemplateColumns=`repeat(${gtCols},1fr)`;g.innerHTML='';mcCards=[];
+  const totalCells=gtRows*gtCols;
+  const n=Math.floor(totalCells/2); // pairs
+  mcPairs=n;
+  if(gtTheme==='animals'){[...GTA.slice(0,n),...GTA.slice(0,n)].sort(()=>Math.random()-.5).forEach((v,i)=>mcCards.push({id:i,val:v,type:'emoji',pid:v,m:false,f:false}))}
+  else if(gtTheme==='colors'){[...GTC.slice(0,n),...GTC.slice(0,n)].sort(()=>Math.random()-.5).forEach((v,i)=>mcCards.push({id:i,val:v,type:'color',pid:v.n,m:false,f:false}))}
+  else if(gtTheme==='cards'){[...GTK.slice(0,n),...GTK.slice(0,n)].sort(()=>Math.random()-.5).forEach((v,i)=>mcCards.push({id:i,val:v,type:'card',pid:v.v+v.s,m:false,f:false}))}
+  else if(gtTheme==='numbers'){[...GTN.slice(0,n),...GTN.slice(0,n)].sort(()=>Math.random()-.5).forEach((v,i)=>mcCards.push({id:i,val:v,type:'number',pid:v.n,m:false,f:false}))}
+  else{
+    const src=gtCat==='custom'?gtCustomPairs.slice(0,n/2).map((p,i)=>({pid:i,a:p[0],b:p[1]})):GTNI[gtCat].slice(0,n/2).map((p,i)=>({pid:i,a:p[0],b:p[1]}));
+    let deck=[];src.forEach(p=>{deck.push({type:'ni-a',val:p.a,pid:p.pid,m:false,f:false});deck.push({type:'ni-b',val:p.b,pid:p.pid,m:false,f:false})});
+    deck.sort(()=>Math.random()-.5);mcCards=deck.map((c,i)=>({...c,id:i}));
+  }
+  mcCards.forEach((c,i)=>{
+    const el=document.createElement('div');el.className='mc';
+    el.innerHTML=`<div class="mci"><div class="mf mbk"></div><div class="mf mfr">${mcRenderFace(c)}</div></div>`;
+    el.onclick=()=>mcFlip(i,el);g.appendChild(el);
+  });
+}
+function mcRenderFace(c){
+  if(c.type==='emoji')return`<span style="font-size:30px">${c.val}</span>`;
+  if(c.type==='color')return`<div style="width:46px;height:46px;background:${c.val.h};border-radius:9px"></div>`;
+  if(c.type==='card'){const r=c.val.s==='♥'||c.val.s==='♦';return`<div style="text-align:center;line-height:1"><div style="font-size:20px;font-weight:700;color:${c.val.c}">${c.val.v}</div><div style="font-size:20px;color:${r?'#E53935':'#111'}">${c.val.s}</div></div>`}
+  if(c.type==='number')return`<div style="width:46px;height:46px;background:${c.val.bg};border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:${c.val.fg}">${c.val.n}</div>`;
+  if(c.type==='ni-a')return`<span style="font-size:28px">${c.val}</span>`;
+  if(c.type==='ni-b')return`<div style="background:var(--info-bg);border-radius:7px;padding:5px 7px;text-align:center;max-width:66px"><span style="font-size:10px;font-weight:700;letter-spacing:.03em;color:var(--info-tx);word-break:break-word;line-height:1.2">${c.val}</span></div>`;
+  return'';
+}
+function mcFlip(i,el){
+  if(mcLocked||mcCards[i].m||mcCards[i].f)return;
+  if(!mcStarted){mcStarted=true;mcTimer=setInterval(()=>{mcSec++;document.getElementById('mc-tm').textContent=Math.floor(mcSec/60)+':'+p2(mcSec%60);document.getElementById('mc-live').textContent=mcCalcScore()},1000)}
+  mcCards[i].f=true;el.classList.add('flipped');mcFlipped.push({i,el});
+  if(mcFlipped.length===2){
+    mcLocked=true;mcMoves++;document.getElementById('mc-mv').textContent=mcMoves;document.getElementById('mc-ef').textContent=Math.round(mcPairs/mcMoves*100)+'%';
+    const[a,b]=mcFlipped;const ni=gtTheme==='nameit';
+    const match=ni?(mcCards[a.i].pid===mcCards[b.i].pid&&mcCards[a.i].type!==mcCards[b.i].type):(mcCards[a.i].pid===mcCards[b.i].pid&&a.i!==b.i);
+    if(match){
+      mcCards[a.i].m=mcCards[b.i].m=true;
+      [a,b].forEach(x=>{x.el.querySelector('.mfr').style.background='var(--ok-bg)';x.el.querySelector('.mfr').style.borderColor='var(--ok-bd)';x.el.classList.add('matched')});
+      mcMatched++;document.getElementById('mc-pr').textContent=mcMatched;mcFlipped=[];mcLocked=false;document.getElementById('mc-live').textContent=mcCalcScore();
+      if(mcMatched===mcPairs){
+        clearInterval(mcTimer);const fs=mcCalcScore();document.getElementById('mc-live').textContent=fs;
+        const w=document.getElementById('mc-win');w.style.display='block';w.textContent=`All matched! 🏆 ${fs} pts · ${Math.floor(mcSec/60)}:${p2(mcSec%60)} · ${Math.round(mcPairs/mcMoves*100)}% accuracy`;
+        document.getElementById('mc-share').style.display='block';
+        SS.gotcha={score:fs,time:Math.floor(mcSec/60)+':'+p2(mcSec%60),acc:Math.round((gtRows*gtCols/2)/mcMoves*100)+'%',theme:GT_THEMES.find(t=>t.id===gtTheme)?.n,diff:gtDiffName};
+        recordGotcha(fs,gtDiffName,GT_THEMES.find(t=>t.id===gtTheme)?.n);
+      }
+    }else{setTimeout(()=>{mcCards[a.i].f=mcCards[b.i].f=false;a.el.classList.remove('flipped');b.el.classList.remove('flipped');mcFlipped=[];mcLocked=false;document.getElementById('mc-live').textContent=mcCalcScore()},950)}
+  }
+}
+
+
+// ── TIPPA SOLO ────────────────────────────────────────────────────────────────
+const TP_SOLO_KEY='tp_solo';
+let tpSoloCount=3, tpSoloTime=10, tpSoloHint='none';
+let tpSoloWords=[], tpSoloSpeedScore=0, tpSoloMemStart=0, tpSoloMI=null;
+let tpSoloRetriesLeft=0, tpSoloWordState=[], tpSoloRetriesUsed=0;
+
+function tpSoloSetCount(n,btn){tpSoloCount=n;dimOthers('tp-solo-count',btn)}
+function tpSoloSetTime(t,btn){tpSoloTime=t;dimOthers('tp-solo-times',btn)}
+function tpSoloSetHint(h,btn){tpSoloHint=h;dimOthers('tp-solo-hints',btn)}
+
+// Check if there's an active solo challenge in localStorage
+function tpSoloCheck(){
+  const saved=localStorage.getItem(TP_SOLO_KEY);
+  if(saved){
+    // Active challenge exists — go straight to locked/recall screen
+    tpSoloLoadLocked();
+  } else {
+    goScr('tp-solo');
+  }
+}
+
+function tpSoloStart(){
+  // Pick random words
+  const shuffled=[...RWORDS].sort(()=>Math.random()-.5);
+  tpSoloWords=shuffled.slice(0,tpSoloCount).map(w=>w.toLowerCase());
+  // Show memorize screen
+  const mw=document.getElementById('tp-solo-words');
+  mw.innerHTML='';
+  tpSoloWords.forEach(w=>{
+    const s=document.createElement('span');s.className='mw';s.textContent=w;mw.appendChild(s);
+  });
+  const hr=document.getElementById('tp-solo-hint-row');
+  if(tpSoloHint!=='none'){hr.style.display='block';hr.innerHTML=`<span class="hp">Hint: ${tpSoloHint}</span>`}
+  else hr.style.display='none';
+  goScr('tp-solo-mem');
+  tpSoloRunTimer();
+}
+
+function tpSoloRunTimer(){
+  clearInterval(tpSoloMI);
+  tpSoloMemStart=Date.now();
+  const arc=document.getElementById('tp-solo-arc');
+  const txt=document.getElementById('tp-solo-tmr');
+  const circ=188;
+  function tick(){
+    const elapsed=(Date.now()-tpSoloMemStart)/1000;
+    const rem=Math.max(0,tpSoloTime-elapsed);
+    txt.textContent=Math.ceil(rem);
+    arc.style.strokeDashoffset=circ-(circ*(rem/tpSoloTime));
+    if(rem<=0){clearInterval(tpSoloMI);tpSoloDone()}
+  }
+  tick();tpSoloMI=setInterval(tick,100);
+}
+
+function tpSoloDone(){
+  clearInterval(tpSoloMI);
+  const used=(Date.now()-tpSoloMemStart)/1000;
+  tpSoloSpeedScore=Math.max(0,Math.round((1-(Math.min(used,tpSoloTime)/tpSoloTime))*100));
+  // Save to localStorage with timestamp
+  const data={
+    words:tpSoloWords,
+    hint:tpSoloHint,
+    speedScore:tpSoloSpeedScore,
+    lockedAt:Date.now(),
+    unlockAt:Date.now()+(24*60*60*1000), // 24 hours from now
+    retries:tpSoloWords.length,
+    completed:false
+  };
+  localStorage.setItem(TP_SOLO_KEY,JSON.stringify(data));
+  tpSoloLoadLocked();
+}
+
+function tpSoloLoadLocked(){
+  const saved=localStorage.getItem(TP_SOLO_KEY);
+  if(!saved){goScr('tp-home');return}
+  const data=JSON.parse(saved);
+  tpSoloWords=data.words;
+  tpSoloSpeedScore=data.speedScore;
+  tpSoloRetriesLeft=data.retries;
+  tpSoloHint=data.hint||'none';
+
+  document.getElementById('tp-solo-locked-count').textContent=data.words.length+' word'+(data.words.length>1?'s':'');
+  document.getElementById('tp-solo-retries-disp').textContent=data.retries+' retr'+(data.retries===1?'y':'ies');
+  document.getElementById('tp-solo-locked-hint').textContent=data.hint==='none'?'None':data.hint;
+  goScr('tp-solo-locked');
+  tpSoloTickCountdown(data);
+}
+
+function tpSoloTickCountdown(data){
+  const cd=document.getElementById('tp-solo-countdown');
+  const btn=document.getElementById('tp-solo-recall-btn');
+  function update(){
+    const remaining=data.unlockAt-Date.now();
+    if(remaining<=0){
+      cd.textContent='Ready!';
+      cd.style.color='var(--teal)';
+      btn.style.display='block';
+      return;
+    }
+    const h=Math.floor(remaining/3600000);
+    const m=Math.floor((remaining%3600000)/60000);
+    const s=Math.floor((remaining%60000)/1000);
+    cd.textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    setTimeout(update,1000);
+  }
+  update();
+}
+
+function tpSoloTryRecall(){
+  const saved=localStorage.getItem(TP_SOLO_KEY);
+  if(!saved){goScr('tp-home');return}
+  const data=JSON.parse(saved);
+  if(Date.now()<data.unlockAt){
+    alert('Not yet! Come back when the countdown hits zero.');return;
+  }
+  tpSoloWords=data.words;
+  tpSoloSpeedScore=data.speedScore;
+  tpSoloRetriesLeft=data.retries;
+  tpSoloRetriesUsed=0;
+  // init word state: each word starts as 'pending'
+  tpSoloWordState=data.words.map(w=>({word:w,status:'pending',answer:'',attempts:0}));
+  tpSoloShowRecall();
+}
+
+function tpSoloShowRecall(){
+  // Show hint
+  const hr=document.getElementById('tp-solo-hint-rec');
+  if(tpSoloHint!=='none'){hr.style.display='block';hr.innerHTML=`<span class="hp">Hint: ${tpSoloHint}</span>`}
+  else hr.style.display='none';
+
+  // Build word input rows
+  const container=document.getElementById('tp-solo-word-rows');
+  container.innerHTML='';
+  tpSoloWordState.forEach((ws,i)=>{
+    const row=document.createElement('div');
+    row.style.cssText='padding:8px 0;border-bottom:1px solid var(--bd)';
+    if(ws.status==='correct'){
+      row.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:13px;font-weight:600;color:var(--ok-tx)">✓ ${ws.word}</span><span class="ok-tag">correct</span></div>`;
+    } else if(ws.status==='failed'){
+      row.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:13px;font-weight:600;color:var(--err-tx)">✗ ${ws.word}</span><span class="no-tag">missed</span></div>`;
+    } else {
+      const label=ws.attempts>0?`<span style="font-size:10px;color:var(--warn-tx)">Retry</span>`:'';
+      row.innerHTML=`<div style="font-size:11px;color:var(--tx2);margin-bottom:4px">Word ${i+1} ${label}</div><input class="wi" id="ts-inp-${i}" style="margin:0" placeholder="Type the word..." value="${ws.answer}">`;
+    }
+    container.appendChild(row);
+  });
+
+  // Update retries badge
+  document.getElementById('tp-solo-retries-left').textContent=`${tpSoloRetriesLeft} retr${tpSoloRetriesLeft===1?'y':'ies'} left`;
+  goScr('tp-solo-recall');
+}
+
+function tpSoloSubmit(){
+  const saved=localStorage.getItem(TP_SOLO_KEY);
+  const data=saved?JSON.parse(saved):{};
+  let allDone=true;
+  let anyWrongWithRetries=false;
+
+  tpSoloWordState.forEach((ws,i)=>{
+    if(ws.status!=='pending') return;
+    const inp=document.getElementById(`ts-inp-${i}`);
+    const ans=(inp?inp.value.trim().toLowerCase():'');
+    ws.answer=ans;
+    ws.attempts++;
+    if(ans===ws.word){
+      ws.status='correct';
+    } else {
+      // wrong — use a retry if available
+      if(tpSoloRetriesLeft>0){
+        tpSoloRetriesLeft--;
+        tpSoloRetriesUsed++;
+        anyWrongWithRetries=true;
+        ws.status='pending'; // can try again
+      } else {
+        ws.status='failed';
+      }
+    }
+    if(ws.status==='pending') allDone=false;
+  });
+
+  if(!allDone&&anyWrongWithRetries){
+    // Still words to retry — refresh the recall screen
+    tpSoloShowRecall();
+    return;
+  }
+
+  // All done — calculate score
+  const correct=tpSoloWordState.filter(ws=>ws.status==='correct').length;
+  const total=tpSoloWordState.length;
+  const all=correct===total;
+
+  // Wait bonus: check actual time waited
+  const waitedMs=Date.now()-(data.lockedAt||Date.now());
+  const waitedHrs=waitedMs/3600000;
+  const waitBonus=waitedHrs>26?Math.min(25,Math.round(((waitedHrs-26)/22)*25)):0;
+
+  // Retry penalty: -5 pts per retry used
+  const retryPenalty=tpSoloRetriesUsed*5;
+  const base=Math.round(tpSoloSpeedScore*correct*(all?1.5:1));
+  const finalScore=Math.max(0,base+waitBonus-retryPenalty);
+
+  // Show results
+  document.getElementById('tp-solo-tot').textContent=finalScore;
+  document.getElementById('tp-solo-rc').textContent=correct+'/'+total;
+  document.getElementById('tp-solo-rs').textContent=tpSoloSpeedScore;
+  document.getElementById('tp-solo-rr').textContent=tpSoloRetriesUsed;
+
+  const rw=document.getElementById('tp-solo-res-words');rw.innerHTML='';
+  tpSoloWordState.forEach(ws=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd)';
+    row.innerHTML=`<span style="font-size:13px;font-weight:600">${ws.word}</span><span class="${ws.status==='correct'?'ok-tag':'no-tag'}">${ws.status==='correct'?'correct':'missed'}</span>`;
+    rw.appendChild(row);
+  });
+
+  // Clear localStorage
+  localStorage.removeItem(TP_SOLO_KEY);
+  SS['tippa-solo']={score:finalScore,correct:correct+'/'+total};
+  recordTippa(finalScore, correct+'/'+total);
+  goScr('tp-solo-res');
+}
+
+function tpSoloReset(){
+  localStorage.removeItem(TP_SOLO_KEY);
+  goScr('tp-solo');
+}
+
+
+// ── TIPPA DATA ────────────────────────────────────────────────────────────────
+const RWORDS=['Umbrella','Cobalt','Lantern','Mirage','Sphinx','Velvet','Quartz','Fable','Nimbus','Anchor','Dagger','Fossil','Cinder','Prism','Lagoon','Tundra','Cipher','Mosaic','Raven','Ember'];
+let tpWords=[],tpTime=10,tpHint='none',tpCode='',tpSpeedScore=0,tpMemStart=0,tpMI=null;
+function tpAdd(){const i=document.getElementById('tp-wi');const w=i.value.trim().toLowerCase();if(!w||tpWords.length>=5||tpWords.includes(w))return;tpWords.push(w);i.value='';tpRenderWords()}
+function tpRand(){if(tpWords.length>=5)return;const av=RWORDS.filter(w=>!tpWords.includes(w.toLowerCase()));if(!av.length)return;tpWords.push(av[Math.floor(Math.random()*av.length)].toLowerCase());tpRenderWords()}
+function tpRenderWords(){const d=document.getElementById('tp-wdisp');d.innerHTML='';tpWords.forEach((w,i)=>{const s=document.createElement('span');s.className='wp';s.innerHTML=`${w}<span onclick="tpWords.splice(${i},1);tpRenderWords()" style="cursor:pointer;color:var(--tx2);font-size:13px;margin-left:2px">×</span>`;d.appendChild(s)})}
+function tpSetT(t,btn){tpTime=t;dimOthers('tp-times',btn)}
+function tpSetH(h,btn){tpHint=h;dimOthers('tp-hints',btn)}
+async function tpCreate(){
+  if(!tpWords.length){alert('Add at least one word first.');return}
+  tpCode=gc('TIPPA');
+  const btn=document.querySelector('#s-tp-create .btn-p');if(btn){btn.textContent='Saving...';btn.disabled=true}
+  try{
+    await sbInsert('tippa_challenges',{code:tpCode,words:tpWords,hint:tpHint,memo_time:tpTime});
+  }catch(e){
+    if(btn){btn.textContent='Generate code';btn.disabled=false}
+    alert('Could not save challenge — check your connection and try again.');return;
+  }
+  if(btn){btn.textContent='Generate code';btn.disabled=false}
+  document.getElementById('tp-code').textContent=tpCode;
+  document.getElementById('tp-sw').textContent=tpWords.length+' word'+(tpWords.length>1?'s':'');
+  document.getElementById('tp-st').textContent=tpTime+'s';
+  document.getElementById('tp-sh').textContent=tpHint==='none'?'None':tpHint;
+  goScr('tp-code');
+}
+function tpCopy(){navigator.clipboard.writeText(tpCode).catch(()=>{});const b=document.getElementById('tp-copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy code',1500)}
+async function tpJoin(){
+  const code=document.getElementById('tp-join-inp').value.trim().toUpperCase();
+  if(!code.startsWith('TIPPA-')||code.length!==12){alert('Enter a valid TIPPA-XXXXXX code.');return}
+  const btn=document.querySelector('#s-tp-join .btn-p');if(btn){btn.textContent='Loading...';btn.disabled=true}
+  try{
+    const ch=await sbGet('tippa_challenges',code);
+    if(!ch){alert('Challenge not found. Double-check the code.');if(btn){btn.textContent='Join';btn.disabled=false}return}
+    if(ch.completed){alert('This challenge has already been completed!');if(btn){btn.textContent='Join';btn.disabled=false}return}
+    tpWords=ch.words;tpTime=ch.memo_time;tpHint=ch.hint;tpCode=code;
+    if(btn){btn.textContent='Join';btn.disabled=false}
+    tpSimReceiver();
+  }catch(e){
+    if(btn){btn.textContent='Join';btn.disabled=false}
+    alert('Could not load challenge — check your connection.');
+  }
+}
+function tpSimReceiver(){const mw=document.getElementById('tp-memwords');mw.innerHTML='';tpWords.forEach(w=>{const s=document.createElement('span');s.className='mw';s.textContent=w;mw.appendChild(s)});const hr=document.getElementById('tp-hint-row');if(tpHint!=='none'){hr.style.display='block';hr.innerHTML=`<span class="hp">Hint: ${tpHint}</span>`}else hr.style.display='none';goScr('tp-mem');tpStartTimer()}
+function tpStartTimer(){clearInterval(tpMI);tpMemStart=Date.now();const arc=document.getElementById('tp-arc'),txt=document.getElementById('tp-tmr'),circ=188;function tick(){const el=(Date.now()-tpMemStart)/1000;const rem=Math.max(0,tpTime-el);txt.textContent=Math.ceil(rem);arc.style.strokeDashoffset=circ-(circ*(rem/tpTime));if(rem<=0){clearInterval(tpMI);tpDone()}}tick();tpMI=setInterval(tick,100)}
+function tpDone(){clearInterval(tpMI);const used=(Date.now()-tpMemStart)/1000;const s=Math.max(0,Math.round((1-(Math.min(used,tpTime)/tpTime))*100));tpSpeedScore=s;document.getElementById('tp-spd-disp').textContent=used.toFixed(1)+'s';document.getElementById('tp-spd-sc').textContent=s+' pts per word';document.getElementById('tp-wc').textContent=tpWords.length+' word'+(tpWords.length>1?'s':'');document.getElementById('tp-ceil').textContent=Math.round(s*tpWords.length*1.5)+' pts';goScr('tp-wait')}
+function tpStartRecall(){const ri=document.getElementById('tp-rec-inputs');ri.innerHTML='';tpWords.forEach((_,i)=>{const inp=document.createElement('input');inp.className='wi';inp.placeholder='Word '+(i+1)+'...';inp.id='tpr-'+i;inp.oninput=()=>{let cor=0;tpWords.forEach((w,j)=>{const x=document.getElementById('tpr-'+j);if(x&&x.value.trim().toLowerCase()===w)cor++});document.getElementById('tp-rec-live').textContent=Math.round(tpSpeedScore*cor*(cor===tpWords.length?1.5:1))+' pts so far'};ri.appendChild(inp)});const rh=document.getElementById('tp-hint-rec');if(tpHint!=='none'){rh.style.display='block';rh.innerHTML=`<span class="hp">Hint: ${tpHint}</span>`}else rh.style.display='none';document.getElementById('tp-rec-live').textContent=tpSpeedScore+' pts ceiling';goScr('tp-recall')}
+async function tpSubmit(){
+  let cor=0;const answers=[];const rw=document.getElementById('tp-res-words');rw.innerHTML='';
+  tpWords.forEach((w,i)=>{
+    const inp=document.getElementById('tpr-'+i);const ans=(inp?inp.value.trim().toLowerCase():'');const ok=ans===w;
+    if(ok)cor++;answers.push(ans);
+    const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd)';
+    row.innerHTML=`<span style="font-size:13px;font-weight:600">${w}</span><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:var(--tx1)">${ans||'—'}</span><span class="${ok?'ok-tag':'no-tag'}">${ok?'correct':'wrong'}</span></div>`;
+    rw.appendChild(row);
+  });
+  const all=cor===tpWords.length;const wb=Math.floor(Math.random()*26);
+  const total=Math.round((all?tpSpeedScore*cor*1.5:tpSpeedScore*cor)+wb);
+  document.getElementById('tp-rc').textContent=cor+'/'+tpWords.length;
+  document.getElementById('tp-rs').textContent=tpSpeedScore;
+  document.getElementById('tp-rb').textContent='+'+wb;
+  document.getElementById('tp-tot').textContent=total;
+  SS.tippa={score:total,correct:cor+'/'+tpWords.length};
+  recordTippa(total,cor+'/'+tpWords.length);
+  // Save to Supabase (best-effort — don't block the result screen)
+  try{
+    await sbPatch('tippa_challenges',tpCode,{
+      answers,correct_count:cor,speed_score:tpSpeedScore,
+      wait_bonus:wb,total_score:total,completed:true,recalled_at:new Date().toISOString()
+    });
+  }catch(e){console.warn('Could not save recall results:',e)}
+  goScr('tp-res');
+}
+
+// ── BLINKA DATA ───────────────────────────────────────────────────────────────
+const BL_ICONS={nature:['🌊','🌲','🌺','🏔','🌸','🌴','🌿','🌵','🍀','🌾','🌻','🌼','🗻','🌱','🌳','❄️','🍂','🍁','🏕','🌅'],animals:['🐶','🐱','🦊','🐻','🐼','🦁','🐸','🦋','🐙','🦜','🦉','🐬','🦒','🐊','🦘','🦔','🐺','🦅','🦈','🦚'],food:['🍕','🍔','🌮','🍣','🍩','🥑','🌽','🧁','🥐','🍇','🍓','🥩','🌶','🧀','🍱','🥭','🍎','🥦','🍋','🥕'],space:['🌙','⭐','🪐','☄️','🌍','🚀','🛸','🌟','💫','🌠','☀️','🛰️','🌑','🌈','🌌'],colors:['🟥','🟧','🟨','🟩','🟦','🟪','🟫','⬛','🔴','🟠','🟡','🟢','🔵','🟣','🟤','⚫'],cards:['A♠','K♠','Q♠','J♠','A♥','K♥','Q♥','J♥','A♦','K♦','Q♦','J♦','A♣','K♣','Q♣','J♣'],sports:['⚽','🏀','🎾','🏈','⚾','🏐','🏒','🎱','🏸','🥊','🏹','🎯','🤿','🤸','🤺','🏄','🎿','🚴','🏊','⛳']};
+const BL_CARDS_COLORS={'♠':'#1a1a1a','♣':'#1a1a1a','♥':'#E53935','♦':'#E53935'};
+const BL_SPORTS_WORDS={'⚽':'SOCCER','🏀':'BASKETBALL','🎾':'TENNIS','🏈':'FOOTBALL','⚾':'BASEBALL','🏐':'VOLLEYBALL','🏒':'HOCKEY','🎱':'BILLIARDS','🏸':'BADMINTON','🥊':'BOXING','🏹':'ARCHERY','🎯':'DARTS','🤿':'DIVING','🤸':'GYMNASTICS','🤺':'FENCING','🏄':'SURFING','🎿':'SKIING','🚴':'CYCLING','🏊':'SWIMMING','⛳':'GOLF'};
+const BL_THEMES=[{id:'nature',n:'Nature',ic:'🌿',d:'Trees, water, flowers & mountains',pv:['🌊','🌲','🌺','🏔']},{id:'animals',n:'Animals',ic:'🐾',d:'Pure animal icons',pv:['🐶','🦊','🦁','🐬']},{id:'food',n:'Food',ic:'🍕',d:'Delicious and easy to mix up',pv:['🍕','🌮','🍩','🧁']},{id:'space',n:'Space',ic:'🚀',d:'Cosmic, visually striking',pv:['🌙','🪐','🚀','⭐']},{id:'colors',n:'Colors',ic:'🎨',d:'Color squares — the hardest theme',pvc:['🟥','🟦','🟨','🟩']},{id:'sports',n:'Sports',ic:'🏆',d:'Match the sport name to its emoji',pv:['⚽','🏀','🎾','🏈'],isSports:true},{id:'cards',n:'Cards',ic:'🃏',d:'Playing card suits & values',pvk:['A♠','K♥','Q♦','J♣'],isCards:true}];
+let blTheme='nature',blRows=1,blCols=4,blSpeed=2400,blDiffName='1×4 Easiest',blSpeedName='Slow'; // defaults
+
+function blBuildThemes(){
+  const g=document.getElementById('bl-tgrid');g.innerHTML='';
+  BL_THEMES.forEach(t=>{
+    const div=document.createElement('div');div.className='tc'+(blTheme===t.id?' sel':' dim');div.dataset.id=t.id;div.onclick=()=>{blTheme=t.id;blBuildThemes()};
+    let ph='<div class="tprev">';
+    if(t.pvc)t.pvc.forEach(e=>{ph+=`<div class="tpc" style="font-size:16px;border:none;background:transparent">${e}</div>`});
+    else if(t.pvk)t.pvk.forEach(c=>{const r=c.includes('♥')||c.includes('♦');ph+=`<div class="tpc" style="font-size:9px;font-weight:700;color:${r?'#E53935':'#111'};flex-direction:column;gap:0"><span>${c.replace(/[♠♥♦♣]/,'')}</span><span>${c.match(/[♠♥♦♣]/)[0]}</span></div>`});
+    else t.pv.forEach(e=>{ph+=`<div class="tpc">${e}</div>`});
+    ph+='</div>';
+    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}${blTheme===t.id?'<div class="ck">✓</div>':''}`;
+    g.appendChild(div);
+  });
+  blBuildSizes();
+}
+function blBuildSizes(){
+  const container=document.getElementById('bl-sizes');container.innerHTML='';
+  const blSizeList=[{r:1,cols:4,l:'1×4 Easiest'},{r:2,cols:2,l:'2×2 Easier'},{r:2,cols:3,l:'2×3 Easy'},{r:2,cols:4,l:'2×4 Less Easy'},{r:3,cols:3,l:'3×3 Kinda Hard'},{r:3,cols:4,l:'3×4 Harder'},{r:4,cols:4,l:'4×4 Hardest'}];
+  blSizeList.forEach((s,i)=>{
+    const b=document.createElement('button');
+    const isCurrent=s.r===blRows&&s.cols===blCols;
+    b.className='db'+(isCurrent?' on':' dim');
+    b.textContent=s.l;
+    b.onclick=function(){dimOthers('bl-sizes',this);blRows=s.r;blCols=s.cols;blDiffName=s.l};
+    container.appendChild(b);
+  });
+}
+function blSetSpeed(sp,btn){blSpeed=sp;blSpeedName=btn.textContent.trim();dimOthers('bl-speeds',btn)}
+
+let blGrid=[],blHidden=[],blPhase='idle',blSel=null,blRecalled={},blFadeTimer=null,blRecallStart=0,blCorrect=0;
+function blCalcScore(cor,ts){const total=blRows*blCols;const mult=total<=4?0.7:total<=6?0.9:total<=8?1:total<=9?1.2:total<=12?1.4:1.7;return Math.round(cor*20*mult+Math.max(0,60-ts))}
+function blStartGame(){
+  const t=BL_THEMES.find(x=>x.id===blTheme);
+  document.getElementById('bl-theme-badge').textContent=t.ic+' '+t.n;
+  document.getElementById('bl-diff-badge').textContent=blDiffName+' · '+blSpeedName;
+  goScr('bl-play');
+  clearTimeout(blFadeTimer);blPhase='study';blHidden=[];blSel=null;blRecalled={};blCorrect=0;
+  const icons=BL_ICONS[blTheme]||BL_ICONS.nature;
+  blGrid=[...icons].sort(()=>Math.random()-.5).slice(0,blCols*blRows);
+  document.getElementById('bl-rec-ui').style.display='none';
+  document.getElementById('bl-win').style.display='none';
+  document.getElementById('bl-again').style.display='none';
+  document.getElementById('bl-share').style.display='none';
+  document.getElementById('bl-ph').textContent='Study';
+  document.getElementById('bl-cor').textContent='0';
+  document.getElementById('bl-live').textContent='0';
+  blRenderGrid();blBuildPicker();blUpdateStats();blSchedule();
+}
+function blRenderGrid(){
+  const g=document.getElementById('bl-grid');g.style.gridTemplateColumns=`repeat(${blCols},1fr)`;g.innerHTML='';
+  blGrid.forEach((icon,i)=>{
+    const cell=document.createElement('div');let cls='fc';
+    if(blHidden.includes(i)){cls+=' hid';if(blPhase==='recall'){if(blRecalled[i]!==undefined){cls+=blRecalled[i]===icon?' cok':' cno'}else if(blSel===i){cls+=' csel'}}}
+    cell.className=cls;
+    if(blPhase==='recall'&&blHidden.includes(i)){
+      if(blRecalled[i]!==undefined){cell.innerHTML=`<span class="fi">${blRecalled[i]}</span>`;if(blRecalled[i]!==icon){const m=document.createElement('span');m.style.cssText='position:absolute;bottom:2px;right:2px;font-size:9px;color:var(--err-tx)';m.textContent=icon;cell.appendChild(m)}}
+      else{cell.innerHTML=`<span class="fq">?</span>`;cell.onclick=()=>blSelectCell(i)}
+    }else{
+      if(blTheme==='sports'){const word=BL_SPORTS_WORDS[icon]||icon;cell.innerHTML=`<span style="font-size:10px;font-weight:700;letter-spacing:.02em;text-align:center;padding:2px;line-height:1.2;color:var(--tx0)">${word}</span>`}
+      else if(blTheme==='cards'){const suit=icon.slice(-1);const val=icon.slice(0,-1);const col=BL_CARDS_COLORS[suit]||'#111';cell.innerHTML=`<div style="text-align:center;line-height:1.1"><div style="font-size:14px;font-weight:800;color:${col}">${val}</div><div style="font-size:16px;color:${col}">${suit}</div></div>`}
+      else{cell.innerHTML=`<span class="fi">${icon}</span>`}
+    }
+    g.appendChild(cell);
+  });
+}
+function blBuildPicker(){const p=document.getElementById('bl-picker');p.innerHTML='';[...new Set(blGrid)].sort(()=>Math.random()-.5).forEach(icon=>{const b=document.createElement('button');b.className='pk';b.dataset.icon=icon;b.textContent=icon;b.onclick=()=>blPickIcon(icon,b);p.appendChild(b)})}
+function blUpdatePickerStrikes(){const cI=blHidden.filter(i=>blRecalled[i]===blGrid[i]).map(i=>blGrid[i]);document.querySelectorAll('#bl-picker .pk').forEach(btn=>{btn.classList.toggle('used',cI.filter(c=>c===btn.dataset.icon).length>=blGrid.filter(g=>g===btn.dataset.icon).length)})}
+function blSchedule(){const rem=blGrid.length-blHidden.length;if(rem===0){blBeginRecall();return}blFadeTimer=setTimeout(()=>{const av=blGrid.map((_,i)=>i).filter(i=>!blHidden.includes(i));blHidden.push(av[Math.floor(Math.random()*av.length)]);blUpdateStats();blRenderGrid();blSchedule()},blSpeed)}
+function blUpdateStats(){document.getElementById('bl-hid').textContent=blHidden.length;document.getElementById('bl-vis').textContent=blGrid.length-blHidden.length;document.getElementById('bl-pbar').style.width=Math.round(((blGrid.length-blHidden.length)/blGrid.length)*100)+'%'}
+function blBeginRecall(){blPhase='recall';blRecallStart=Date.now();document.getElementById('bl-ph').textContent='Recall';document.getElementById('bl-rec-ui').style.display='block';document.getElementById('bl-status').textContent='Tap a ? cell, then pick its icon below.';blRenderGrid();blBuildPicker()}
+function blSelectCell(i){blSel=i;blRenderGrid();document.getElementById('bl-status').textContent='Now pick the icon for this cell.'}
+function blPickIcon(icon,btn){
+  if(blSel===null){document.getElementById('bl-status').textContent='Tap a ? cell first.';return}
+  if(btn.classList.contains('used'))return;
+  blRecalled[blSel]=icon;const ok=icon===blGrid[blSel];if(ok){blCorrect++;document.getElementById('bl-cor').textContent=blCorrect;blUpdatePickerStrikes()}
+  blSel=null;const ts=Math.round((Date.now()-blRecallStart)/1000);document.getElementById('bl-live').textContent=blCalcScore(blCorrect,ts);
+  const rem=blHidden.filter(i=>blRecalled[i]===undefined);document.getElementById('bl-status').textContent=rem.length?rem.length+' remaining':'All answered!';
+  blRenderGrid();
+  if(!rem.length){
+    let cor=0;blHidden.forEach(i=>{if(blRecalled[i]===blGrid[i])cor++});
+    const ts2=Math.round((Date.now()-blRecallStart)/1000);const score=blCalcScore(cor,ts2);const acc=Math.round(cor/blHidden.length*100)+'%';
+    const w=document.getElementById('bl-win');w.style.display='block';w.textContent=`${cor}/${blHidden.length} correct · 🏆 ${score} pts · ${acc} · ${ts2}s recall`;
+    document.getElementById('bl-live').textContent=score;document.getElementById('bl-again').style.display='flex';document.getElementById('bl-share').style.display='block';
+    SS.blink={score,acc,diff:blDiffName,theme:BL_THEMES.find(t=>t.id===blTheme)?.n};
+    recordBlink(score,blDiffName,BL_THEMES.find(t=>t.id===blTheme)?.n);
+  }
+}
+
+// ── WORDSY DATA ───────────────────────────────────────────────────────────────
+const WSP={4:['FIRE','JUMP','BLUE','FAST','DARK','GOLD','WIND','BONE','GRAY','HOPE','CALM','BOLD','STAR','LAKE'],6:['PLANET','BRIDGE','WINTER','FROZEN','SHADOW','MARBLE','FOREST','DANGER','CASTLE','SILVER','DESERT','MIRROR'],8:['MOUNTAIN','SYMPHONY','UNIVERSE','TWILIGHT','CHAMPION','WANDERER','LABYRINTH','SPECTRUM','CARNIVAL','FLAMINGO']};
+let wsMode='always',wsLen=4,wsSendMode='always',wsCurWord='',wsSenderWord='',wsSenderSent=[],wsChallCode='';
+function wsSetMode(m,btn){wsMode=m;dimOthers('ws-modes',btn)}
+function wsSetLen(l,btn){wsLen=l;dimOthers('ws-lens',btn)}
+function wsSetSendMode(m,btn){wsSendMode=m;dimOthers('ws-send-modes',btn)}
+function wsPickWord(len){const pool=WSP[len]||WSP[4];return pool[Math.floor(Math.random()*pool.length)]}
+function wsRandWord(){const all=[...WSP[4],...WSP[6],...WSP[8]];document.getElementById('ws-send-inp').value=all[Math.floor(Math.random()*all.length)];wsBuildSender()}
+function wsStartSolo(){wsCurWord=wsPickWord(wsLen);document.getElementById('ws-play').style.display='block';document.getElementById('ws-ai').style.display='none';document.getElementById('ws-share').style.display='none';const ml={'always':'×1','reveal':'×1.5','hide':'×2.5'};document.getElementById('ws-mult-lbl').textContent=ml[wsMode];document.getElementById('ws-live').textContent='0';wsRenderRows('ws-word-disp','ws-timer-row','ws-letter-rows','ws-live',wsCurWord,wsMode)}
+function wsRenderRows(dispId,timerId,rowsId,scoreId,word,mode){
+  const letters=word.split('');const disp=document.getElementById(dispId);const timer=timerId?document.getElementById(timerId):null;const rows=document.getElementById(rowsId);if(!rows)return;
+  if(disp){
+    if(mode==='always'){disp.textContent=word;if(timer)timer.textContent=''}
+    else if(mode==='reveal'){disp.innerHTML=letters.map((l,i)=>`<span class="rl" id="rl-${rowsId}-${i}">${l}</span>`).join('');if(timer)timer.textContent='Letters revealing...';letters.forEach((_,i)=>setTimeout(()=>{const el=document.getElementById(`rl-${rowsId}-${i}`);if(el){el.classList.add('vis');if(timer&&i===letters.length-1)timer.textContent='All revealed'}},i*650+80))}
+    else{disp.textContent=word;let cnt=5;if(timer)timer.textContent='5s to memorize!';const iv=setInterval(()=>{cnt--;if(cnt<=0){clearInterval(iv);disp.textContent='█'.repeat(word.length);if(timer)timer.textContent='Word hidden'}else if(timer)timer.textContent=cnt+'s remaining'},1000)}
+  }
+  rows.innerHTML='';letters.forEach((l,i)=>{const row=document.createElement('div');row.className='lrow';row.innerHTML=`<div class="lchip">${l}</div><div class="lwrap"><input class="li" id="${rowsId}-${i}" placeholder="Word starting with ${l}..." oninput="wsCalc('${rowsId}','${scoreId}','${word}')"><div class="lsc" id="${rowsId}-sc-${i}">0 pts</div></div>`;rows.appendChild(row)});
+}
+function wsCalc(rowsId,scoreId,word){let total=0;word.split('').forEach((l,i)=>{const inp=document.getElementById(`${rowsId}-${i}`);const sc=document.getElementById(`${rowsId}-sc-${i}`);if(!inp)return;const v=inp.value.trim();const valid=v.length>0&&v[0].toUpperCase()===l;inp.className='li'+(v.length>0?(valid?' ok':' err'):'');const pts=valid?v.length:0;total+=pts;if(sc)sc.textContent=valid?`${pts} pts`:'must start with '+l});const el=document.getElementById(scoreId);if(el)el.textContent=total;return total}
+function wsGetWords(rowsId,word){return word.split('').map((_,i)=>{const inp=document.getElementById(`${rowsId}-${i}`);return inp?inp.value.trim().toLowerCase():''})}
+async function wsSubmitSolo(){
+  const words=wsGetWords('ws-letter-rows',wsCurWord);const base=wsCalc('ws-letter-rows','ws-live',wsCurWord);const mults={'always':1,'reveal':1.5,'hide':2.5};const mult=mults[wsMode];const sentence=words.filter(Boolean).join(' ');
+  const aiBox=document.getElementById('ws-ai');aiBox.style.display='block';aiBox.textContent='Asking AI to rate your sentence...';
+  try{const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:250,messages:[{role:'user',content:`Word: "${wsCurWord}". Acronym sentence: "${sentence}". Rate coherence 1-3 stars. Reply ONLY with JSON: {"rating":2,"comment":"witty remark max 12 words","score":${Math.round(base*mult*2)}}`}]})});const data=await resp.json();const txt=data.content.map(c=>c.text||'').join('');const parsed=JSON.parse(txt.replace(/```json|```/g,'').trim());const stars='★'.repeat(parsed.rating)+'☆'.repeat(3-parsed.rating);aiBox.innerHTML=`<strong>Coherence ${stars}</strong> — ${parsed.comment}<br><br>Final score: <strong>${parsed.score} pts</strong>`;document.getElementById('ws-live').textContent=parsed.score;document.getElementById('ws-share').style.display='block';SS.wordsy={score:parsed.score,word:wsCurWord};recordWordsy(parsed.score,wsCurWord)}
+  catch(e){const fb=Math.round(base*mult*2);aiBox.textContent=`Score: ${fb} pts (AI unavailable)`;document.getElementById('ws-live').textContent=fb;document.getElementById('ws-share').style.display='block';SS.wordsy={score:fb,word:wsCurWord};recordWordsy(fb,wsCurWord)}
+}
+function wsBuildSender(){const word=(document.getElementById('ws-send-inp').value||'').replace(/[^A-Z]/g,'');if(!word)return;wsSenderWord=word;wsRenderRows('ws-send-disp-h','ws-send-timer-h','ws-sender-rows','ws-sender-score',word,'always')}
+async function wsCreateChallenge(){
+  const word=(document.getElementById('ws-send-inp').value||'').replace(/[^A-Z]/g,'');
+  if(!word){alert('Enter a word first.');return}
+  wsSenderWord=word;wsSenderSent=wsGetWords('ws-sender-rows',word);
+  const score=wsCalc('ws-sender-rows','ws-sender-score',word);
+  wsChallCode=gc('WRDSY');
+  const btn=document.querySelector('#s-ws-send button:last-child');if(btn){btn.textContent='Saving...';btn.disabled=true}
+  try{
+    await sbInsert('wordsy_challenges',{
+      code:wsChallCode,word:wsSenderWord,
+      sender_sentence:wsSenderSent,recv_mode:wsSendMode,sender_score:score
+    });
+  }catch(e){
+    if(btn){btn.textContent='Generate code';btn.disabled=false}
+    alert('Could not save challenge — check your connection.');return;
+  }
+  if(btn){btn.textContent='Generate code';btn.disabled=false}
+  document.getElementById('ws-code').textContent=wsChallCode;
+  document.getElementById('ws-cs-word').textContent=wsSenderWord;
+  const ml={'always':'Always ×1','reveal':'Letter by letter ×1.5','hide':'Hidden 5s ×2.5'};
+  document.getElementById('ws-cs-mode').textContent=ml[wsSendMode];
+  document.getElementById('ws-cs-score').textContent=score+' pts';
+  goScr('ws-code');
+}
+function wsCopyCode(){navigator.clipboard.writeText(wsChallCode).catch(()=>{});const b=document.getElementById('ws-copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy code',1500)}
+function wsSimReceiver(){if(!wsSenderWord){wsSenderWord='PHONE';wsSenderSent=['please','help','our','nice','everyone'];wsSendMode='always'}const ml={'always':'Always','reveal':'Letter by letter','hide':'Hidden 5s'};document.getElementById('ws-recv-mode-badge').textContent=ml[wsSendMode];document.getElementById('ws-recv-live').textContent='0';wsRenderRows('ws-recv-word','ws-recv-timer','ws-recv-rows','ws-recv-live',wsSenderWord,wsSendMode);goScr('ws-recv')}
+async function wsSubmitRecv(){
+  const recvWords=wsGetWords('ws-recv-rows',wsSenderWord);const base=wsCalc('ws-recv-rows','ws-recv-live',wsSenderWord);const mults={'always':1,'reveal':1.5,'hide':2.5};const mult=mults[wsSendMode];
+  const sL=wsSenderSent.map(w=>(w||'').toLowerCase());let slotMatch=0,sharedBonus=0;
+  recvWords.forEach((rw,i)=>{const rl=(rw||'').toLowerCase();if(sL[i]&&rl===sL[i]&&rl.length>0)slotMatch++;else if(sL.includes(rl)&&rl.length>2)sharedBonus++});
+  const isMM=recvWords.map(w=>(w||'').toLowerCase()).join(' ')===sL.join(' ')&&sL.join(' ').length>0;
+  const sentence=recvWords.filter(Boolean).join(' ');
+  const aiBox=document.getElementById('ws-res-ai');aiBox.textContent='Getting AI rating...';
+  let aiR=2,aiC='Solid effort!';
+  try{const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:`Word: "${wsSenderWord}". Acronym: "${sentence}". Rate 1-3. JSON only: {"rating":2,"comment":"max 12 words"}`}]})});const data=await resp.json();const txt=data.content.map(c=>c.text||'').join('');const p=JSON.parse(txt.replace(/```json|```/g,'').trim());aiR=p.rating;aiC=p.comment}catch(e){}
+  const slotPts=slotMatch*25;const sharedPts=sharedBonus*15;const mmMult=isMM?3:1;const total=Math.round((Math.round(base*mult)+slotPts+sharedPts)*aiR*mmMult);
+  const resRecv=document.getElementById('ws-res-recv');resRecv.innerHTML='';
+  recvWords.forEach((w,i)=>{const wl=(w||'').toLowerCase();const slot=sL[i]&&wl===sL[i]&&wl.length>0;const shared=!slot&&sL.includes(wl)&&wl.length>2;const span=document.createElement('span');span.className=slot?'exact-w':shared?'match-w':'';span.textContent=(w||'—')+' ';resRecv.appendChild(span)});
+  document.getElementById('ws-res-sender').textContent=wsSenderSent.filter(Boolean).join(' ')||'(none)';
+  const stars='★'.repeat(aiR)+'☆'.repeat(3-aiR);aiBox.innerHTML=`<strong>Coherence ${stars}</strong> — ${aiC}`;
+  document.getElementById('ws-r-base').textContent=base+' pts';document.getElementById('ws-r-mult').textContent='×'+mult;document.getElementById('ws-r-slot').textContent=slotPts?'+'+slotPts+' slot match':'none';document.getElementById('ws-r-coh').textContent=stars+' (×'+aiR+')';document.getElementById('ws-res-tot').textContent=total+' pts';document.getElementById('ws-mindmeld').style.display=isMM?'block':'none';
+  SS['wordsy-res']={score:total,word:wsSenderWord};
+  recordWordsy(total,wsSenderWord);
+  // Save to Supabase
+  try{
+    await sbPatch('wordsy_challenges',wsChallCode,{
+      recv_sentence:recvWords,recv_score:total,completed:true,completed_at:new Date().toISOString()
+    });
+  }catch(e){console.warn('Could not save recv results:',e)}
+  goScr('ws-res');
+}
+
+
+async function wsJoin(){
+  const code=document.getElementById('ws-join-inp').value.trim().toUpperCase();
+  if(!code.startsWith('WRDSY-')||code.length!==12){alert('Enter a valid WRDSY-XXXXXX code.');return}
+  const btn=document.querySelector('#s-ws-join .btn-p');if(btn){btn.textContent='Loading...';btn.disabled=true}
+  try{
+    const ch=await sbGet('wordsy_challenges',code);
+    if(!ch){alert('Challenge not found. Double-check the code.');if(btn){btn.textContent='Join challenge';btn.disabled=false}return}
+    if(ch.completed){alert('This challenge has already been completed!');if(btn){btn.textContent='Join challenge';btn.disabled=false}return}
+    wsSenderWord=ch.word;wsSenderSent=ch.sender_sentence;wsSendMode=ch.recv_mode;wsChallCode=code;
+    if(btn){btn.textContent='Join challenge';btn.disabled=false}
+    const ml={'always':'Always','reveal':'Letter by letter','hide':'Hidden 5s'};
+    document.getElementById('ws-recv-mode-badge').textContent=ml[wsSendMode];
+    document.getElementById('ws-recv-live').textContent='0';
+    wsRenderRows('ws-recv-word','ws-recv-timer','ws-recv-rows','ws-recv-live',wsSenderWord,wsSendMode);
+    goScr('ws-recv');
+  }catch(e){
+    if(btn){btn.textContent='Join challenge';btn.disabled=false}
+    alert('Could not load challenge — check your connection.');
+  }
+}
+
+// ── SUPABASE BACKEND ─────────────────────────────────────────────────────────
+const SB_URL='https://ulppdajtcxzaypkqsavj.supabase.co';
+const SB_KEY='sb_publishable_-SwfFUlC5JID9X7yAkaFog_UEgKGBl6';
+const SB_HDR={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
+
+async function sbInsert(table,data){
+  const r=await fetch(`${SB_URL}/rest/v1/${table}`,{method:'POST',headers:{...SB_HDR,'Prefer':'return=minimal'},body:JSON.stringify(data)});
+  if(!r.ok)throw new Error(await r.text());
+}
+async function sbGet(table,code){
+  const r=await fetch(`${SB_URL}/rest/v1/${table}?code=eq.${code}&select=*`,{headers:SB_HDR});
+  if(!r.ok)throw new Error(await r.text());
+  const d=await r.json();return d[0]||null;
+}
+async function sbPatch(table,code,data){
+  const r=await fetch(`${SB_URL}/rest/v1/${table}?code=eq.${code}`,{method:'PATCH',headers:SB_HDR,body:JSON.stringify(data)});
+  if(!r.ok)throw new Error(await r.text());
+}
+
+
+
+
+
+// ── CHANGE LEVEL HELPERS ─────────────────────────────────────────────────────
+function gtChangeLevel(){
+  goScr('gt-themes');
+  // Scroll to and flash the difficulty section
+  setTimeout(()=>{
+    const el=document.getElementById('gt-sizes');
+    if(el){el.scrollIntoView({behavior:'smooth',block:'center'});
+    el.style.outline='2px solid var(--purple)';
+    setTimeout(()=>el.style.outline='',1200);}
+  },200);
+}
+function blChangeLevel(){
+  goScr('bl-themes');
+  setTimeout(()=>{
+    const el=document.getElementById('bl-sizes');
+    if(el){el.scrollIntoView({behavior:'smooth',block:'center'});
+    el.style.outline='2px solid var(--teal)';
+    setTimeout(()=>el.style.outline='',1200);}
+  },200);
+}
+function orChangeLevel(){
+  goScr('or-solo');
+  setTimeout(()=>{
+    const el=document.getElementById('or-len-btns');
+    if(el){el.scrollIntoView({behavior:'smooth',block:'center'});
+    el.style.outline='2px solid var(--info-bd)';
+    setTimeout(()=>el.style.outline='',1200);}
+  },200);
+}
+
+// ── SPLASH ────────────────────────────────────────────────────────────────────
+function splashGo(game){
+  document.getElementById('splash').style.display='none';
+  goGame(game);
+}
+
+// ── TOOLTIPS ─────────────────────────────────────────────────────────────────
+function showTip(title, body){
+  document.getElementById('tip-title').textContent=title;
+  document.getElementById('tip-body').innerHTML=body;
+  document.getElementById('tip-overlay').style.display='flex';
+}
+function closeTip(){
+  document.getElementById('tip-overlay').style.display='none';
+}
+
+// ── STATS SYSTEM ─────────────────────────────────────────────────────────────
+const STAT_GAMES=['gotcha','tippa','blink','wordsy','orderly'];
+const STAT_LABELS={gotcha:'🃏 Gotcha',tippa:'💬 Tippa',blink:'👁 Blinka',wordsy:'📝 Wordsy',orderly:'🔢 Orderly'};
+
+function statKey(game){return 'bb_stats_'+game}
+function loadStats(game){try{return JSON.parse(localStorage.getItem(statKey(game))||'[]')}catch(e){return[]}}
+function saveStats(game,arr){localStorage.setItem(statKey(game),JSON.stringify(arr.slice(-20)))}
+function recordStat(game,entry){const arr=loadStats(game);arr.push({...entry,date:new Date().toLocaleDateString()});saveStats(game,arr)}
+function resetAllStats(){STAT_GAMES.forEach(g=>localStorage.removeItem(statKey(g)));renderStats();showToast('All stats reset')}
+
+function renderStats(){
+  const el=document.getElementById('st-content');if(!el)return;
+  let html='';
+  STAT_GAMES.forEach(game=>{
+    const arr=loadStats(game);
+    if(!arr.length){html+=`<div class="st-card"><div class="st">${STAT_LABELS[game]}</div><p style="font-size:12px;color:var(--tx2);padding:6px 0">No plays yet</p></div>`;return}
+    const scores=arr.map(e=>e.score||0);
+    const best=Math.max(...scores);
+    const avg=Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+    html+=`<div class="st-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="st" style="margin:0">${STAT_LABELS[game]}</div>
+        <button onclick="if(confirm('Reset ${STAT_LABELS[game]} stats?')){localStorage.removeItem('${statKey(game)}');renderStats()}" style="font-size:10px;padding:3px 8px;color:var(--err-tx);border-color:var(--err-bd)">Reset</button>
+      </div>
+      <div class="mini-stats">
+        <div class="mini-stat"><strong>${best}</strong>Best</div>
+        <div class="mini-stat"><strong>${avg}</strong>Avg</div>
+        <div class="mini-stat"><strong>${arr.length}</strong>Played</div>
+      </div>
+      <div style="max-height:160px;overflow-y:auto">`;
+    arr.slice().reverse().slice(0,10).forEach(e=>{
+      html+=`<div class="hist-item"><span style="color:var(--tx2)">${e.date}</span><span>${e.detail||''}</span><span style="font-weight:700;color:var(--purple-tx)">${e.score} pts</span></div>`;
+    });
+    html+=`</div></div>`;
+  });
+  el.innerHTML=html;
+}
+
+// Wire stat recording into existing game completions
+// (called at end of each game)
+function recordGotcha(score,diff,theme){recordStat('gotcha',{score,detail:`${theme} · ${diff}`})}
+function recordTippa(score,correct){recordStat('tippa',{score,detail:`${correct} recalled`})}
+function recordBlink(score,diff,theme){recordStat('blink',{score,detail:`${theme} · ${diff}`})}
+function recordWordsy(score,word){recordStat('wordsy',{score,detail:`Word: ${word}`})}
+function recordOrderly(score,round,theme){recordStat('orderly',{score,detail:`${theme} · Round ${round}`})}
+
+// ── ORDERLY DATA ─────────────────────────────────────────────────────────────
+const OR_THEMES={
+  numbers:{name:'Numbers',ic:'🔢',items:['1','2','3','4','5','6','7','8','9'],type:'number'},
+  colors:{name:'Colors',ic:'🎨',items:['🔴','🟠','🟡','🟢','🔵','🟣','🟤','⚫','⚪'],type:'emoji'},
+  emoji:{name:'Emoji',ic:'😀',items:['😀','😎','🤩','😴','🤔','😱','🥳','😡','🤖','👻','🐸','🦊'],type:'emoji'},
+  letters:{name:'Letters',ic:'🔤',items:['A','B','C','D','E','F','G','H','I','J','K','L'],type:'letter'},
+  shapes:{name:'Shapes',ic:'🔷',items:['🔴','🔷','⭐','🟩','🔺','🟡','💎','🌙','❤️'],type:'emoji'}
+};
+const OR_THEME_LIST=[
+  {id:'numbers',n:'Numbers',ic:'🔢',d:'Digits 1–9',pv:['1','2','3','4'],type:'number'},
+  {id:'colors',n:'Colors',ic:'🎨',d:'Color circles',pv:['🔴','🟠','🟡','🟢'],type:'emoji'},
+  {id:'emoji',n:'Emoji',ic:'😀',d:'Fun faces & icons',pv:['😀','😎','🤩','😴'],type:'emoji'},
+  {id:'letters',n:'Letters',ic:'🔤',d:'Alphabet letters',pv:['A','B','C','D'],type:'letter'},
+  {id:'shapes',n:'Shapes',ic:'🔷',d:'Shapes & symbols',pv:['🔴','🔷','⭐','🟩'],type:'emoji'}
+];
+
+let orTheme='numbers', orStartLen=3, orSpeed=900;
+let orSeq=[], orInput=[], orRound=1, orStreak=0, orTotalScore=0, orPhase='idle';
+let orPassTheme='numbers', orPassStartLen=3, orPassLen=3, orPassRound=1;
+let orPassTurn=0, orPassScores=[0,0], orPassNames=['Player 1','Player 2'];
+let orSendTheme='numbers', orSendLen=4, orChalCode='', orChalSeq=[], orChalScore=0;
+let orRecvSeq=[], orRecvInput=[], orRecvCode='', orRecvTheme='numbers';
+
+// ── helpers ───────────────────────────────────────────────────────────────────
+function orGetItems(themeId){return OR_THEMES[themeId]?.items||OR_THEMES.numbers.items}
+function orIsText(themeId){const t=OR_THEMES[themeId]?.type;return t==='number'||t==='letter'}
+function orRandSeq(len,themeId){
+  const items=orGetItems(themeId);
+  return Array.from({length:len},()=>items[Math.floor(Math.random()*items.length)]);
+}
+function orCalcScore(len,round,streak){return Math.round(len*10*round*(1+streak*0.1))}
+function orEffectiveSeq(seq){
+  // In liner mode the answer order = the order items flashed, not grid order
+  if(orStyle==='liner'&&orLinerFlashOrder.length===seq.length){
+    return orLinerFlashOrder.map(i=>seq[i]);
+  }
+  return seq;
+}
+
+function orMakeCell(val,themeId,size=52){
+  const cell=document.createElement('div');
+  const isText=orIsText(themeId);
+  cell.style.cssText=`width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;border-radius:10px;border:2px solid var(--bd2);background:var(--bg2);flex-shrink:0;`;
+  if(isText){
+    cell.innerHTML=`<span style="font-size:${size>44?22:16}px;font-weight:800;color:var(--purple-tx)">${val}</span>`;
+  } else {
+    cell.innerHTML=`<span style="font-size:${size>44?26:20}px;line-height:1">${val}</span>`;
+  }
+  return cell;
+}
+
+function orUpdateDots(containerId, filled, total, lastCorrect=true){
+  const c=document.getElementById(containerId); if(!c)return; c.innerHTML='';
+  for(let i=0;i<total;i++){
+    const dot=document.createElement('div');
+    const sz=Math.max(8,Math.min(14,Math.floor(280/total)));
+    let bg='var(--bg3)';
+    if(i<filled-1) bg='var(--teal)';
+    else if(i===filled-1) bg=lastCorrect?'var(--teal)':'var(--err-bd)';
+    dot.style.cssText=`width:${sz}px;height:${sz}px;border-radius:50%;background:${bg};transition:background .2s`;
+    c.appendChild(dot);
+  }
+}
+
+// ── theme grid builder ────────────────────────────────────────────────────────
+function orBuildThemeGrid(containerId, selectedId, setter){
+  const g=document.getElementById(containerId); if(!g)return; g.innerHTML='';
+  OR_THEME_LIST.forEach(t=>{
+    const div=document.createElement('div');
+    div.className='tc'+(selectedId===t.id?' sel':' dim');
+    div.dataset.id=t.id;
+    div.onclick=()=>setter(t.id);
+    const isText=t.type==='number'||t.type==='letter';
+    let ph='<div class="tprev">';
+    t.pv.forEach(e=>{
+      if(isText) ph+=`<div class="tpc" style="font-size:11px;font-weight:700;background:var(--purple-lt);color:var(--purple-tx);border-color:var(--purple-bd)">${e}</div>`;
+      else ph+=`<div class="tpc">${e}</div>`;
+    });
+    ph+='</div>';
+    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}${selectedId===t.id?'<div class="ck">✓</div>':''}`;
+    g.appendChild(div);
+  });
+}
+function orSetTheme(id){orTheme=id;orBuildThemeGrid('or-theme-grid',orTheme,orSetTheme)}
+function orPassSetTheme(id){orPassTheme=id;orBuildThemeGrid('or-pass-theme-grid',orPassTheme,orPassSetTheme)}
+function orSendSetTheme(id){orSendTheme=id;orBuildThemeGrid('or-send-theme-grid',orSendTheme,orSendSetTheme)}
+function orSetLen(l,btn){orStartLen=l;dimOthers('or-len-btns',btn)}
+function orSetSpeed(s,btn){orSpeed=s;dimOthers('or-speed-btns',btn)}
+function orPassSetLen(l,btn){orPassStartLen=l;dimOthers('or-pass-len-btns',btn)}
+function orSendSetLen(l,btn){orSendLen=l;dimOthers('or-send-len-btns',btn)}
+
+
+function orInitThemeGrids(){
+  orBuildThemeGrid('or-theme-grid',orTheme,orSetTheme);
+  orBuildThemeGrid('or-pass-theme-grid',orPassTheme,orPassSetTheme);
+  orBuildThemeGrid('or-send-theme-grid',orSendTheme,orSendSetTheme);
+}
+
+// ── style & speed state ──────────────────────────────────────────────────────
+let orStyle='flash';       // 'flash' | 'liner'
+let orLinerFlashOrder=[];  // tracks which positions flashed in what order
+let orSendStyle='flash';
+
+function orSetStyle(s,btn){orStyle=s;dimOthers('or-style-btns',btn)}
+function orSetSendStyle(s,btn){orSendStyle=s;dimOthers('or-send-style-btns',btn)}
+
+// ── main animate dispatcher ───────────────────────────────────────────────────
+function orAnimate(displayId, seq, themeId, speed, onDone, style){
+  const s=style||orStyle;
+  if(s==='liner') orAnimateLiner(displayId,seq,themeId,speed,onDone);
+  else orAnimateFlash(displayId,seq,themeId,speed,onDone);
+}
+
+// ── FLASH — one item at a time, big in centre ─────────────────────────────────
+function orAnimateFlash(displayId, seq, themeId, speed, onDone){
+  const d=document.getElementById(displayId); if(!d)return;
+  d.innerHTML='';
+  let countdown=3;
+  const ctr=document.createElement('div');
+  ctr.style.cssText='font-size:32px;font-weight:800;color:var(--purple-tx);text-align:center;width:100%;padding:8px 0;';
+  ctr.textContent=countdown;
+  d.appendChild(ctr);
+  const cdI=setInterval(()=>{
+    countdown--;
+    if(countdown<=0){clearInterval(cdI);d.innerHTML='';flashNext(0);}
+    else ctr.textContent=countdown;
+  },700);
+
+  function flashNext(i){
+    if(i>=seq.length){d.innerHTML='';setTimeout(()=>{if(onDone)onDone();},300);return;}
+    d.innerHTML='';
+    const isText=orIsText(themeId);
+    const cell=document.createElement('div');
+    cell.style.cssText=`width:90px;height:90px;display:flex;align-items:center;justify-content:center;
+      border-radius:16px;background:var(--purple-lt);border:3px solid var(--purple);margin:0 auto;
+      font-size:${isText?40:52}px;font-weight:800;color:var(--purple-tx);transition:opacity .12s;`;
+    cell.textContent=seq[i];
+    d.appendChild(cell);
+    setTimeout(()=>{d.innerHTML='';setTimeout(()=>flashNext(i+1),speed*0.25);},speed*0.75);
+  }
+}
+
+// ── LINER — all shown at once, randomly highlighted one by one, then gone ──────
+function orAnimateLiner(displayId, seq, themeId, speed, onDone){
+  const d=document.getElementById(displayId); if(!d)return;
+  d.innerHTML='';
+
+  // Shuffle positions so items appear in random grid order
+  // The FLASH ORDER is what the player must memorize — stored in orLinerFlashOrder
+  const isText=orIsText(themeId);
+  const sz=Math.min(60,Math.floor(300/Math.ceil(Math.sqrt(seq.length))));
+
+  // Create shuffled position array — this IS the sequence the player must repeat
+  const flashOrder=[...Array(seq.length).keys()].sort(()=>Math.random()-.5);
+  orLinerFlashOrder=flashOrder; // store globally so picker can check against it
+
+  // Build grid with cells at random positions
+  const wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;flex-wrap:wrap;gap:6px;justify-content:center;width:100%;';
+  // cells[i] shows seq[i] at some grid slot
+  const cells=seq.map((val)=>{
+    const c=document.createElement('div');
+    c.style.cssText=`width:${sz}px;height:${sz}px;display:flex;align-items:center;justify-content:center;
+      border-radius:10px;background:var(--bg2);border:2px solid var(--bd2);
+      font-size:${isText?Math.round(sz*.42):Math.round(sz*.58)}px;font-weight:800;
+      color:var(--tx2);opacity:0.3;transition:all .18s;flex-shrink:0;`;
+    c.textContent=val;
+    wrap.appendChild(c);
+    return c;
+  });
+  d.appendChild(wrap);
+
+  // Countdown
+  let countdown=3;
+  const ctr=document.createElement('div');
+  ctr.style.cssText='font-size:28px;font-weight:800;color:var(--purple-tx);text-align:center;width:100%;padding:6px 0;';
+  ctr.textContent=countdown;
+  d.appendChild(ctr);
+  const cdI=setInterval(()=>{
+    countdown--;
+    if(countdown<=0){clearInterval(cdI);ctr.remove();highlightNext(0);}
+    else ctr.textContent=countdown;
+  },700);
+
+  // Highlight cells in flashOrder sequence — THIS is the order to memorize
+  function highlightNext(step){
+    if(step>0){
+      const prev=cells[flashOrder[step-1]];
+      if(prev){prev.style.background='var(--bg3)';prev.style.borderColor='var(--bd2)';prev.style.opacity='0.2';prev.style.transform='scale(1)'}
+    }
+    if(step>=seq.length){
+      setTimeout(()=>{
+        cells.forEach(c=>{c.style.opacity='0';c.style.transform='scale(0.8)'});
+        setTimeout(()=>{d.innerHTML='';if(onDone)onDone();},400);
+      },speed*0.4);
+      return;
+    }
+    const cell=cells[flashOrder[step]];
+    if(cell){
+      cell.style.opacity='1';
+      cell.style.background='var(--purple-lt)';
+      cell.style.borderColor='var(--purple)';
+      cell.style.color='var(--purple-tx)';
+      cell.style.transform='scale(1.12)';
+      setTimeout(()=>cell.style.transform='scale(1)',150);
+    }
+    setTimeout(()=>highlightNext(step+1), speed);
+  }
+}
+
+
+
+// ── picker builder ────────────────────────────────────────────────────────────
+function orBuildPicker(pickerId, themeId, tapFn){
+  const p=document.getElementById(pickerId); if(!p)return; p.innerHTML='';
+  const items=orGetItems(themeId);
+  const isText=orIsText(themeId);
+  items.forEach(val=>{
+    const btn=document.createElement('button');
+    btn.className='seq-pk';
+    btn.style.cssText=`width:${isText?46:52}px;height:${isText?46:52}px;font-size:${isText?20:26}px;`;
+    if(isText) btn.style.cssText+=`background:var(--purple-lt);color:var(--purple-tx);border-color:var(--purple-bd);`;
+    btn.textContent=val;
+    btn.onclick=()=>{
+      btn.style.transform='scale(0.88)';
+      setTimeout(()=>btn.style.transform='',180);
+      tapFn(val);
+    };
+    p.appendChild(btn);
+  });
+  p.style.display='flex';
+}
+
+// ── SOLO PLAY ─────────────────────────────────────────────────────────────────
+function orStartSolo(){
+  orRound=1; orStreak=0; orTotalScore=0; orPhase='idle';
+  goScr('or-play');
+  document.getElementById('or-theme-badge').textContent=OR_THEMES[orTheme]?.name||orTheme;
+  document.getElementById('or-fail').style.display='none';
+  document.getElementById('or-next-wrap').style.display='none';
+  document.getElementById('or-done-wrap').style.display='none';
+  document.getElementById('or-picker').style.display='none';
+  document.getElementById('or-score').textContent='0';
+  orDoRound();
+}
+
+function orDoRound(){
+  orSeq=orRandSeq(orStartLen+(orRound-1), orTheme);
+  orInput=[];
+  document.getElementById('or-round').textContent=orRound;
+  document.getElementById('or-round-badge').textContent='Round '+orRound;
+  document.getElementById('or-len').textContent=orSeq.length;
+  document.getElementById('or-streak').textContent=orStreak;
+  document.getElementById('or-phase').textContent='Watch';
+  document.getElementById('or-msg').textContent='Watch carefully...';
+  document.getElementById('or-picker').style.display='none';
+  document.getElementById('or-next-wrap').style.display='none';
+  document.getElementById('or-fail').style.display='none';
+  orUpdateDots('or-progress',0,orSeq.length);
+  // animate sequence, then switch to input
+  orAnimate('or-seq-display', orSeq, orTheme, orSpeed, ()=>{
+    orPhase='input';
+    document.getElementById('or-phase').textContent='Repeat';
+    document.getElementById('or-msg').textContent='Tap the sequence in order';
+    orUpdateDots('or-progress',0,orSeq.length);
+    orBuildPicker('or-picker', orTheme, orSoloTap);
+  });
+}
+
+function orSoloTap(val){
+  if(orPhase!=='input') return;
+  const idx=orInput.length;
+  orInput.push(val);
+  const effectiveSeq=orEffectiveSeq(orSeq);
+  const correct=val===effectiveSeq[idx];
+  // show tapped item in display
+  const d=document.getElementById('or-seq-display');
+  const cell=orMakeCell(val,orTheme,44);
+  cell.style.background=correct?'var(--ok-bg)':'var(--err-bg)';
+  cell.style.borderColor=correct?'var(--ok-bd)':'var(--err-bd)';
+  d.appendChild(cell);
+  orUpdateDots('or-progress', orInput.length, orSeq.length, correct);
+
+  if(!correct){
+    // FAIL
+    orPhase='idle';
+    document.getElementById('or-picker').style.display='none';
+    document.getElementById('or-phase').textContent='✗';
+    document.getElementById('or-msg').textContent='Wrong! The sequence was:';
+    // show correct sequence
+    setTimeout(()=>{
+      d.innerHTML='';
+      orEffectiveSeq(orSeq).forEach(v=>{const c=orMakeCell(v,orTheme,44);d.appendChild(c)});
+    },400);
+    const fail=document.getElementById('or-fail');
+    fail.style.display='block';
+    fail.textContent=`Game over — Score: ${orTotalScore} pts · Reached round ${orRound}`;
+    document.getElementById('or-done-wrap').style.display='block';
+    SS.orderly={score:orTotalScore,round:orRound,theme:OR_THEMES[orTheme]?.name};
+    recordOrderly(orTotalScore, orRound, OR_THEMES[orTheme]?.name);
+    return;
+  }
+
+  if(orInput.length===orSeq.length){
+    // SUCCESS
+    orPhase='idle';
+    const pts=orCalcScore(orSeq.length, orRound, orStreak);
+    orTotalScore+=pts; orStreak++;
+    document.getElementById('or-score').textContent=orTotalScore;
+    document.getElementById('or-streak').textContent=orStreak;
+    document.getElementById('or-phase').textContent='✓';
+    document.getElementById('or-msg').textContent=`✓ Correct! +${pts} pts`;
+    document.getElementById('or-picker').style.display='none';
+    orRound++;
+    setTimeout(()=>document.getElementById('or-next-wrap').style.display='block', 600);
+  }
+}
+
+function orNextRound(){
+  document.getElementById('or-next-wrap').style.display='none';
+  document.getElementById('or-seq-display').innerHTML='';
+  orDoRound();
+}
+function orQuit(){orPhase='idle'; goScr('or-home')}
+
+// ── PASS THE PHONE ────────────────────────────────────────────────────────────
+function orStartPass(){
+  orPassLen=orPassStartLen; orPassRound=1; orPassTurn=0; orPassScores=[0,0];
+  orPassNames[0]=document.getElementById('or-p1-name').value.trim()||'Player 1';
+  orPassNames[1]=document.getElementById('or-p2-name').value.trim()||'Player 2';
+  document.getElementById('or-p1-lbl').textContent=orPassNames[0].split(' ')[0];
+  document.getElementById('or-p2-lbl').textContent=orPassNames[1].split(' ')[0];
+  goScr('or-pass-play');
+  orDoPassRound();
+}
+
+function orDoPassRound(){
+  orSeq=orRandSeq(orPassLen, orPassTheme);
+  orInput=[];
+  orPhase='idle';
+  const who=orPassNames[orPassTurn];
+  document.getElementById('or-pass-who').textContent=`${who}'s turn — Pass the phone!`;
+  document.getElementById('or-pass-round').textContent=orPassRound;
+  document.getElementById('or-pass-len').textContent=orPassLen;
+  document.getElementById('or-p1-score').textContent=orPassScores[0];
+  document.getElementById('or-p2-score').textContent=orPassScores[1];
+  document.getElementById('or-pass-msg').textContent='Watch carefully...';
+  document.getElementById('or-pass-picker').style.display='none';
+  document.getElementById('or-pass-fail').style.display='none';
+  document.getElementById('or-pass-done').style.display='none';
+  orUpdateDots('or-pass-progress',0,orSeq.length);
+  orAnimate('or-pass-seq-display', orSeq, orPassTheme, orSpeed, ()=>{
+    orPhase='input';
+    document.getElementById('or-pass-msg').textContent='Tap the sequence in order';
+    orBuildPicker('or-pass-picker', orPassTheme, orPassTap);
+  });
+}
+
+function orPassTap(val){
+  if(orPhase!=='input') return;
+  const idx=orInput.length;
+  orInput.push(val);
+  const effectiveSeq=orEffectiveSeq(orSeq);
+  const correct=val===effectiveSeq[idx];
+  const d=document.getElementById('or-pass-seq-display');
+  const cell=orMakeCell(val,orPassTheme,44);
+  cell.style.background=correct?'var(--ok-bg)':'var(--err-bg)';
+  cell.style.borderColor=correct?'var(--ok-bd)':'var(--err-bd)';
+  d.appendChild(cell);
+  orUpdateDots('or-pass-progress', orInput.length, orSeq.length, correct);
+
+  if(!correct){
+    orPhase='idle';
+    const loser=orPassNames[orPassTurn];
+    const winner=orPassNames[1-orPassTurn];
+    document.getElementById('or-pass-picker').style.display='none';
+    const fail=document.getElementById('or-pass-fail');
+    fail.style.display='block';
+    fail.textContent=`${loser} got it wrong! 🏆 ${winner} wins! Final scores — ${orPassNames[0]}: ${orPassScores[0]} · ${orPassNames[1]}: ${orPassScores[1]}`;
+    document.getElementById('or-pass-done').style.display='block';
+    return;
+  }
+  if(orInput.length===orSeq.length){
+    orPhase='idle';
+    const pts=orCalcScore(orPassLen, orPassRound, 0);
+    orPassScores[orPassTurn]+=pts;
+    document.getElementById(`or-p${orPassTurn+1}-score`).textContent=orPassScores[orPassTurn];
+    document.getElementById('or-pass-msg').textContent=`✓ ${orPassNames[orPassTurn]} got it! +${pts} pts`;
+    document.getElementById('or-pass-picker').style.display='none';
+    orPassTurn=1-orPassTurn; orPassLen++; orPassRound++;
+    setTimeout(()=>orDoPassRound(), 1800);
+  }
+}
+function orQuitPass(){orPhase='idle'; goScr('or-home')}
+
+// ── SEND CHALLENGE ────────────────────────────────────────────────────────────
+async function orCreateChallenge(){
+  orChalSeq=orRandSeq(orSendLen, orSendTheme);
+  orChalScore=orCalcScore(orSendLen,1,0);
+  orChalCode=gc('ORDLY');
+  const btn=document.querySelector('#s-or-send .btn-p');
+  if(btn){btn.textContent='Saving...';btn.disabled=true}
+  try{
+    await sbInsert('orderly_challenges',{
+      code:orChalCode, theme:orSendTheme,
+      sequence:orChalSeq, sender_score:orChalScore, style:orSendStyle
+    });
+  }catch(e){
+    if(btn){btn.textContent='Generate code';btn.disabled=false}
+    alert('Could not save challenge. Check connection.');return;
+  }
+  if(btn){btn.textContent='Generate code';btn.disabled=false}
+  document.getElementById('or-code-disp').textContent=orChalCode;
+  document.getElementById('or-cs-theme').textContent=OR_THEMES[orSendTheme]?.name||orSendTheme;
+  document.getElementById('or-cs-len').textContent=orSendLen+' items';
+  document.getElementById('or-cs-style').textContent=orSendStyle==='flash'?'⚡ Flash':'📋 Liner';
+  document.getElementById('or-cs-score').textContent=orChalScore+' pts';
+  goScr('or-code');
+}
+function orCopyCode(){
+  navigator.clipboard.writeText(orChalCode).catch(()=>{});
+  const b=document.getElementById('or-copy-btn');
+  b.textContent='Copied!';setTimeout(()=>b.textContent='Copy code',1500);
+}
+function orPreviewChallenge(){orStartRecv(orChalSeq,orSendTheme,orChalCode,orSendStyle)}
+
+// ── JOIN CHALLENGE ────────────────────────────────────────────────────────────
+async function orJoin(){
+  const code=document.getElementById('or-join-inp').value.trim().toUpperCase();
+  if(!code.startsWith('ORDLY-')||code.length!==12){alert('Enter a valid ORDLY-XXXXXX code.');return}
+  const btn=document.querySelector('#s-or-home button[onclick="orJoin()"]');
+  if(btn){btn.textContent='Loading...';btn.disabled=true}
+  try{
+    const ch=await sbGet('orderly_challenges',code);
+    if(!ch){alert('Challenge not found. Double-check the code.');if(btn){btn.textContent='Join';btn.disabled=false}return}
+    if(ch.completed){alert('This challenge has already been completed!');if(btn){btn.textContent='Join';btn.disabled=false}return}
+    if(btn){btn.textContent='Join';btn.disabled=false}
+    orStartRecv(ch.sequence, ch.theme, code, ch.style||'flash');
+  }catch(e){
+    if(btn){btn.textContent='Join';btn.disabled=false}
+    alert('Could not load challenge — check your connection.');
+  }
+}
+
+function orStartRecv(seq, themeId, code, style){
+  orRecvSeq=seq; orRecvInput=[]; orRecvCode=code; orRecvTheme=themeId; orPhase='idle';
+  const recvStyle=style||'flash';
+  document.getElementById('or-recv-badge').textContent=(OR_THEMES[themeId]?.name||themeId)+' · '+seq.length+' items';
+  document.getElementById('or-recv-result').style.display='none';
+  document.getElementById('or-recv-done').style.display='none';
+  document.getElementById('or-recv-picker').style.display='none';
+  document.getElementById('or-recv-msg').textContent='Watch carefully...';
+  document.getElementById('or-recv-seq-display').innerHTML='';
+  orUpdateDots('or-recv-progress',0,seq.length);
+  goScr('or-recv');
+  orAnimate('or-recv-seq-display', seq, themeId, 900, ()=>{
+    orPhase='input';
+    document.getElementById('or-recv-msg').textContent='Tap the sequence in order';
+    orBuildPicker('or-recv-picker', themeId, orRecvTap);
+  }, recvStyle);
+}
+
+async function orRecvTap(val){
+  if(orPhase!=='input') return;
+  const idx=orRecvInput.length;
+  orRecvInput.push(val);
+  const effectiveSeq=orEffectiveSeq(orRecvSeq);
+  const correct=val===effectiveSeq[idx];
+  const d=document.getElementById('or-recv-seq-display');
+  const cell=orMakeCell(val,orRecvTheme,44);
+  cell.style.background=correct?'var(--ok-bg)':'var(--err-bg)';
+  cell.style.borderColor=correct?'var(--ok-bd)':'var(--err-bd)';
+  d.appendChild(cell);
+  orUpdateDots('or-recv-progress', orRecvInput.length, orRecvSeq.length, correct);
+
+  const done=!correct||orRecvInput.length===orRecvSeq.length;
+  if(!done) return;
+
+  orPhase='idle';
+  const allCorrect=correct&&orRecvInput.length===orRecvSeq.length;
+  const effectiveRecvSeq=orEffectiveSeq(orRecvSeq);
+  const correctCount=orRecvInput.filter((v,i)=>v===effectiveRecvSeq[i]).length;
+  const score=allCorrect
+    ? orCalcScore(orRecvSeq.length,1,0)
+    : Math.round(orCalcScore(orRecvSeq.length,1,0)*(correctCount/orRecvSeq.length));
+  document.getElementById('or-recv-picker').style.display='none';
+  const res=document.getElementById('or-recv-result');
+  res.style.display='block';
+  res.style.background=allCorrect?'var(--ok-bg)':'var(--err-bg)';
+  res.style.borderColor=allCorrect?'var(--ok-bd)':'var(--err-bd)';
+  res.style.color=allCorrect?'var(--ok-tx)':'var(--err-tx)';
+  res.textContent=allCorrect
+    ? `🏆 Perfect! Score: ${score} pts`
+    : `✗ Got ${correctCount}/${orRecvSeq.length} — Score: ${score} pts. Sequence was: ${effectiveRecvSeq.join(' ')}`;
+  document.getElementById('or-recv-done').style.display='block';
+  SS['orderly-recv']={score,word:orRecvSeq.join(' ')};
+  recordOrderly(score,1,OR_THEMES[orRecvTheme]?.name);
+  try{
+    await sbPatch('orderly_challenges',orRecvCode,{
+      recv_score:score,completed:true,completed_at:new Date().toISOString()
+    });
+  }catch(e){}
+}
+
+
+// ── PWA INSTALL ───────────────────────────────────────────────────────────────
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('ib').style.display='block'});
+function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;document.getElementById('ib').style.display='none'})}}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+gtBuildThemes();
+blBuildThemes();
+orInitThemeGrids();
+// Copy logo from header to splash
+(function(){
+  const hdrLogo=document.querySelector('.hdr img');
+  const splashLogo=document.getElementById('splash-logo');
+  if(hdrLogo&&splashLogo) splashLogo.src=hdrLogo.src;
+})();
+
+</script>
+</body>
+</html>

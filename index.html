@@ -2332,51 +2332,76 @@ async function orRecvTap(val){
 
 // ── SCRAMBLER DATA ────────────────────────────────────────────────────────────
 // Word sets: [correct sentence words], each set is a full sentence scrambled
+// SC_SENTENCES: each array is the CORRECT word order of a real sentence
+// SC_SENTENCES: each array is the CORRECT word order of a real sentence
 const SC_SENTENCES = {
   3: [
     ['hit','the','gas'],['pet','the','dog'],['eat','your','food'],
-    ['make','some','noise'],['hold','the','line'],['turn','the','page'],
-    ['read','the','map'],['find','the','key'],['pass','the','ball'],
-    ['feel','the','beat'],['dim','the','lights'],['fix','the','leak'],
-    ['set','the','stage'],['save','the','day'],['cut','the','cake'],
-    ['ring','the','bell'],['walk','the','dog'],['feed','the','cat'],
-    ['paint','the','fence'],['close','the','door']
+    ['hold','the','line'],['turn','the','page'],['read','the','map'],
+    ['find','the','key'],['pass','the','ball'],['feel','the','beat'],
+    ['dim','the','lights'],['fix','the','leak'],['set','the','stage'],
+    ['save','the','day'],['cut','the','cake'],['ring','the','bell'],
+    ['walk','the','dog'],['feed','the','cat'],['close','the','door'],
+    ['drop','the','mic'],['grab','your','coat'],['start','the','car'],
+    ['break','the','ice'],['catch','the','bus'],['lose','the','plot'],
+    ['hold','your','breath'],['call','my','bluff'],['miss','the','bus'],
+    ['flip','the','switch'],['raise','the','flag'],['sound','the','alarm']
   ],
   4: [
-    ['pretty','is','my','kitty'],['bright','shines','the','sun'],
-    ['fast','runs','the','fox'],['slow','ticks','the','clock'],
-    ['cold','blows','the','wind'],['loud','rings','the','bell'],
-    ['high','flies','the','kite'],['deep','flows','the','river'],
-    ['sweet','smells','the','rose'],['soft','falls','the','rain'],
-    ['old','creaks','the','floor'],['wide','opens','the','door'],
-    ['still','stands','the','tree'],['quick','bites','the','snake'],
-    ['sharp','cuts','the','knife'],['brave','stands','the','knight'],
-    ['loud','plays','the','band'],['thin','blows','the','smoke'],
-    ['lost','found','was','key','the'],['blue','sky','the','is']
+    ['my','kitty','is','pretty'],['the','sun','shines','bright'],
+    ['the','fox','runs','fast'],['the','clock','ticks','slow'],
+    ['the','wind','blows','cold'],['the','kite','flies','high'],
+    ['the','river','flows','deep'],['the','rose','smells','sweet'],
+    ['the','rain','falls','soft'],['the','floor','creaks','loud'],
+    ['the','door','opens','wide'],['the','tree','stands','still'],
+    ['the','band','plays','loud'],['the','fire','burns','hot'],
+    ['the','ice','melts','fast'],['the','bird','sings','sweet'],
+    ['the','cat','sleeps','deep'],['she','runs','very','fast'],
+    ['he','eats','too','much'],['they','work','so','hard'],
+    ['we','play','every','day'],['the','game','starts','now'],
+    ['time','flies','so','fast'],['keep','your','chin','up'],
+    ['the','dog','sits','still'],['the','ship','sails','away'],
+    ['the','wolf','howls','loud'],['the','moon','glows','bright'],
+    ['the','clock','strikes','twelve'],['the','crowd','cheers','loudly']
   ],
   5: [
-    ['the','cat','sat','on','mat'],['she','sells','sea','shells','here'],
-    ['he','ran','down','the','hill'],['they','played','in','the','park'],
-    ['the','dog','barked','all','night'],['my','friend','lives','far','away'],
-    ['she','baked','a','sweet','cake'],['the','bird','sang','all','day'],
-    ['he','threw','the','ball','high'],['they','swam','in','the','lake'],
-    ['the','wind','blew','the','hat'],['she','drew','a','big','star'],
+    ['the','cat','sat','on','mat'],['he','ran','down','the','hill'],
+    ['they','played','in','the','park'],['the','dog','barked','all','night'],
+    ['my','friend','lives','far','away'],['she','baked','a','sweet','cake'],
+    ['the','bird','sang','all','day'],['he','threw','the','ball','high'],
+    ['they','swam','in','the','lake'],['she','drew','a','big','star'],
     ['he','climbed','up','the','tree'],['the','snow','fell','very','fast'],
-    ['they','built','a','small','hut']
+    ['they','built','a','small','hut'],['the','sun','rose','very','early'],
+    ['she','wrote','him','a','letter'],['he','found','a','lost','coin'],
+    ['the','rain','fell','all','day'],['they','sang','a','happy','song'],
+    ['she','wore','a','red','dress'],['he','drove','a','fast','car'],
+    ['the','kids','ran','to','school'],['she','picked','a','pink','flower'],
+    ['he','caught','a','big','fish'],['the','moon','rose','very','late'],
+    ['they','ate','a','hot','meal']
   ],
   6: [
-    ['the','quick','brown','fox','jumps','over'],
     ['she','walked','alone','down','the','road'],
-    ['he','found','a','note','under','the'],
-    ['they','danced','all','night','in','rain'],
     ['the','old','clock','struck','midnight','twice'],
     ['she','baked','fresh','bread','every','morning'],
     ['he','wrote','a','long','letter','today'],
-    ['the','stars','shone','bright','in','sky'],
     ['they','sat','quietly','by','the','fire'],
-    ['the','little','girl','chased','the','butterfly']
+    ['the','little','girl','chased','a','butterfly'],
+    ['she','sang','a','song','all','night'],
+    ['he','read','a','book','every','night'],
+    ['the','children','played','outside','all','day'],
+    ['he','cooked','dinner','for','his','family'],
+    ['she','laughed','until','her','sides','hurt'],
+    ['the','waves','crashed','against','the','shore'],
+    ['he','climbed','slowly','to','the','top'],
+    ['she','danced','alone','under','the','stars'],
+    ['they','watched','the','sunset','from','afar'],
+    ['the','cat','curled','up','by','fire'],
+    ['he','jumped','over','the','garden','wall'],
+    ['she','hummed','softly','to','herself','today'],
+    ['the','wind','howled','through','the','trees'],
+    ['they','ran','laughing','through','the','rain']
   ]
-};
+}
 
 // Decoy pool — words that sound/look similar or are same category
 const SC_DECOYS = {
@@ -2408,6 +2433,7 @@ function scGetDecoys(realWords, count) {
 }
 
 let scStartLen=3, scDecoyCount=2, scFlashSpeed=1000;
+let scUsedSentences=new Set(); // tracks used sentences across entire session
 let scSendWords=[], scSendDecoys=2, scSendSpeed=1000, scChalCode='';
 let scRound=1, scTotalScore=0, scCurrentWords=[], scCorrectOrder=[];
 let scBuiltSentence=[], scPickerWords=[], scTimerInterval=null, scTimeLeft=0;
@@ -2422,16 +2448,22 @@ function scSendSetSpeed(s,btn){scSendSpeed=s;dimOthers('sc-send-speed-btns',btn)
 // ── SOLO ──────────────────────────────────────────────────────────────────────
 function scStartSolo(){
   scRound=1; scTotalScore=0; scIsChallenge=false;
+  scUsedSentences=new Set(); // reset used sentences on fresh game start
   goScr('sc-play');
   scDoRound();
 }
 
 function scDoRound(){
-  // Pick a sentence for this round's length
+  // Pick a sentence for this round's length — never repeat within session
   const len = Math.min(scStartLen + (scRound-1), 6);
   const pool = SC_SENTENCES[len] || SC_SENTENCES[3];
-  const sentence = pool[Math.floor(Math.random()*pool.length)];
-  scCurrentWords = [...sentence]; // correct order
+  // Filter out already-used sentences
+  const available = pool.filter(s => !scUsedSentences.has(s.join('|')));
+  // If all used, reset pool for this length only
+  const source = available.length > 0 ? available : pool;
+  const sentence = source[Math.floor(Math.random()*source.length)];
+  scUsedSentences.add(sentence.join('|')); // mark as used
+  scCurrentWords = [...sentence]; // correct order IS the sentence
   scCorrectOrder = [...sentence];
   
   document.getElementById('sc-round-badge').textContent = 'Round '+scRound;
@@ -2517,8 +2549,9 @@ function scBeginRecall(len){
     picker.appendChild(btn);
   });
 
-  // Start countdown timer — more time for longer sentences
-  scTimeLeft = 20 + (len * 5);
+  // Start countdown timer — fixed times by word count
+  const scTimerMap={3:10,4:15,5:20,6:30};
+  scTimeLeft = scTimerMap[len] || 15;
   scUpdateTimer();
   clearInterval(scTimerInterval);
   scTimerInterval = setInterval(()=>{
@@ -2650,7 +2683,7 @@ async function scSubmit(){
   try{
     const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,
-        messages:[{role:'user',content:`The scrambled words were: ${scCurrentWords.join(', ')}. The player arranged them as: "${built}". Rate whether this makes a coherent sentence, 1-3 stars. JSON only: {"rating":2,"comment":"max 10 words"}`}]})});
+        messages:[{role:'user',content:`Words: ${scCurrentWords.join(', ')}. Correct order: "${scCorrectOrder.join(' ')}". Player answered: "${built}". Rate the player's sentence coherence 1-3 stars. JSON only: {"rating":2,"comment":"max 10 words"}`}]})});
     const data=await resp.json();
     const txt=data.content.map(c=>c.text||'').join('');
     const p=JSON.parse(txt.replace(/```json|```/g,'').trim());

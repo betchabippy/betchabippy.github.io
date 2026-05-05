@@ -1341,7 +1341,7 @@ function mcFlip(i,el){
 
 // ── TIPPA SOLO ────────────────────────────────────────────────────────────────
 const TP_SOLO_KEY='tp_solo';
-let tpSoloCount=3, tpSoloTime=10, tpSoloHint='none', tpSoloRecallSecs=24*60*60;
+let tpSoloCount=3, tpSoloTime=10, tpSoloHint='none', tpSoloRecallSecs=15*60; // default matches first button
 let tpSoloWords=[], tpSoloSpeedScore=0, tpSoloMemStart=0, tpSoloMI=null;
 let tpSoloRetriesLeft=0, tpSoloWordState=[], tpSoloRetriesUsed=0;
 
@@ -1363,7 +1363,8 @@ function tpSoloCheck(){
 
 function tpSoloStart(){
   // Pick random words
-  const shuffled=[...RWORDS].sort(()=>Math.random()-.5);
+  const pool=RWORDS[tpSoloHint]||RWORDS.none;
+  const shuffled=[...pool].sort(()=>Math.random()-.5);
   tpSoloWords=shuffled.slice(0,tpSoloCount).map(w=>w.toLowerCase());
   // Show memorize screen
   const mw=document.getElementById('tp-solo-words');
@@ -1577,10 +1578,19 @@ function tpSoloReset(){
 
 
 // ── TIPPA DATA ────────────────────────────────────────────────────────────────
-const RWORDS=['Umbrella','Cobalt','Lantern','Mirage','Sphinx','Velvet','Quartz','Fable','Nimbus','Anchor','Dagger','Fossil','Cinder','Prism','Lagoon','Tundra','Cipher','Mosaic','Raven','Ember'];
+const RWORDS={
+  none:['Umbrella','Cobalt','Lantern','Mirage','Sphinx','Velvet','Quartz','Fable','Nimbus','Anchor','Dagger','Fossil','Cinder','Prism','Lagoon','Tundra','Cipher','Mosaic','Raven','Ember','Shadow','Ember','Glacier','Thunder','Whisper','Cascade','Zenith','Horizon','Solstice','Phantom'],
+  animals:['Falcon','Panther','Cobra','Dolphin','Jaguar','Osprey','Badger','Viper','Condor','Otter','Marmot','Ibis','Lynx','Narwhal','Pelican','Quokka','Tapir','Wombat','Gecko','Bison','Kestrel','Lemur','Mongoose','Puffin','Salamander','Toucan','Vulture','Walrus','Yak','Zebu'],
+  places:['Desert','Canyon','Jungle','Valley','Harbor','Tundra','Lagoon','Meadow','Summit','Glacier','Savanna','Delta','Plateau','Bayou','Fjord','Prairie','Marsh','Peninsula','Estuary','Rainforest','Steppe','Archipelago','Volcano','Oasis','Reef','Gorge','Basin','Cavern','Dune','Inlet'],
+  things:['Compass','Lantern','Anchor','Goblet','Satchel','Canteen','Sundial','Hammock','Sextant','Bellows','Pulley','Mortar','Flagon','Quiver','Satchel','Chalice','Brazier','Awning','Spyglass','Cauldron','Bellows','Parchment','Locket','Hourglass','Prism','Casket','Trinket','Vial','Clasp','Talisman']
+};
+function getRWord(hint){
+  const pool=RWORDS[hint]||RWORDS.none;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
 let tpWords=[],tpTime=10,tpHint='none',tpCode='',tpSpeedScore=0,tpMemStart=0,tpMI=null;
 function tpAdd(){const i=document.getElementById('tp-wi');const w=i.value.trim().toLowerCase();if(!w||tpWords.length>=5||tpWords.includes(w))return;tpWords.push(w);i.value='';tpRenderWords()}
-function tpRand(){if(tpWords.length>=5)return;const av=RWORDS.filter(w=>!tpWords.includes(w.toLowerCase()));if(!av.length)return;tpWords.push(av[Math.floor(Math.random()*av.length)].toLowerCase());tpRenderWords()}
+function tpRand(){if(tpWords.length>=5)return;const pool=(RWORDS[tpHint]||RWORDS.none);const av=pool.filter(w=>!tpWords.includes(w.toLowerCase()));const word=(av.length?av:pool)[Math.floor(Math.random()*(av.length||pool.length))];tpWords.push(word.toLowerCase());tpRenderWords()}
 function tpRenderWords(){const d=document.getElementById('tp-wdisp');d.innerHTML='';tpWords.forEach((w,i)=>{const s=document.createElement('span');s.className='wp';s.innerHTML=`${w}<span onclick="tpWords.splice(${i},1);tpRenderWords()" style="cursor:pointer;color:var(--tx2);font-size:13px;margin-left:2px">×</span>`;d.appendChild(s)})}
 function tpSetT(t,btn){tpTime=t;dimOthers('tp-times',btn)}
 function tpSetH(h,btn){tpHint=h;dimOthers('tp-hints',btn)}
@@ -1730,7 +1740,15 @@ function blRenderGrid(){
   const g=document.getElementById('bl-grid');g.style.gridTemplateColumns=`repeat(${blCols},1fr)`;g.innerHTML='';
   blGrid.forEach((icon,i)=>{
     const cell=document.createElement('div');let cls='fc';
-    if(blHidden.includes(i)){cls+=' hid';if(blPhase==='recall'){if(blRecalled[i]!==undefined){cls+=blRecalled[i]===icon?' cok':' cno'}else if(blSel===i){cls+=' csel'}}}
+    if(blHidden.includes(i)){
+      if(blPhase==='recall'&&blRecalled[i]!==undefined){
+        // recalled — show content, just colour the cell
+        cls+=blRecalled[i]===icon?' cok':' cno';
+      } else {
+        cls+=' hid'; // still hidden — show as blank
+        if(blPhase==='recall'){if(blSel===i){cls+=' csel'}}
+      }
+    }
     cell.className=cls;
     if(blPhase==='recall'&&blHidden.includes(i)){
       if(blRecalled[i]!==undefined){

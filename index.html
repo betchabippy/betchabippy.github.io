@@ -1425,28 +1425,43 @@ function tpSoloLoadLocked(){
   document.getElementById('tp-solo-locked-count').textContent=data.words.length+' word'+(data.words.length>1?'s':'');
   document.getElementById('tp-solo-retries-disp').textContent=data.retries+' retr'+(data.retries===1?'y':'ies');
   document.getElementById('tp-solo-locked-hint').textContent=data.hint==='none'?'None':data.hint;
+  // Show recall window
+  const recallMs=data.unlockAt-data.lockedAt;
+  const recallMins=Math.round(recallMs/60000);
+  let recallLabel=recallMins<60?recallMins+'min':Math.round(recallMins/60)+'hr';
+  const existingRow=document.getElementById('tp-recall-window-row');
+  if(!existingRow){
+    const row=document.createElement('div');row.id='tp-recall-window-row';
+    row.className='row';row.innerHTML=`<span style="font-size:12px;color:var(--tx1);flex:1">Recall window</span><span style="font-size:12px;font-weight:600">${recallLabel}</span>`;
+    document.getElementById('tp-solo-locked-hint').parentNode.appendChild(row);
+  }
   goScr('tp-solo-locked');
   tpSoloTickCountdown(data);
 }
 
+let tpCountdownInterval=null;
 function tpSoloTickCountdown(data){
-  const cd=document.getElementById('tp-solo-countdown');
-  const btn=document.getElementById('tp-solo-recall-btn');
+  if(tpCountdownInterval) clearInterval(tpCountdownInterval);
   function update(){
+    const cd=document.getElementById('tp-solo-countdown');
+    const btn=document.getElementById('tp-solo-recall-btn');
+    if(!cd) return; // navigated away
     const remaining=data.unlockAt-Date.now();
     if(remaining<=0){
+      clearInterval(tpCountdownInterval);
+      tpCountdownInterval=null;
       cd.textContent='Ready!';
       cd.style.color='var(--teal)';
-      btn.style.display='block';
+      if(btn) btn.style.display='block';
       return;
     }
     const h=Math.floor(remaining/3600000);
     const m=Math.floor((remaining%3600000)/60000);
     const s=Math.floor((remaining%60000)/1000);
     cd.textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    setTimeout(update,1000);
   }
-  update();
+  update(); // run immediately
+  tpCountdownInterval=setInterval(update,1000);
 }
 
 function tpSoloTryRecall(){
@@ -1566,6 +1581,7 @@ function tpSoloSubmit(){
 
 function tpSoloAbandon(){
   if(confirm('Abandon this challenge? Your progress will be lost.')){
+    if(tpCountdownInterval){clearInterval(tpCountdownInterval);tpCountdownInterval=null;}
     localStorage.removeItem(TP_SOLO_KEY);
     goScr('tp-home');
     tpCheckPendingOnLoad();
@@ -1684,7 +1700,20 @@ async function tpSubmit(){
 
 // ── BLINKA DATA ───────────────────────────────────────────────────────────────
 const BL_ICONS={nature:['🌊','🌲','🌺','🏔','🌸','🌴','🌿','🌵','🍀','🌾','🌻','🌼','🗻','🌱','🌳','❄️','🍂','🍁','🏕','🌅'],animals:['🐶','🐱','🦊','🐻','🐼','🦁','🐸','🦋','🐙','🦜','🦉','🐬','🦒','🐊','🦘','🦔','🐺','🦅','🦈','🦚'],food:['🍕','🍔','🌮','🍣','🍩','🥑','🌽','🧁','🥐','🍇','🍓','🥩','🌶','🧀','🍱','🥭','🍎','🥦','🍋','🥕'],space:['🌙','⭐','🪐','☄️','🌍','🚀','🛸','🌟','💫','🌠','☀️','🛰️','🌑','🌈','🌌'],colors:['🟥','🟧','🟨','🟩','🟦','🟪','🟫','⬛','🔴','🟠','🟡','🟢','🔵','🟣','🟤','⚫'],cards:['A♠','K♠','Q♠','J♠','A♥','K♥','Q♥','J♥','A♦','K♦','Q♦','J♦','A♣','K♣','Q♣','J♣'],sports:['⚽','🏀','🎾','🏈','⚾','🏐','🏒','🎱','🏸','🥊','🏹','🎯','🤿','🤸','🤺','🏄','🎿','🚴','🏊','⛳']};
-const BL_CARDS_COLORS={'♠':'#1a1a1a','♣':'#1a1a1a','♥':'#E53935','♦':'#E53935'};
+function blCardColor(icon){
+  return (icon.includes('♥')||icon.includes('♦')) ? '#E53935' : '#1a1a1a';
+}
+function blCardHtml(icon, size){
+  const s=size||'normal';
+  const fs=s==='big'?'18px':'13px';
+  const suit=icon.slice(-1);
+  const val=icon.slice(0,-1);
+  const col=blCardColor(icon);
+  return `<span class="fi" style="display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;gap:1px">
+    <span style="font-size:${fs};font-weight:900;color:${col};font-family:serif">${val}</span>
+    <span style="font-size:${fs};color:${col};font-family:serif">${suit}</span>
+  </span>`;
+}
 const BL_SPORTS_WORDS={'⚽':'SOCCER','🏀':'BASKETBALL','🎾':'TENNIS','🏈':'FOOTBALL','⚾':'BASEBALL','🏐':'VOLLEYBALL','🏒':'HOCKEY','🎱':'BILLIARDS','🏸':'BADMINTON','🥊':'BOXING','🏹':'ARCHERY','🎯':'DARTS','🤿':'DIVING','🤸':'GYMNASTICS','🤺':'FENCING','🏄':'SURFING','🎿':'SKIING','🚴':'CYCLING','🏊':'SWIMMING','⛳':'GOLF'};
 const BL_THEMES=[{id:'nature',n:'Nature',ic:'🌿',d:'Trees, water, flowers & mountains',pv:['🌊','🌲','🌺','🏔']},{id:'animals',n:'Animals',ic:'🐾',d:'Pure animal icons',pv:['🐶','🦊','🦁','🐬']},{id:'food',n:'Food',ic:'🍕',d:'Delicious and easy to mix up',pv:['🍕','🌮','🍩','🧁']},{id:'space',n:'Space',ic:'🚀',d:'Cosmic, visually striking',pv:['🌙','🪐','🚀','⭐']},{id:'colors',n:'Colors',ic:'🎨',d:'Color squares — the hardest theme',pvc:['🟥','🟦','🟨','🟩']},{id:'sports',n:'Sports',ic:'🏆',d:'Match the sport name to its emoji',pv:['⚽','🏀','🎾','🏈'],isSports:true},{id:'cards',n:'Cards',ic:'🃏',d:'Playing card suits & values',pvk:['A♠','K♥','Q♦','J♣'],isCards:true}];
 let blTheme='nature',blRows=1,blCols=4,blSpeed=2400,blDiffName='1×4 Easiest',blSpeedName='Slow'; // defaults
@@ -1754,7 +1783,7 @@ function blRenderGrid(){
       if(blRecalled[i]!==undefined){
         const rv=blRecalled[i];
         let rcHtml;
-        if(blTheme==='cards'){const suit=rv.slice(-1);const val=rv.slice(0,-1);const col=BL_CARDS_COLORS[suit]||'#111';rcHtml=`<span class="fi"><div style="text-align:center;line-height:1.1"><div style="font-size:14px;font-weight:800;color:${col}">${val}</div><div style="font-size:16px;color:${col}">${suit}</div></div></span>`}
+        if(blTheme==='cards'){rcHtml=blCardHtml(rv,'big')}
         else if(blTheme==='sports'){const word=BL_SPORTS_WORDS[rv]||rv;rcHtml=`<span class="fi" style="font-size:10px;font-weight:700;letter-spacing:.02em;text-align:center;padding:2px;line-height:1.2;color:var(--tx0)">${word}</span>`}
         else{rcHtml=`<span class="fi">${rv}</span>`}
         cell.innerHTML=rcHtml;
@@ -1762,13 +1791,23 @@ function blRenderGrid(){
       else{cell.innerHTML=`<span class="fq">?</span>`;cell.onclick=()=>blSelectCell(i)}
     }else{
       if(blTheme==='sports'){const word=BL_SPORTS_WORDS[icon]||icon;cell.innerHTML=`<span class="fi" style="font-size:10px;font-weight:700;letter-spacing:.02em;text-align:center;padding:2px;line-height:1.2;color:var(--tx0)">${word}</span>`}
-      else if(blTheme==='cards'){const suit=icon.slice(-1);const val=icon.slice(0,-1);const col=BL_CARDS_COLORS[suit]||'#111';cell.innerHTML=`<span class="fi"><div style="text-align:center;line-height:1.1"><div style="font-size:14px;font-weight:800;color:${col}">${val}</div><div style="font-size:16px;color:${col}">${suit}</div></div></span>`}
+      else if(blTheme==='cards'){cell.innerHTML=blCardHtml(icon,'big')}
       else{cell.innerHTML=`<span class="fi">${icon}</span>`}
     }
     g.appendChild(cell);
   });
 }
-function blBuildPicker(){const p=document.getElementById('bl-picker');p.innerHTML='';[...new Set(blGrid)].sort(()=>Math.random()-.5).forEach(icon=>{const b=document.createElement('button');b.className='pk';b.dataset.icon=icon;b.textContent=icon;b.onclick=()=>blPickIcon(icon,b);p.appendChild(b)})}
+function blBuildPicker(){
+  const p=document.getElementById('bl-picker');p.innerHTML='';
+  [...new Set(blGrid)].sort(()=>Math.random()-.5).forEach(icon=>{
+    const b=document.createElement('button');b.className='pk';b.dataset.icon=icon;
+    if(blTheme==='cards'){b.innerHTML=blCardHtml(icon)}
+    else if(blTheme==='sports'){b.innerHTML=`<span style="font-size:10px;font-weight:700;color:var(--tx0)">${BL_SPORTS_WORDS[icon]||icon}</span>`}
+    else{b.textContent=icon}
+    b.onclick=()=>blPickIcon(icon,b);
+    p.appendChild(b);
+  });
+}
 function blUpdatePickerStrikes(){const cI=blHidden.filter(i=>blRecalled[i]===blGrid[i]).map(i=>blGrid[i]);document.querySelectorAll('#bl-picker .pk').forEach(btn=>{btn.classList.toggle('used',cI.filter(c=>c===btn.dataset.icon).length>=blGrid.filter(g=>g===btn.dataset.icon).length)})}
 function blSchedule(){const rem=blGrid.length-blHidden.length;if(rem===0){blBeginRecall();return}blFadeTimer=setTimeout(()=>{const av=blGrid.map((_,i)=>i).filter(i=>!blHidden.includes(i));blHidden.push(av[Math.floor(Math.random()*av.length)]);blUpdateStats();blRenderGrid();blSchedule()},blSpeed)}
 function blUpdateStats(){document.getElementById('bl-hid').textContent=blHidden.length;document.getElementById('bl-vis').textContent=blGrid.length-blHidden.length;document.getElementById('bl-pbar').style.width=Math.round(((blGrid.length-blHidden.length)/blGrid.length)*100)+'%'}

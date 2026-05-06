@@ -1390,7 +1390,7 @@ function mcFlip(i,el){
 
 // ── TIPPA SOLO ────────────────────────────────────────────────────────────────
 const TP_SOLO_KEY='tp_solo';
-let tpSoloCount=3, tpSoloTime=10, tpSoloHint='none', tpSoloRecallSecs=15*60; // default matches first button
+let tpSoloCount=3, tpSoloTime=10, tpSoloHint='none', tpSoloDiff='easy', tpSoloRecallSecs=5*60; // defaults match first buttons
 let tpSoloWords=[], tpSoloSpeedScore=0, tpSoloMemStart=0, tpSoloMI=null;
 let tpSoloRetriesLeft=0, tpSoloWordState=[], tpSoloRetriesUsed=0;
 
@@ -1412,6 +1412,7 @@ function tpSoloCheck(){
 }
 
 function tpSoloStart(){
+  console.log('tpSoloStart called, tpSoloDiff=',tpSoloDiff,'tpSoloHint=',tpSoloHint,'RWORDS keys=',Object.keys(RWORDS));
   // Pick random words
   const usedWords=tpGetUsedWords();
   const poolKey=(tpSoloHint==='none'?'none':tpSoloHint)+'_'+tpSoloDiff;
@@ -1669,6 +1670,250 @@ const RWORDS={
   things_easy:['Compass','Lantern','Canteen','Hammock','Locket','Trinket','Goblet','Anchor','Pulley','Prism','Quiver','Vial','Basket','Bottle','Bucket','Button','Candle','Crayon','Feather','Kettle'],
   things_hard:['Satchel','Sundial','Sextant','Bellows','Mortar','Flagon','Chalice','Brazier','Awning','Spyglass','Cauldron','Parchment','Hourglass','Casket','Clasp','Talisman','Scabbard','Astrolabe','Thurible','Vambrace']
 };
+
+function tpSoloSetCount(n,btn){tpSoloCount=n;dimOthers('tp-solo-count',btn)}
+function tpSoloSetTime(t,btn){tpSoloTime=t;dimOthers('tp-solo-times',btn)}
+function tpSoloSetHint(h,btn){tpSoloHint=h;dimOthers('tp-solo-hints',btn)}
+
+function tpSoloSetRecall(secs,btn){tpSoloRecallSecs=secs;dimOthers('tp-solo-recall-times',btn)}
+
+// Check if there's an active solo challenge in localStorage
+function tpSoloCheck(){
+  const saved=localStorage.getItem(TP_SOLO_KEY);
+  if(saved){
+    // Active challenge exists — go straight to locked/recall screen
+    tpSoloLoadLocked();
+  } else {
+    goScr('tp-solo');
+  }
+}
+
+function tpSoloStart(){
+  console.log('tpSoloStart called, tpSoloDiff=',tpSoloDiff,'tpSoloHint=',tpSoloHint,'RWORDS keys=',Object.keys(RWORDS));
+  // Pick random words
+  const usedWords=tpGetUsedWords();
+  const poolKey=(tpSoloHint==='none'?'none':tpSoloHint)+'_'+tpSoloDiff;
+  const pool=RWORDS[poolKey]||RWORDS['none_easy'];
+  const available=pool.filter(w=>!usedWords[w.toLowerCase()]);
+  const source=available.length>=tpSoloCount?available:pool;
+  const shuffled=[...source].sort(()=>Math.random()-.5);
+  tpSoloWords=shuffled.slice(0,tpSoloCount).map(w=>w.toLowerCase());
+  tpMarkUsed(tpSoloWords);
+  // Show memorize screen
+  const mw=document.getElementById('tp-solo-words');
+  mw.innerHTML='';
+  tpSoloWords.forEach(w=>{
+    const s=document.createElement('span');s.className='mw';s.textContent=w;mw.appendChild(s);
+  });
+  const hr=document.getElementById('tp-solo-hint-row');
+  if(tpSoloHint!=='none'){hr.style.display='block';hr.innerHTML=`<span class="hp">Hint: ${tpSoloHint}</span>`}
+  else hr.style.display='none';
+  goScr('tp-solo-mem');
+  tpSoloRunTimer();
+}
+
+function tpSoloRunTimer(){
+  clearInterval(tpSoloMI);
+  tpSoloMemStart=Date.now();
+  const arc=document.getElementById('tp-solo-arc');
+  const txt=document.getElementById('tp-solo-tmr');
+  const circ=188;
+  function tick(){
+    const elapsed=(Date.now()-tpSoloMemStart)/1000;
+    const rem=Math.max(0,tpSoloTime-elapsed);
+    txt.textContent=Math.ceil(rem);
+    arc.style.strokeDashoffset=circ-(circ*(rem/tpSoloTime));
+    if(rem<=0){clearInterval(tpSoloMI);tpSoloDone()}
+  }
+  tick();tpSoloMI=setInterval(tick,100);
+}
+
+function tpSoloDone(){
+  clearInterval(tpSoloMI);
+  const used=(Date.now()-tpSoloMemStart)/1000;
+  tpSoloSpeedScore=Math.max(0,Math.round((1-(Math.min(used,tpSoloTime)/tpSoloTime))*100));
+  // Save to localStorage with timestamp
+  const data={
+    words:tpSoloWords,
+    hint:tpSoloHint,
+    speedScore:tpSoloSpeedScore,
+    lockedAt:Date.now(),
+    unlockAt:Date.now()+(tpSoloRecallSecs*1000),
+    retries:tpSoloWords.length,
+    completed:false
+  };
+  localStorage.setItem(TP_SOLO_KEY,JSON.stringify(data));
+  tpSoloLoadLocked();
+}
+
+function tpSoloLoadLocked(){
+  const saved=localStorage.getItem(TP_SOLO_KEY);
+  if(!saved){goScr('tp-home');return}
+  const data=JSON.parse(saved);
+  tpSoloWords=data.words;
+  tpSoloSpeedScore=data.speedScore;
+  tpSoloRetriesLeft=data.retries;
+  tpSoloHint=data.hint||'none';
+
+  document.getElementById('tp-solo-locked-count').textContent=data.words.length+' word'+(data.words.length>1?'s':'');
+  document.getElementById('tp-solo-retries-disp').textContent=data.retries+' retr'+(data.retries===1?'y':'ies');
+  document.getElementById('tp-solo-locked-hint').textContent=data.hint==='none'?'None':data.hint;
+  // Show recall window
+  const recallMs=data.unlockAt-data.lockedAt;
+  const recallMins=Math.round(recallMs/60000);
+  let recallLabel=recallMins<60?recallMins+'min':Math.round(recallMins/60)+'hr';
+  const existingRow=document.getElementById('tp-recall-window-row');
+  if(!existingRow){
+    const row=document.createElement('div');row.id='tp-recall-window-row';
+    row.className='row';row.innerHTML=`<span style="font-size:12px;color:var(--tx1);flex:1">Recall window</span><span style="font-size:12px;font-weight:600">${recallLabel}</span>`;
+    document.getElementById('tp-solo-locked-hint').parentNode.appendChild(row);
+  }
+  goScr('tp-solo-locked');
+  tpSoloTickCountdown(data);
+}
+
+
+function tpSoloTryRecall(){
+  const saved=localStorage.getItem(TP_SOLO_KEY);
+  if(!saved){goScr('tp-home');return}
+  const data=JSON.parse(saved);
+  if(Date.now()<data.unlockAt){
+    alert('Not yet! Come back when the countdown hits zero.');return;
+  }
+  tpSoloWords=data.words;
+  tpSoloSpeedScore=data.speedScore;
+  tpSoloRetriesLeft=data.retries;
+  tpSoloRetriesUsed=0;
+  // init word state: each word starts as 'pending'
+  tpSoloWordState=data.words.map(w=>({word:w,status:'pending',answer:'',attempts:0}));
+  tpSoloShowRecall();
+}
+
+function tpSoloShowRecall(){
+  // Show hint
+  const hr=document.getElementById('tp-solo-hint-rec');
+  if(tpSoloHint!=='none'){hr.style.display='block';hr.innerHTML=`<span class="hp">Hint: ${tpSoloHint}</span>`}
+  else hr.style.display='none';
+
+  // Build word input rows
+  const container=document.getElementById('tp-solo-word-rows');
+  container.innerHTML='';
+  tpSoloWordState.forEach((ws,i)=>{
+    const row=document.createElement('div');
+    row.style.cssText='padding:8px 0;border-bottom:1px solid var(--bd)';
+    if(ws.status==='correct'){
+      row.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:13px;font-weight:600;color:var(--ok-tx)">✓ ${ws.word}</span><span class="ok-tag">correct</span></div>`;
+    } else if(ws.status==='failed'){
+      row.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:13px;font-weight:600;color:var(--err-tx)">✗ ${ws.word}</span><span class="no-tag">missed</span></div>`;
+    } else {
+      const label=ws.attempts>0?`<span style="font-size:10px;color:var(--warn-tx)">Retry</span>`:'';
+      row.innerHTML=`<div style="font-size:11px;color:var(--tx2);margin-bottom:4px">Word ${i+1} ${label}</div><input class="wi" id="ts-inp-${i}" style="margin:0" placeholder="Type the word..." value="${ws.answer}">`;
+    }
+    container.appendChild(row);
+  });
+
+  // Update retries badge
+  document.getElementById('tp-solo-retries-left').textContent=`${tpSoloRetriesLeft} retr${tpSoloRetriesLeft===1?'y':'ies'} left`;
+  goScr('tp-solo-recall');
+}
+
+function tpSoloSubmit(){
+  const saved=localStorage.getItem(TP_SOLO_KEY);
+  const data=saved?JSON.parse(saved):{};
+  let allDone=true;
+  let anyWrongWithRetries=false;
+
+  tpSoloWordState.forEach((ws,i)=>{
+    if(ws.status!=='pending') return;
+    const inp=document.getElementById(`ts-inp-${i}`);
+    const ans=(inp?inp.value.trim().toLowerCase():'');
+    ws.answer=ans;
+    ws.attempts++;
+    if(ans===ws.word){
+      ws.status='correct';
+    } else {
+      // wrong — use a retry if available
+      if(tpSoloRetriesLeft>0){
+        tpSoloRetriesLeft--;
+        tpSoloRetriesUsed++;
+        anyWrongWithRetries=true;
+        ws.status='pending'; // can try again
+      } else {
+        ws.status='failed';
+      }
+    }
+    if(ws.status==='pending') allDone=false;
+  });
+
+  if(!allDone&&anyWrongWithRetries){
+    // Still words to retry — refresh the recall screen
+    tpSoloShowRecall();
+    return;
+  }
+
+  // All done — calculate score
+  const correct=tpSoloWordState.filter(ws=>ws.status==='correct').length;
+  const total=tpSoloWordState.length;
+  const all=correct===total;
+
+  // Wait bonus: check actual time waited
+  const waitedMs=Date.now()-(data.lockedAt||Date.now());
+  const waitedHrs=waitedMs/3600000;
+  const waitBonus=waitedHrs>26?Math.min(25,Math.round(((waitedHrs-26)/22)*25)):0;
+
+  // Score: 10pts per correct word base, + speed bonus (0-50pts), + wait bonus
+  const retryPenalty=tpSoloRetriesUsed*5;
+  const wordBase=correct*10; // guaranteed 10pts per correct word
+  const speedBonus=Math.round((tpSoloSpeedScore/100)*50*correct); // 0-50pts based on speed
+  const base=wordBase+speedBonus+(all?25:0); // +25 all-correct bonus
+  const finalScore=Math.max(correct>0?correct*5:0, base+waitBonus-retryPenalty);
+
+  // Show results
+  document.getElementById('tp-solo-tot').textContent=finalScore;
+  document.getElementById('tp-solo-rc').textContent=correct+'/'+total;
+  document.getElementById('tp-solo-rs').textContent=Math.round((tpSoloSpeedScore/100)*50*correct)+'pts';
+  document.getElementById('tp-solo-rr').textContent=tpSoloRetriesUsed;
+  const bonusEl=document.getElementById('tp-solo-bonuses');
+  if(bonusEl){
+    const parts=[];
+    if(all) parts.push('🎯 All correct +25pts');
+    if(waitBonus>0) parts.push(`⏳ Wait bonus +${waitBonus}pts`);
+    if(retryPenalty>0) parts.push(`↩️ Retry penalty -${retryPenalty}pts`);
+    bonusEl.textContent=parts.join(' · ');
+  }
+
+  const rw=document.getElementById('tp-solo-res-words');rw.innerHTML='';
+  tpSoloWordState.forEach(ws=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd)';
+    row.innerHTML=`<span style="font-size:13px;font-weight:600">${ws.word}</span><span class="${ws.status==='correct'?'ok-tag':'no-tag'}">${ws.status==='correct'?'correct':'missed'}</span>`;
+    rw.appendChild(row);
+  });
+
+  // Clear localStorage
+  localStorage.removeItem(TP_SOLO_KEY);
+  SS['tippa-solo']={score:finalScore,correct:correct+'/'+total};
+  recordTippa(finalScore, correct+'/'+total);
+  goScr('tp-solo-res');
+}
+
+
+function tpSoloAbandon(){
+  if(confirm('Abandon this challenge? Your progress will be lost.')){
+    if(tpCountdownInterval){clearInterval(tpCountdownInterval);tpCountdownInterval=null;}
+    localStorage.removeItem(TP_SOLO_KEY);
+    goScr('tp-home');
+    tpCheckPendingOnLoad();
+  }
+}
+function tpSoloReset(){
+  localStorage.removeItem(TP_SOLO_KEY);
+  goScr('tp-solo');
+}
+
+
+// ── TIPPA DATA ────────────────────────────────────────────────────────────────
+
 
 const TP_USED_KEY='tp_used_words';
 function tpGetUsedWords(){
@@ -1963,6 +2208,44 @@ function wsStartSolo(){
   wsStartCountdown();
 }
 function wsCalc(rowsId,scoreId,word){let total=0;word.split('').forEach((l,i)=>{const inp=document.getElementById(`${rowsId}-${i}`);const sc=document.getElementById(`${rowsId}-sc-${i}`);if(!inp)return;const v=inp.value.trim();const valid=v.length>0&&v[0].toUpperCase()===l;inp.className='li'+(v.length>0?(valid?' ok':' err'):'');const pts=valid?v.length:0;total+=pts;if(sc)sc.textContent=valid?`${pts} pts`:'must start with '+l});const el=document.getElementById(scoreId);if(el)el.textContent=total;return total}
+
+function wsRenderRows(dispId, timerId, rowsId, liveId, word, mode){
+  // Show the word
+  const disp = document.getElementById(dispId);
+  if(disp){
+    disp.innerHTML = word.split('').map((l,i) =>
+      `<span style="display:inline-block;min-width:22px;text-align:center;font-weight:900;font-size:22px;letter-spacing:2px;color:var(--purple-tx)">${l}</span>`
+    ).join('');
+  }
+  // Build one input row per letter
+  const rows = document.getElementById(rowsId);
+  if(rows){
+    rows.innerHTML = word.split('').map((letter,i) => `
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="width:22px;text-align:center;font-weight:900;font-size:16px;color:var(--purple-tx);flex-shrink:0">${letter}</span>
+        <input id="${rowsId}-${i}" type="text" placeholder="starts with ${letter}..."
+          style="flex:1;padding:7px 10px;border-radius:8px;border:1.5px solid var(--bd2);background:var(--bg1);font-size:13px;color:var(--tx0);font-family:inherit"
+          oninput="wsUpdateLive('${rowsId}','${liveId}','${word}')"
+          autocomplete="off" autocorrect="off" spellcheck="false"/>
+      </div>`
+    ).join('');
+    // Focus first input
+    const first = document.getElementById(rowsId+'-0');
+    if(first) setTimeout(()=>first.focus(), 100);
+  }
+}
+
+function wsUpdateLive(rowsId, liveId, word){
+  const letters = word.split('');
+  let filled = 0;
+  letters.forEach((_,i) => {
+    const v = (document.getElementById(`${rowsId}-${i}`)?.value||'').trim();
+    if(v) filled++;
+  });
+  const pct = letters.length ? filled/letters.length : 0;
+  document.getElementById(liveId).textContent = Math.round(pct * word.length * 10);
+}
+
 function wsGetWords(rowsId,word){return word.split('').map((_,i)=>{const inp=document.getElementById(`${rowsId}-${i}`);return inp?inp.value.trim().toLowerCase():''})}
 
 let wsCountdownInterval=null;

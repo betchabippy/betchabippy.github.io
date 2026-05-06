@@ -315,11 +315,11 @@ button:active{transform:scale(.98)}
   </div>
   <div class="card" style="cursor:pointer;margin-bottom:8px" onclick="tpSoloCheck()">
     <div class="st">Solo play</div>
-    <p class="hdesc">Get up to 5 random words to memorize. Come back in 24 hrs to recall them. You get one retry per word if you miss.</p>
+    <p class="hdesc">Get up to 5 random words to memorize. Pick your recall time. You get one retry per word if you miss.</p>
     <button style="width:100%;font-size:12px">Play solo</button>
   </div>
   <div class="g2">
-    <div class="card" style="cursor:pointer" onclick="goScr('tp-create')"><div class="st">Send a challenge</div><p class="hdesc">Pick 1–5 words. Receiver memorizes then recalls 24 hrs later.</p><button style="width:100%;font-size:12px">Create</button></div>
+    <div class="card" style="cursor:pointer" onclick="goScr('tp-create')"><div class="st">Send a challenge</div><p class="hdesc">Receiver memorizes then recalls after the time set by the challenger.</p><button style="width:100%;font-size:12px">Create</button></div>
     <div class="card" style="cursor:pointer" onclick="goScr('tp-join')"><div class="st">Join a challenge</div><p class="hdesc">Got a TIPPA code? Enter it to start memorizing.</p><button style="width:100%;font-size:12px">Join</button></div>
   </div>
   <div class="card"><div class="st">How Tippa works</div>
@@ -464,6 +464,18 @@ button:active{transform:scale(.98)}
       <button class="db dim" onclick="tpSetH('animals',this)">Animals</button>
       <button class="db dim" onclick="tpSetH('places',this)">Places</button>
       <button class="db dim" onclick="tpSetH('things',this)">Things</button>
+    </div>
+    <div class="st" style="margin-top:8px">Recall window for receiver</div>
+    <div class="dr" id="tp-recall-window" style="flex-wrap:wrap">
+      <button class="db on" onclick="tpSetRecallWindow(15*60,this)" style="flex:none;padding:6px 8px">15 min</button>
+      <button class="db dim" onclick="tpSetRecallWindow(30*60,this)" style="flex:none;padding:6px 8px">30 min</button>
+      <button class="db dim" onclick="tpSetRecallWindow(45*60,this)" style="flex:none;padding:6px 8px">45 min</button>
+      <button class="db dim" onclick="tpSetRecallWindow(1*60*60,this)" style="flex:none;padding:6px 8px">1 hr</button>
+      <button class="db dim" onclick="tpSetRecallWindow(2*60*60,this)" style="flex:none;padding:6px 8px">2 hrs</button>
+      <button class="db dim" onclick="tpSetRecallWindow(4*60*60,this)" style="flex:none;padding:6px 8px">4 hrs</button>
+      <button class="db dim" onclick="tpSetRecallWindow(6*60*60,this)" style="flex:none;padding:6px 8px">6 hrs</button>
+      <button class="db dim" onclick="tpSetRecallWindow(8*60*60,this)" style="flex:none;padding:6px 8px">8 hrs</button>
+      <button class="db dim" onclick="tpSetRecallWindow(24*60*60,this)" style="flex:none;padding:6px 8px">24 hrs</button>
     </div>
   </div>
   <button class="btn-p" onclick="tpCreate()" style="width:100%;padding:10px;font-size:14px">Generate code</button>
@@ -1604,18 +1616,19 @@ function getRWord(hint){
   const pool=RWORDS[hint]||RWORDS.none;
   return pool[Math.floor(Math.random()*pool.length)];
 }
-let tpWords=[],tpTime=10,tpHint='none',tpCode='',tpSpeedScore=0,tpMemStart=0,tpMI=null;
+let tpWords=[],tpTime=10,tpHint='none',tpCode='',tpSpeedScore=0,tpMemStart=0,tpMI=null,tpRecallWindow=15*60;
 function tpAdd(){const i=document.getElementById('tp-wi');const w=i.value.trim().toLowerCase();if(!w||tpWords.length>=5||tpWords.includes(w))return;tpWords.push(w);i.value='';tpRenderWords()}
 function tpRand(){if(tpWords.length>=5)return;const pool=(RWORDS[tpHint]||RWORDS.none);const av=pool.filter(w=>!tpWords.includes(w.toLowerCase()));const word=(av.length?av:pool)[Math.floor(Math.random()*(av.length||pool.length))];tpWords.push(word.toLowerCase());tpRenderWords()}
 function tpRenderWords(){const d=document.getElementById('tp-wdisp');d.innerHTML='';tpWords.forEach((w,i)=>{const s=document.createElement('span');s.className='wp';s.innerHTML=`${w}<span onclick="tpWords.splice(${i},1);tpRenderWords()" style="cursor:pointer;color:var(--tx2);font-size:13px;margin-left:2px">×</span>`;d.appendChild(s)})}
 function tpSetT(t,btn){tpTime=t;dimOthers('tp-times',btn)}
 function tpSetH(h,btn){tpHint=h;dimOthers('tp-hints',btn)}
+function tpSetRecallWindow(secs,btn){tpRecallWindow=secs;dimOthers('tp-recall-window',btn)}
 async function tpCreate(){
   if(!tpWords.length){alert('Add at least one word first.');return}
   tpCode=gc('TIPPA');
   const btn=document.querySelector('#s-tp-create .btn-p');if(btn){btn.textContent='Saving...';btn.disabled=true}
   try{
-    await sbInsert('tippa_challenges',{code:tpCode,words:tpWords,hint:tpHint,memo_time:tpTime});
+    await sbInsert('tippa_challenges',{code:tpCode,words:tpWords,hint:tpHint,memo_time:tpTime,recall_window:tpRecallWindow});
   }catch(e){
     if(btn){btn.textContent='Generate code';btn.disabled=false}
     alert('Could not save challenge — check your connection and try again.');return;
@@ -1624,6 +1637,12 @@ async function tpCreate(){
   document.getElementById('tp-code').textContent=tpCode;
   document.getElementById('tp-sw').textContent=tpWords.length+' word'+(tpWords.length>1?'s':'');
   document.getElementById('tp-st').textContent=tpTime+'s';
+  const rwMins=Math.round(tpRecallWindow/60);
+  const rwLabel=rwMins<60?rwMins+' min':Math.round(rwMins/60)+' hr'+(rwMins>=120?'s':'');
+  // update or add recall window row on code screen
+  let rwRow=document.getElementById('tp-code-rw');
+  if(!rwRow){rwRow=document.createElement('div');rwRow.id='tp-code-rw';rwRow.className='row';rwRow.innerHTML='<span style="font-size:12px;color:var(--tx1);flex:1">Recall window</span><span id="tp-srw" style="font-size:12px;font-weight:600">—</span>';document.getElementById('tp-st').closest('.card').appendChild(rwRow);}
+  document.getElementById('tp-srw').textContent=rwLabel;
   document.getElementById('tp-sh').textContent=tpHint==='none'?'None':tpHint;
   goScr('tp-code');
 }
@@ -1636,7 +1655,7 @@ async function tpJoin(){
     const ch=await sbGet('tippa_challenges',code);
     if(!ch){alert('Challenge not found. Double-check the code.');if(btn){btn.textContent='Join';btn.disabled=false}return}
     if(ch.completed){alert('This challenge has already been completed!');if(btn){btn.textContent='Join';btn.disabled=false}return}
-    tpWords=ch.words;tpTime=ch.memo_time;tpHint=ch.hint;tpCode=code;
+    tpWords=ch.words;tpTime=ch.memo_time;tpHint=ch.hint;tpCode=code;tpRecallWindow=ch.recall_window||24*60*60;
     if(btn){btn.textContent='Join';btn.disabled=false}
     tpSimReceiver();
   }catch(e){
@@ -1663,7 +1682,7 @@ function tpDone(){
       hint: tpHint,
       speedScore: s,
       lockedAt: Date.now(),
-      unlockAt: Date.now() + (24*60*60*1000)
+      unlockAt: Date.now() + (tpRecallWindow*1000)
     }));
   }
   goScr('tp-wait');

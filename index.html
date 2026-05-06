@@ -1217,19 +1217,19 @@ function dimOthers(container,chosen){document.querySelectorAll('#'+container+' .
 function dimThemes(grid,chosenId){document.querySelectorAll('#'+grid+' .tc').forEach(tc=>{tc.classList.remove('sel','dim');tc.classList.add(tc.dataset.id===chosenId?'sel':'dim')})}
 function gc(pfx){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<6;i++)s+=c[Math.floor(Math.random()*c.length)];return pfx+'-'+s}
 
+const GAME_LINK='\n\n▶ Play at https://betchabippy.com';
 function shareScore(game){
-  const LINK='\n\n▶ Play at https://betchabippy.com';
   const d=SS[game]||{};let txt='';
-  if(game==='gotcha')txt=`🧠 ${APP}\n🃏 Gotcha — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ⏱ ${d.time||'—'} · 🎯 ${d.acc||'—'}\n\nCan you beat it?`+LINK;
+  if(game==='gotcha')txt=`🧠 ${APP}\n🃏 Gotcha — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ⏱ ${d.time||'—'} · 🎯 ${d.acc||'—'}\n\nCan you beat it?`+GAME_LINK;
   else if(game==='tippa-solo')txt=`🧠 ${APP}
 💬 Tippa Solo
 
 🏆 ${d.score||0} pts · ✅ ${d.correct||'—'} recalled
 
-Can you beat it?`+LINK;
-  else if(game==='tippa')txt=`🧠 ${APP}\n💬 Tippa\n\n🏆 ${d.score||0} pts · ✅ ${d.correct||'—'} recalled\n\nCan you beat it?`+LINK;
-  else if(game==='blink')txt=`🧠 ${APP}\n👁 Blinka — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ✅ ${d.acc||'—'}\n\nCan you beat it?`+LINK;
-  else txt=`🧠 ${APP}\n📝 Crony\n\n🏆 ${d.score||0} pts · 📖 ${d.word||'—'}\n\nCan you beat it?`+LINK;
+Can you beat it?`+GAME_LINK;
+  else if(game==='tippa')txt=`🧠 ${APP}\n💬 Tippa\n\n🏆 ${d.score||0} pts · ✅ ${d.correct||'—'} recalled\n\nCan you beat it?`+GAME_LINK;
+  else if(game==='blink')txt=`🧠 ${APP}\n👁 Blinka — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ✅ ${d.acc||'—'}\n\nCan you beat it?`+GAME_LINK;
+  else txt=`🧠 ${APP}\n📝 Crony\n\n🏆 ${d.score||0} pts · 📖 ${d.word||'—'}\n\nCan you beat it?`+GAME_LINK;
   if(navigator.share){navigator.share({text:txt}).catch(()=>{})}else{navigator.clipboard.writeText(txt).then(()=>showToast('Score copied!')).catch(()=>{})}
 }
 
@@ -3578,7 +3578,7 @@ function aiqShareDaily(score, category){
 
 🏆 ${score} pts · ${category}
 
-Can you beat it?`+LINK;
+Can you beat it?`+GAME_LINK;
   if(navigator.share) navigator.share({text:txt}).catch(()=>{});
   else navigator.clipboard.writeText(txt).then(()=>showToast('Score copied!')).catch(()=>{});
 }

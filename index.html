@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="BetchaBippy">
-<meta name="description" content="BetchaBippy® Mind Games — Gotcha, Tippa, Blinka, Wordie">
+<meta name="description" content="BetchaBippy® Mind Games — Gotcha, Tippa, Blinka, Crony">
 <meta name="theme-color" content="#534AB7">
 <link rel="manifest" href="manifest.json">
 <title>BetchaBippy® Mind Games</title>
@@ -202,7 +202,7 @@ button:active{transform:scale(.98)}
 
     <div class="splash-card" onclick="splashGo('tp')">
       <div class="splash-icon" style="background:var(--purple-lt);color:var(--purple-tx);border-color:var(--purple-bd)">💬</div>
-      <div><div class="splash-title">Tippa!</div><div class="splash-desc">Pick up to five words to memorize. In 24 hours, can you recall them? What was that word? It's on the tippa your tongue!</div></div>
+      <div><div class="splash-title">Tippa!</div><div class="splash-desc">Pick up to five words to memorize. Pick a recall time. What was that word? It's on the tippa your tongue!</div></div>
     </div>
 
     <div class="splash-card" onclick="splashGo('bl')">
@@ -212,7 +212,7 @@ button:active{transform:scale(.98)}
 
     <div class="splash-card" onclick="splashGo('ws')">
       <div class="splash-icon" style="background:var(--amber-lt);color:var(--amber-tx);border-color:var(--amber-bd)">📝</div>
-      <div><div class="splash-title">Wordie!</div><div class="splash-desc">The acronym sentence challenge! Fun, wacky, and zany. But not so easy. Get thinkin'!</div></div>
+      <div><div class="splash-title">Crony!</div><div class="splash-desc">The backronym challenge. One word, many possibilities. The wackier the better! Challenge a friend, or go solo.</div></div>
     </div>
 
     <div class="splash-card" onclick="splashGo('or')">
@@ -239,7 +239,7 @@ button:active{transform:scale(.98)}
   <button class="bn on" onclick="goGame('gt')"><span class="bn-ic">🃏</span><span class="bn-lb">Gotcha</span></button>
   <button class="bn" onclick="goGame('tp')"><span class="bn-ic">💬</span><span class="bn-lb">Tippa</span></button>
   <button class="bn" onclick="goGame('bl')"><span class="bn-ic">👁</span><span class="bn-lb">Blinka</span></button>
-  <button class="bn" onclick="goGame('ws')"><span class="bn-ic">📝</span><span class="bn-lb">Wordie</span></button>
+  <button class="bn" onclick="goGame('ws')"><span class="bn-ic">📝</span><span class="bn-lb">Crony</span></button>
   <button class="bn" onclick="goGame('or')"><span class="bn-ic">🔢</span><span class="bn-lb">Orderly</span></button>
   <button class="bn" onclick="goGame('st')"><span class="bn-ic">📊</span><span class="bn-lb">Stats</span></button>
 </nav>
@@ -352,7 +352,9 @@ button:active{transform:scale(.98)}
     </div>
     <div class="st" style="margin-top:8px">Recall window</div>
     <div class="dr" id="tp-solo-recall-times" style="flex-wrap:wrap">
-      <button class="db on" onclick="tpSoloSetRecall(15*60,this)" style="flex:none;padding:6px 8px">15 min</button>
+      <button class="db on" onclick="tpSoloSetRecall(5*60,this)" style="flex:none;padding:6px 8px">5 min</button>
+      <button class="db dim" onclick="tpSoloSetRecall(10*60,this)" style="flex:none;padding:6px 8px">10 min</button>
+      <button class="db dim" onclick="tpSoloSetRecall(15*60,this)" style="flex:none;padding:6px 8px">15 min</button>
       <button class="db dim" onclick="tpSoloSetRecall(30*60,this)" style="flex:none;padding:6px 8px">30 min</button>
       <button class="db dim" onclick="tpSoloSetRecall(45*60,this)" style="flex:none;padding:6px 8px">45 min</button>
       <button class="db dim" onclick="tpSoloSetRecall(1*60*60,this)" style="flex:none;padding:6px 8px">1 hr</button>
@@ -467,7 +469,9 @@ button:active{transform:scale(.98)}
     </div>
     <div class="st" style="margin-top:8px">Recall window for receiver</div>
     <div class="dr" id="tp-recall-window" style="flex-wrap:wrap">
-      <button class="db on" onclick="tpSetRecallWindow(15*60,this)" style="flex:none;padding:6px 8px">15 min</button>
+      <button class="db on" onclick="tpSetRecallWindow(5*60,this)" style="flex:none;padding:6px 8px">5 min</button>
+      <button class="db dim" onclick="tpSetRecallWindow(10*60,this)" style="flex:none;padding:6px 8px">10 min</button>
+      <button class="db dim" onclick="tpSetRecallWindow(15*60,this)" style="flex:none;padding:6px 8px">15 min</button>
       <button class="db dim" onclick="tpSetRecallWindow(30*60,this)" style="flex:none;padding:6px 8px">30 min</button>
       <button class="db dim" onclick="tpSetRecallWindow(45*60,this)" style="flex:none;padding:6px 8px">45 min</button>
       <button class="db dim" onclick="tpSetRecallWindow(1*60*60,this)" style="flex:none;padding:6px 8px">1 hr</button>
@@ -587,16 +591,16 @@ button:active{transform:scale(.98)}
 <div id="s-ws-home" class="scr">
   <div class="ghdr">
     <div class="gic" style="background:var(--amber-lt);color:var(--amber-tx);border-color:var(--amber-bd)">W</div>
-    <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Wordie</p><p style="font-size:12px;color:var(--tx1)">Each letter of the word starts a word in your sentence. Longer words, bigger points. Get Bippy to rate it!</p></div>
+    <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Crony</p><p style="font-size:12px;color:var(--tx1)">Each letter of the word starts a word in your sentence. Longer words, bigger points. Get Bippy to rate it!</p></div>
   </div>
   <div class="g2">
     <div class="card" style="cursor:pointer" onclick="goScr('ws-solo')"><div class="st">Solo play</div><p class="hdesc">Get a random word, build your best acronym. Bippy judges coherence.</p><button style="width:100%;font-size:12px">Play solo</button></div>
     <div class="card" style="cursor:pointer" onclick="goScr('ws-send')"><div class="st">Send a challenge</div><p class="hdesc">Pick a word, write your secret sentence. Bonus for matching.</p><button style="width:100%;font-size:12px">Send challenge</button></div>
   </div>
-  <div class="card" style="cursor:pointer;margin-bottom:10px" onclick="goScr('ws-join')"><div class="st">Join a challenge</div><p class="hdesc">Got a WRDIE code from a friend? Enter it here to play their challenge.</p><button style="width:100%;font-size:12px">Enter code</button></div>
-  <div class="card"><div class="st">How Wordie works</div>
-    <div class="row"><span class="badge ba">1</span><span style="font-size:12px;color:var(--tx1);flex:1">Each letter starts a word in your sentence</span></div>
-    <div class="row"><span class="badge ba">2</span><span style="font-size:12px;color:var(--tx1);flex:1">Visibility modes change difficulty &amp; multiplier</span><button class="tip-btn" onclick="showTip('Visibility modes','Always visible ×1 — the word stays on screen the whole time. Easy but lowest score multiplier.&lt;br&gt;&lt;br&gt;Letter by letter ×1.5 — letters reveal one at a time so you build the sentence as you go.&lt;br&gt;&lt;br&gt;Hidden after 5s ×2.5 — you get 5 seconds to memorize the word, then it disappears. Hardest mode, highest multiplier.')">?</button></div>
+  <div class="card" style="cursor:pointer;margin-bottom:10px" onclick="goScr('ws-join')"><div class="st">Join a challenge</div><p class="hdesc">Got a CRONY code from a friend? Enter it here to play their challenge.</p><button style="width:100%;font-size:12px">Enter code</button></div>
+  <div class="card"><div class="st">How Crony works</div>
+    <div class="row"><span class="badge ba">1</span><span style="font-size:12px;color:var(--tx1);flex:1">Each letter starts a word — build a backronym sentence</span><button class="tip-btn" onclick="showTip('What is a backronym?','You get a word — say STORM — and each letter must start a word in your sentence. S-T-O-R-M could become: Sometimes Thunder Ominously Roars Mightily. The sillier the better!')">?</button></div>
+    <div class="row"><span class="badge ba">2</span><span style="font-size:12px;color:var(--tx1);flex:1">Race the clock — build your sentence before time runs out</span><button class="tip-btn" onclick="showTip('Timer pressure','Choose 30s, 60s, or 90s. The word is always visible but the clock is ticking. No limit mode lets you take your time for maximum creativity.')">?</button></div>
     <div class="row"><span class="badge ba">3</span><span style="font-size:12px;color:var(--tx1);flex:1">Bippy rates your sentence for coherence</span><button class="tip-btn" onclick="showTip('Bippy scoring','After you submit, Bippy (powered by Claude) rates how coherent and meaningful your sentence is on a 1–3 star scale. ★★★ means it actually makes sense. ★ means... creative. The coherence rating multiplies your base score, so a brilliant sentence beats a random one.')">?</button></div>
     <div class="row"><span class="badge ba">4</span><span style="font-size:12px;color:var(--tx1);flex:1">Slot match +25 · Shared word +15 · Mind Meld ×3</span><button class="tip-btn" onclick="showTip('Two-player bonuses','When playing against a friend, you each write your own sentence for the same word.&lt;br&gt;&lt;br&gt;Slot match (+25): you used the same word in the same letter position.&lt;br&gt;&lt;br&gt;Shared word (+15): same word appeared anywhere in both sentences.&lt;br&gt;&lt;br&gt;Mind Meld (×3): your entire sentences matched — rare and glorious.')">?</button></div>
   </div>
@@ -606,18 +610,20 @@ button:active{transform:scale(.98)}
 <div id="s-ws-solo" class="scr">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Solo play</p><button onclick="goScr('ws-home')" style="font-size:11px;padding:5px 10px">Back</button></div>
   <div class="card">
-    <div class="st">Visibility mode</div>
-    <div class="dr" id="ws-modes">
-      <button class="db on" onclick="wsSetMode('always',this)">Always ×1</button>
-      <button class="db dim" onclick="wsSetMode('reveal',this)">Letter by letter ×1.5</button>
-      <button class="db dim" onclick="wsSetMode('hide',this)">Hidden 5s ×2.5</button>
-    </div>
-    <div class="st" style="margin-top:8px">Word length</div>
+    <div class="st">Word length</div>
     <div class="dr" id="ws-lens">
       <button class="db on" onclick="wsSetLen(4,this)">Short (4–5)</button>
       <button class="db dim" onclick="wsSetLen(6,this)">Medium (6–7)</button>
       <button class="db dim" onclick="wsSetLen(8,this)">Long (8–10)</button>
     </div>
+    <div class="st" style="margin-top:8px">Time limit</div>
+    <div class="dr" id="ws-timer-btns">
+      <button class="db on" onclick="wsSetTimer(30,this)">30s</button>
+      <button class="db dim" onclick="wsSetTimer(60,this)">60s</button>
+      <button class="db dim" onclick="wsSetTimer(90,this)">90s</button>
+      <button class="db dim" onclick="wsSetTimer(0,this)">No limit</button>
+    </div>
+    <p style="font-size:11px;color:var(--tx2);margin-top:4px">Build your backronym sentence before time runs out!</p>
   </div>
   <button onclick="wsStartSolo()" style="width:100%;padding:8px;font-size:13px;margin-bottom:12px">Get a word</button>
   <div id="ws-play" style="display:none">
@@ -625,7 +631,7 @@ button:active{transform:scale(.98)}
     <div class="card"><div class="st">Your word</div><div class="tword" id="ws-word-disp"></div><div id="ws-timer-row" style="text-align:center;font-size:11px;color:var(--tx2);margin-bottom:10px;min-height:14px"></div><div id="ws-letter-rows"></div></div>
     <div class="ctrls"><button onclick="wsStartSolo()">New word</button><button onclick="wsSubmitSolo()" style="flex:2">Submit for Bippy scoring</button></div>
     <div class="ai-box" id="ws-ai" style="display:none"></div>
-    <div id="ws-share" style="display:none"><button class="cb" onclick="shareScore('wordie')">📤 Share my score</button></div>
+    <div id="ws-share" style="display:none"><button class="cb" onclick="shareScore('crony')">📤 Share my score</button></div>
   </div>
 </div>
 
@@ -638,11 +644,12 @@ button:active{transform:scale(.98)}
       <input id="ws-send-inp" class="wi" style="margin:0;flex:1;font-family:monospace;letter-spacing:.12em;text-transform:uppercase;font-size:16px" placeholder="e.g. PHONE" maxlength="10" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z]/g,'');wsBuildSender()">
       <button onclick="wsRandWord()" style="font-size:12px">Random</button>
     </div>
-    <div class="st" style="margin-top:8px">Receiver visibility</div>
-    <div class="dr" id="ws-send-modes">
-      <button class="db on" onclick="wsSetSendMode('always',this)">Always ×1</button>
-      <button class="db dim" onclick="wsSetSendMode('reveal',this)">Letter by letter ×1.5</button>
-      <button class="db dim" onclick="wsSetSendMode('hide',this)">Hidden 5s ×2.5</button>
+    <div class="st" style="margin-top:8px">Time limit for receiver</div>
+    <div class="dr" id="ws-send-timer-btns">
+      <button class="db on" onclick="wsSetSendTimer(30,this)">30s</button>
+      <button class="db dim" onclick="wsSetSendTimer(60,this)">60s</button>
+      <button class="db dim" onclick="wsSetSendTimer(90,this)">90s</button>
+      <button class="db dim" onclick="wsSetSendTimer(0,this)">No limit</button>
     </div>
   </div>
   <div class="card">
@@ -657,14 +664,14 @@ button:active{transform:scale(.98)}
 <!-- WORDSY CODE -->
 <div id="s-ws-code" class="scr">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Share this code</p><button onclick="goScr('ws-home')" style="font-size:11px;padding:5px 10px">Home</button></div>
-  <div class="card"><div class="code-box" id="ws-code">WRDIE-??????</div><p style="font-size:11px;color:var(--tx2);text-align:center;margin:8px 0 10px">Your friend enters this to play.</p><button onclick="wsCopyCode()" style="width:100%;font-size:13px" id="ws-copy-btn">Copy code</button></div>
+  <div class="card"><div class="code-box" id="ws-code">CRONY-??????</div><p style="font-size:11px;color:var(--tx2);text-align:center;margin:8px 0 10px">Your friend enters this to play.</p><button onclick="wsCopyCode()" style="width:100%;font-size:13px" id="ws-copy-btn">Copy code</button></div>
   <div class="card"><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Word</span><span id="ws-cs-word" style="font-size:12px;font-weight:600;font-family:monospace;letter-spacing:.1em">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Mode</span><span id="ws-cs-mode" style="font-size:12px;font-weight:600">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Your score</span><span id="ws-cs-score" style="font-size:12px;font-weight:600;color:var(--amber-tx)">—</span></div></div>
   <button onclick="wsSimReceiver()" style="width:100%;font-size:13px">Preview receiver</button>
 </div>
 
 <!-- WORDSY RECV -->
 <div id="s-ws-recv" class="scr">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Your challenge</p><span id="ws-recv-mode-badge" style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--warn-bg);color:var(--warn-tx)"></span></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Your challenge</p><span id="ws-recv-mode-badge" style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--info-bg);color:var(--info-tx)"></span></div>
   <div class="lsb"><span class="ll">Live base score</span><span class="lv" id="ws-recv-live">0</span></div>
   <div class="card"><div class="tword" id="ws-recv-word"></div><div id="ws-recv-timer" style="text-align:center;font-size:11px;color:var(--tx2);margin-bottom:10px;min-height:14px"></div><div id="ws-recv-rows"></div></div>
   <button class="btn-p" onclick="wsSubmitRecv()" style="width:100%;padding:10px;font-size:14px">Submit my sentence</button>
@@ -672,18 +679,18 @@ button:active{transform:scale(.98)}
 
 <!-- WORDSY RESULT -->
 <div id="s-ws-res" class="scr">
-  <div class="card"><div class="sc-hero"><div class="big" id="ws-res-tot">—</div><div class="lbl">total points</div></div><div class="st">Your sentence</div><div id="ws-res-recv" style="font-size:14px;line-height:2;margin-bottom:10px"></div><div class="st">Sender's secret</div><div id="ws-res-sender" style="font-size:13px;color:var(--tx1);line-height:1.8;margin-bottom:8px"></div><div class="ai-box" id="ws-res-ai">Scoring...</div><button class="cb" onclick="shareScore('wordie-res')">📤 Share my score</button></div>
+  <div class="card"><div class="sc-hero"><div class="big" id="ws-res-tot">—</div><div class="lbl">total points</div></div><div class="st">Your sentence</div><div id="ws-res-recv" style="font-size:14px;line-height:2;margin-bottom:10px"></div><div class="st">Sender's secret</div><div id="ws-res-sender" style="font-size:13px;color:var(--tx1);line-height:1.8;margin-bottom:8px"></div><div class="ai-box" id="ws-res-ai">Scoring...</div><button class="cb" onclick="shareScore('crony-res')">📤 Share my score</button></div>
   <div id="ws-mindmeld" style="display:none;text-align:center;padding:10px;background:var(--ok-bg);border-radius:10px;font-size:13px;color:var(--ok-tx);font-weight:600;margin-bottom:10px">Mind Meld! ×3 bonus!</div>
   <div class="card"><div class="st">Score breakdown</div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Base</span><span id="ws-r-base">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Visibility ×</span><span id="ws-r-mult">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Slot matches</span><span id="ws-r-slot" style="color:var(--ok-tx)">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">AI coherence</span><span id="ws-r-coh" style="color:var(--purple-tx)">—</span></div></div>
   <div class="ctrls"><button onclick="goScr('ws-home')">Home</button><button onclick="goScr('ws-send')" style="flex:2">Send one back</button></div>
 </div>
 
-<!-- hidden helpers for Wordie sender rows -->
+<!-- hidden helpers for Crony sender rows -->
 
 <!-- WORDSY JOIN -->
 <div id="s-ws-join" class="scr">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Join a challenge</p><button onclick="goScr('ws-home')" style="font-size:11px;padding:5px 10px">Back</button></div>
-  <div class="card"><div class="st">Enter your code</div><input class="wi" id="ws-join-inp" placeholder="WRDIE-XXXXXX" style="font-family:monospace;letter-spacing:.1em;text-transform:uppercase;font-size:16px" oninput="this.value=this.value.toUpperCase()"><p style="font-size:11px;color:var(--tx2);margin-top:4px">Ask your friend to share their WRDIE code with you.</p></div>
+  <div class="card"><div class="st">Enter your code</div><input class="wi" id="ws-join-inp" placeholder="CRONY-XXXXXX" style="font-family:monospace;letter-spacing:.1em;text-transform:uppercase;font-size:16px" oninput="this.value=this.value.toUpperCase()"><p style="font-size:11px;color:var(--tx2);margin-top:4px">Ask your friend to share their CRONY code with you.</p></div>
   <button class="btn-p" onclick="wsJoin()" style="width:100%;padding:10px;font-size:14px">Join challenge</button>
 </div>
 
@@ -1222,7 +1229,7 @@ function shareScore(game){
 Can you beat it?`+LINK;
   else if(game==='tippa')txt=`🧠 ${APP}\n💬 Tippa\n\n🏆 ${d.score||0} pts · ✅ ${d.correct||'—'} recalled\n\nCan you beat it?`+LINK;
   else if(game==='blink')txt=`🧠 ${APP}\n👁 Blinka — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ✅ ${d.acc||'—'}\n\nCan you beat it?`+LINK;
-  else txt=`🧠 ${APP}\n📝 Wordie\n\n🏆 ${d.score||0} pts · 📖 ${d.word||'—'}\n\nCan you beat it?`+LINK;
+  else txt=`🧠 ${APP}\n📝 Crony\n\n🏆 ${d.score||0} pts · 📖 ${d.word||'—'}\n\nCan you beat it?`+LINK;
   if(navigator.share){navigator.share({text:txt}).catch(()=>{})}else{navigator.clipboard.writeText(txt).then(()=>showToast('Score copied!')).catch(()=>{})}
 }
 
@@ -1621,7 +1628,7 @@ function getRWord(hint){
   const pool=RWORDS[hint]||RWORDS.none;
   return pool[Math.floor(Math.random()*pool.length)];
 }
-let tpWords=[],tpTime=10,tpHint='none',tpCode='',tpSpeedScore=0,tpMemStart=0,tpMI=null,tpRecallWindow=15*60;
+let tpWords=[],tpTime=10,tpHint='none',tpCode='',tpSpeedScore=0,tpMemStart=0,tpMI=null,tpRecallWindow=5*60;
 function tpAdd(){const i=document.getElementById('tp-wi');const w=i.value.trim().toLowerCase();if(!w||tpWords.length>=5||tpWords.includes(w))return;tpWords.push(w);i.value='';tpRenderWords()}
 function tpRand(){if(tpWords.length>=5)return;const pool=(RWORDS[tpHint]||RWORDS.none);const av=pool.filter(w=>!tpWords.includes(w.toLowerCase()));const word=(av.length?av:pool)[Math.floor(Math.random()*(av.length||pool.length))];tpWords.push(word.toLowerCase());tpRenderWords()}
 function tpRenderWords(){const d=document.getElementById('tp-wdisp');d.innerHTML='';tpWords.forEach((w,i)=>{const s=document.createElement('span');s.className='wp';s.innerHTML=`${w}<span onclick="tpWords.splice(${i},1);tpRenderWords()" style="cursor:pointer;color:var(--tx2);font-size:13px;margin-left:2px">×</span>`;d.appendChild(s)})}
@@ -1856,29 +1863,51 @@ function blPickIcon(icon,btn){
 
 // ── WORDSY DATA ───────────────────────────────────────────────────────────────
 const WSP={4:['FIRE','JUMP','BLUE','FAST','DARK','GOLD','WIND','BONE','GRAY','HOPE','CALM','BOLD','STAR','LAKE'],6:['PLANET','BRIDGE','WINTER','FROZEN','SHADOW','MARBLE','FOREST','DANGER','CASTLE','SILVER','DESERT','MIRROR'],8:['MOUNTAIN','SYMPHONY','UNIVERSE','TWILIGHT','CHAMPION','WANDERER','LABYRINTH','SPECTRUM','CARNIVAL','FLAMINGO']};
-let wsMode='always',wsLen=4,wsSendMode='always',wsCurWord='',wsSenderWord='',wsSenderSent=[],wsChallCode='';
-function wsSetMode(m,btn){wsMode=m;dimOthers('ws-modes',btn)}
+let wsTimerSecs=30,wsLen=4,wsSendTimerSecs=30,wsCurWord='',wsSenderWord='',wsSenderSent=[],wsChallCode='';
+function wsSetTimer(s,btn){wsTimerSecs=s;dimOthers('ws-timer-btns',btn)}
 function wsSetLen(l,btn){wsLen=l;dimOthers('ws-lens',btn)}
-function wsSetSendMode(m,btn){wsSendMode=m;dimOthers('ws-send-modes',btn)}
+function wsSetSendTimer(s,btn){wsSendTimerSecs=s;dimOthers('ws-send-timer-btns',btn)}
 function wsPickWord(len){const pool=WSP[len]||WSP[4];return pool[Math.floor(Math.random()*pool.length)]}
 function wsRandWord(){const all=[...WSP[4],...WSP[6],...WSP[8]];document.getElementById('ws-send-inp').value=all[Math.floor(Math.random()*all.length)];wsBuildSender()}
-function wsStartSolo(){wsCurWord=wsPickWord(wsLen);document.getElementById('ws-play').style.display='block';document.getElementById('ws-ai').style.display='none';document.getElementById('ws-share').style.display='none';const ml={'always':'×1','reveal':'×1.5','hide':'×2.5'};document.getElementById('ws-mult-lbl').textContent=ml[wsMode];document.getElementById('ws-live').textContent='0';wsRenderRows('ws-word-disp','ws-timer-row','ws-letter-rows','ws-live',wsCurWord,wsMode)}
-function wsRenderRows(dispId,timerId,rowsId,scoreId,word,mode){
-  const letters=word.split('');const disp=document.getElementById(dispId);const timer=timerId?document.getElementById(timerId):null;const rows=document.getElementById(rowsId);if(!rows)return;
-  if(disp){
-    if(mode==='always'){disp.textContent=word;if(timer)timer.textContent=''}
-    else if(mode==='reveal'){disp.innerHTML=letters.map((l,i)=>`<span class="rl" id="rl-${rowsId}-${i}">${l}</span>`).join('');if(timer)timer.textContent='Letters revealing...';letters.forEach((_,i)=>setTimeout(()=>{const el=document.getElementById(`rl-${rowsId}-${i}`);if(el){el.classList.add('vis');if(timer&&i===letters.length-1)timer.textContent='All revealed'}},i*650+80))}
-    else{disp.textContent=word;let cnt=5;if(timer)timer.textContent='5s to memorize!';const iv=setInterval(()=>{cnt--;if(cnt<=0){clearInterval(iv);disp.textContent='█'.repeat(word.length);if(timer)timer.textContent='Word hidden'}else if(timer)timer.textContent=cnt+'s remaining'},1000)}
-  }
-  rows.innerHTML='';letters.forEach((l,i)=>{const row=document.createElement('div');row.className='lrow';row.innerHTML=`<div class="lchip">${l}</div><div class="lwrap"><input class="li" id="${rowsId}-${i}" placeholder="Word starting with ${l}..." oninput="wsCalc('${rowsId}','${scoreId}','${word}')"><div class="lsc" id="${rowsId}-sc-${i}">0 pts</div></div>`;rows.appendChild(row)});
+function wsStartSolo(){
+  if(wsCountdownInterval){clearInterval(wsCountdownInterval);wsCountdownInterval=null;}
+  wsCurWord=wsPickWord(wsLen);
+  document.getElementById('ws-play').style.display='block';
+  document.getElementById('ws-ai').style.display='none';
+  document.getElementById('ws-share').style.display='none';
+  document.getElementById('ws-mult-lbl').textContent='';
+  document.getElementById('ws-live').textContent='0';
+  wsRenderRows('ws-word-disp','ws-timer-row','ws-letter-rows','ws-live',wsCurWord,'always');
+  wsStartCountdown();
 }
 function wsCalc(rowsId,scoreId,word){let total=0;word.split('').forEach((l,i)=>{const inp=document.getElementById(`${rowsId}-${i}`);const sc=document.getElementById(`${rowsId}-sc-${i}`);if(!inp)return;const v=inp.value.trim();const valid=v.length>0&&v[0].toUpperCase()===l;inp.className='li'+(v.length>0?(valid?' ok':' err'):'');const pts=valid?v.length:0;total+=pts;if(sc)sc.textContent=valid?`${pts} pts`:'must start with '+l});const el=document.getElementById(scoreId);if(el)el.textContent=total;return total}
 function wsGetWords(rowsId,word){return word.split('').map((_,i)=>{const inp=document.getElementById(`${rowsId}-${i}`);return inp?inp.value.trim().toLowerCase():''})}
+
+let wsCountdownInterval=null;
+function wsStartCountdown(){
+  if(wsCountdownInterval){clearInterval(wsCountdownInterval);wsCountdownInterval=null;}
+  const timerRow=document.getElementById('ws-timer-row');
+  if(!wsTimerSecs){if(timerRow)timerRow.textContent='No time limit';return;}
+  let remaining=wsTimerSecs;
+  function tick(){
+    if(!timerRow) return;
+    timerRow.textContent=remaining>0?`⏱ ${remaining}s remaining`:'⏱ Time's up!';
+    timerRow.style.color=remaining<=10?'var(--err-tx)':'var(--tx2)';
+    if(remaining<=0){
+      clearInterval(wsCountdownInterval);wsCountdownInterval=null;
+      wsSubmitSolo();
+    }
+    remaining--;
+  }
+  tick();
+  wsCountdownInterval=setInterval(tick,1000);
+}
+
 async function wsSubmitSolo(){
-  const words=wsGetWords('ws-letter-rows',wsCurWord);const base=wsCalc('ws-letter-rows','ws-live',wsCurWord);const mults={'always':1,'reveal':1.5,'hide':2.5};const mult=mults[wsMode];const sentence=words.filter(Boolean).join(' ');
+  const words=wsGetWords('ws-letter-rows',wsCurWord);const base=wsCalc('ws-letter-rows','ws-live',wsCurWord);const mult=1; // timer pressure replaces visibility multiplierconst sentence=words.filter(Boolean).join(' ');
   const aiBox=document.getElementById('ws-ai');aiBox.style.display='block';aiBox.textContent='Asking Bippy to rate your sentence...';
-  try{const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:250,messages:[{role:'user',content:`Word: "${wsCurWord}". Acronym sentence: "${sentence}". Rate coherence 1-3 stars. Reply ONLY with JSON: {"rating":2,"comment":"witty remark max 12 words","score":${Math.round(base*mult*2)}}`}]})});const data=await resp.json();const txt=data.content.map(c=>c.text||'').join('');const parsed=JSON.parse(txt.replace(/```json|```/g,'').trim());const stars='★'.repeat(parsed.rating)+'☆'.repeat(3-parsed.rating);aiBox.innerHTML=`<strong>Coherence ${stars}</strong> — ${parsed.comment}<br><br>Final score: <strong>${parsed.score} pts</strong>`;document.getElementById('ws-live').textContent=parsed.score;document.getElementById('ws-share').style.display='block';SS.wordie={score:parsed.score,word:wsCurWord};recordWordie(parsed.score,wsCurWord)}
-  catch(e){const fb=Math.round(base*mult*2);aiBox.textContent=`Score: ${fb} pts (Bippy unavailable)`;document.getElementById('ws-live').textContent=fb;document.getElementById('ws-share').style.display='block';SS.wordie={score:fb,word:wsCurWord};recordWordie(fb,wsCurWord)}
+  try{const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:250,messages:[{role:'user',content:`Word: "${wsCurWord}". Acronym sentence: "${sentence}". Rate coherence 1-3 stars. Reply ONLY with JSON: {"rating":2,"comment":"witty remark max 12 words","score":${Math.round(base*mult*2)}}`}]})});const data=await resp.json();const txt=data.content.map(c=>c.text||'').join('');const parsed=JSON.parse(txt.replace(/```json|```/g,'').trim());const stars='★'.repeat(parsed.rating)+'☆'.repeat(3-parsed.rating);aiBox.innerHTML=`<strong>Coherence ${stars}</strong> — ${parsed.comment}<br><br>Final score: <strong>${parsed.score} pts</strong>`;document.getElementById('ws-live').textContent=parsed.score;document.getElementById('ws-share').style.display='block';SS.crony={score:parsed.score,word:wsCurWord};recordCrony(parsed.score,wsCurWord)}
+  catch(e){const fb=Math.round(base*mult*2);aiBox.textContent=`Score: ${fb} pts (Bippy unavailable)`;document.getElementById('ws-live').textContent=fb;document.getElementById('ws-share').style.display='block';SS.crony={score:fb,word:wsCurWord};recordCrony(fb,wsCurWord)}
 }
 function wsBuildSender(){const word=(document.getElementById('ws-send-inp').value||'').replace(/[^A-Z]/g,'');if(!word)return;wsSenderWord=word;wsRenderRows('ws-send-disp-h','ws-send-timer-h','ws-sender-rows','ws-sender-score',word,'always')}
 async function wsCreateChallenge(){
@@ -1886,12 +1915,12 @@ async function wsCreateChallenge(){
   if(!word){alert('Enter a word first.');return}
   wsSenderWord=word;wsSenderSent=wsGetWords('ws-sender-rows',word);
   const score=wsCalc('ws-sender-rows','ws-sender-score',word);
-  wsChallCode=gc('WRDIE');
+  wsChallCode=gc('CRONY');
   const btn=document.querySelector('#s-ws-send button:last-child');if(btn){btn.textContent='Saving...';btn.disabled=true}
   try{
-    await sbInsert('wordie_challenges',{
+    await sbInsert('crony_challenges',{
       code:wsChallCode,word:wsSenderWord,
-      sender_sentence:wsSenderSent,recv_mode:wsSendMode,sender_score:score
+      sender_sentence:wsSenderSent,recv_timer:wsSendTimerSecs,sender_score:score
     });
   }catch(e){
     if(btn){btn.textContent='Generate code';btn.disabled=false}
@@ -1901,14 +1930,22 @@ async function wsCreateChallenge(){
   document.getElementById('ws-code').textContent=wsChallCode;
   document.getElementById('ws-cs-word').textContent=wsSenderWord;
   const ml={'always':'Always ×1','reveal':'Letter by letter ×1.5','hide':'Hidden 5s ×2.5'};
-  document.getElementById('ws-cs-mode').textContent=ml[wsSendMode];
+  document.getElementById('ws-cs-mode').textContent=ml[wsSendTimerSecs];
   document.getElementById('ws-cs-score').textContent=score+' pts';
   goScr('ws-code');
 }
 function wsCopyCode(){navigator.clipboard.writeText(wsChallCode).catch(()=>{});const b=document.getElementById('ws-copy-btn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy code',1500)}
-function wsSimReceiver(){if(!wsSenderWord){wsSenderWord='PHONE';wsSenderSent=['please','help','our','nice','everyone'];wsSendMode='always'}const ml={'always':'Always','reveal':'Letter by letter','hide':'Hidden 5s'};document.getElementById('ws-recv-mode-badge').textContent=ml[wsSendMode];document.getElementById('ws-recv-live').textContent='0';wsRenderRows('ws-recv-word','ws-recv-timer','ws-recv-rows','ws-recv-live',wsSenderWord,wsSendMode);goScr('ws-recv')}
+function wsSimReceiver(){
+  if(!wsSenderWord){wsSenderWord='PHONE';wsSenderSent=['please','help','our','nice','everyone'];wsSendTimerSecs=30;}
+  document.getElementById('ws-recv-mode-badge').textContent=wsSendTimerSecs?`${wsSendTimerSecs}s limit`:'No time limit';
+  document.getElementById('ws-recv-live').textContent='0';
+  wsRenderRows('ws-recv-word','ws-recv-timer','ws-recv-rows','ws-recv-live',wsSenderWord,'always');
+  wsTimerSecs=wsSendTimerSecs;
+  wsStartCountdown();
+  goScr('ws-recv');
+}
 async function wsSubmitRecv(){
-  const recvWords=wsGetWords('ws-recv-rows',wsSenderWord);const base=wsCalc('ws-recv-rows','ws-recv-live',wsSenderWord);const mults={'always':1,'reveal':1.5,'hide':2.5};const mult=mults[wsSendMode];
+  const recvWords=wsGetWords('ws-recv-rows',wsSenderWord);const base=wsCalc('ws-recv-rows','ws-recv-live',wsSenderWord);const mult=1; // timer pressure replaces visibility multiplier
   const sL=wsSenderSent.map(w=>(w||'').toLowerCase());let slotMatch=0,sharedBonus=0;
   recvWords.forEach((rw,i)=>{const rl=(rw||'').toLowerCase();if(sL[i]&&rl===sL[i]&&rl.length>0)slotMatch++;else if(sL.includes(rl)&&rl.length>2)sharedBonus++});
   const isMM=recvWords.map(w=>(w||'').toLowerCase()).join(' ')===sL.join(' ')&&sL.join(' ').length>0;
@@ -1922,11 +1959,11 @@ async function wsSubmitRecv(){
   document.getElementById('ws-res-sender').textContent=wsSenderSent.filter(Boolean).join(' ')||'(none)';
   const stars='★'.repeat(aiR)+'☆'.repeat(3-aiR);aiBox.innerHTML=`<strong>Coherence ${stars}</strong> — ${aiC}`;
   document.getElementById('ws-r-base').textContent=base+' pts';document.getElementById('ws-r-mult').textContent='×'+mult;document.getElementById('ws-r-slot').textContent=slotPts?'+'+slotPts+' slot match':'none';document.getElementById('ws-r-coh').textContent=stars+' (×'+aiR+')';document.getElementById('ws-res-tot').textContent=total+' pts';document.getElementById('ws-mindmeld').style.display=isMM?'block':'none';
-  SS['wordie-res']={score:total,word:wsSenderWord};
-  recordWordie(total,wsSenderWord);
+  SS['crony-res']={score:total,word:wsSenderWord};
+  recordCrony(total,wsSenderWord);
   // Save to Supabase
   try{
-    await sbPatch('wordie_challenges',wsChallCode,{
+    await sbPatch('crony_challenges',wsChallCode,{
       recv_sentence:recvWords,recv_score:total,completed:true,completed_at:new Date().toISOString()
     });
   }catch(e){console.warn('Could not save recv results:',e)}
@@ -1936,18 +1973,18 @@ async function wsSubmitRecv(){
 
 async function wsJoin(){
   const code=document.getElementById('ws-join-inp').value.trim().toUpperCase();
-  if(!code.startsWith('WRDIE-')||code.length!==12){alert('Enter a valid WRDIE-XXXXXX code.');return}
+  if(!code.startsWith('CRONY-')||code.length!==12){alert('Enter a valid CRONY-XXXXXX code.');return}
   const btn=document.querySelector('#s-ws-join .btn-p');if(btn){btn.textContent='Loading...';btn.disabled=true}
   try{
-    const ch=await sbGet('wordie_challenges',code);
+    const ch=await sbGet('crony_challenges',code);
     if(!ch){alert('Challenge not found. Double-check the code.');if(btn){btn.textContent='Join challenge';btn.disabled=false}return}
     if(ch.completed){alert('This challenge has already been completed!');if(btn){btn.textContent='Join challenge';btn.disabled=false}return}
-    wsSenderWord=ch.word;wsSenderSent=ch.sender_sentence;wsSendMode=ch.recv_mode;wsChallCode=code;
+    wsSenderWord=ch.word;wsSenderSent=ch.sender_sentence;wsSendTimerSecs=ch.recv_timer||0;wsChallCode=code;
     if(btn){btn.textContent='Join challenge';btn.disabled=false}
     const ml={'always':'Always','reveal':'Letter by letter','hide':'Hidden 5s'};
-    document.getElementById('ws-recv-mode-badge').textContent=ml[wsSendMode];
+    document.getElementById('ws-recv-mode-badge').textContent=ml[wsSendTimerSecs];
     document.getElementById('ws-recv-live').textContent='0';
-    wsRenderRows('ws-recv-word','ws-recv-timer','ws-recv-rows','ws-recv-live',wsSenderWord,wsSendMode);
+    wsRenderRows('ws-recv-word','ws-recv-timer','ws-recv-rows','ws-recv-live',wsSenderWord,wsSendTimerSecs);
     goScr('ws-recv');
   }catch(e){
     if(btn){btn.textContent='Join challenge';btn.disabled=false}
@@ -2076,8 +2113,8 @@ function closeTip(){
 }
 
 // ── STATS SYSTEM ─────────────────────────────────────────────────────────────
-const STAT_GAMES=['gotcha','tippa','blink','wordie','orderly','aiq'];
-const STAT_LABELS={gotcha:'🃏 Gotcha',tippa:'💬 Tippa',blink:'👁 Blinka',wordie:'📝 Wordie',orderly:'🔢 Orderly',aiq:'💬 And I Quote'};
+const STAT_GAMES=['gotcha','tippa','blink','crony','orderly','aiq'];
+const STAT_LABELS={gotcha:'🃏 Gotcha',tippa:'💬 Tippa',blink:'👁 Blinka',crony:'📝 Crony',orderly:'🔢 Orderly',aiq:'💬 And I Quote'};
 
 function statKey(game){return 'bb_stats_'+game}
 function loadStats(game){try{return JSON.parse(localStorage.getItem(statKey(game))||'[]')}catch(e){return[]}}
@@ -2118,8 +2155,8 @@ function renderStats(){
 function recordGotcha(score,diff,theme){recordStat('gotcha',{score,detail:`${theme} · ${diff}`})}
 function recordTippa(score,correct){recordStat('tippa',{score,detail:`${correct} recalled`})}
 function recordBlink(score,diff,theme){recordStat('blink',{score,detail:`${theme} · ${diff}`})}
-function recordWordie(score,word){recordStat('wordie',{score,detail:`Word: ${word}`})}
-function recordWordsy(score,word){recordStat('wordie',{score,detail:`Word: ${word}`})}
+function recordCrony(score,word){recordStat('crony',{score,detail:`Word: ${word}`})}
+function recordWordsy(score,word){recordStat('crony',{score,detail:`Word: ${word}`})}
 function recordOrderly(score,round,theme){recordStat('orderly',{score,detail:`${theme} · Round ${round}`})}
 
 // ── ORDERLY DATA ─────────────────────────────────────────────────────────────

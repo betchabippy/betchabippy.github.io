@@ -1159,7 +1159,7 @@ button:active{transform:scale(.98)}
     <div class="winbar" id="aiq-win" style="display:block"></div>
     <div id="aiq-author-final" style="text-align:center;font-size:13px;color:var(--tx1);margin-top:8px;font-style:italic;font-weight:600"></div>
     <div class="ctrls" style="margin-top:10px">
-      <button onclick="goScr('aiq-home')" style="flex:1;font-size:11px">Change game</button>
+      <button onclick="goScr('aiq-home');aiqCheckDaily()" style="flex:1;font-size:11px">Change game</button>
       <button onclick="aiqStart()" style="flex:2;font-size:11px" class="btn-p">Next quote →</button>
     </div>
   </div>
@@ -1191,7 +1191,12 @@ let SS={};
 const APP='BetchaBippy\u00AE Mind Games';
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
-function goScr(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));const el=document.getElementById('s-'+id);if(el)el.classList.add('on')}
+function goScr(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  const el=document.getElementById('s-'+id);
+  if(el)el.classList.add('on');
+  if(id==='aiq-home') setTimeout(aiqCheckDaily,10);
+}
 function goGame(g){
   const screens={gt:'gt-themes',tp:'tp-home',bl:'bl-themes',ws:'ws-home',or:'or-home',st:'st-home'};
   goScr(screens[g]);
@@ -3430,6 +3435,25 @@ let aiqGridWords=[], aiqUsedQuotes=new Set();
 let aiqFanboyPositions=[], aiqFanboyRevealed=0;
 
 function aiqSetCat(cat,btn){aiqCat=cat} // legacy no-op
+
+// Filler words for the 5x5 grid
+const AIQ_FILLERS = [
+  'time','great','love','life','world','dream','heart','mind','soul','power',
+  'light','dark','true','good','long','high','deep','wide','free','bold',
+  'still','even','just','only','also','much','very','well','soon','away',
+  'once','they','them','their','with','from','have','this','that','when',
+  'here','some','more','less','most','best','last','next','over','back',
+  'down','into','upon','each','both','many','such','than','then','thus',
+  'might','could','would','should','shall','will','must','need','keep',
+  'give','take','make','find','know','think','feel','see','hear','say',
+  'come','look','turn','move','play','work','open','close','start','stop',
+  'grow','show','hold','stand','leave','reach','build','break','bring','carry',
+  'place','point','hands','thing','small','large','young','old','same','different',
+  'real','right','wrong','little','own','few','public','private','low','simple',
+  'strong','sure','clear','hard','early','late','live','set','put','end',
+  'help','home','family','ever','land','kind','side','head','try','again'
+];
+
 // ── DAILY QUOTE SYSTEM ───────────────────────────────────────────────────────
 const AIQ_STORE = 'aiq_daily';
 

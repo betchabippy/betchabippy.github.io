@@ -2138,13 +2138,13 @@ function blRenderGrid(){
         const rv=blRecalled[i];
         let rcHtml;
         if(blTheme==='cards'){rcHtml=blCardHtml(rv,'big')}
-        else if(blTheme==='sports'){const word=BL_SPORTS_WORDS[rv]||rv;rcHtml=`<span class="fi" style="font-size:10px;font-weight:700;letter-spacing:.02em;text-align:center;padding:2px;line-height:1.2;color:var(--tx0)">${word}</span>`}
+        else if(blTheme==='sports'){const word=BL_SPORTS_WORDS[rv]||rv;rcHtml=`<span class="fi" style="font-size:8px;font-weight:800;text-align:center;padding:2px;line-height:1.1;color:var(--tx0);word-break:break-word;display:block;width:100%">${word}</span>`}
         else{rcHtml=`<span class="fi">${rv}</span>`}
         cell.innerHTML=rcHtml;
         if(rv!==icon){const m=document.createElement('span');m.style.cssText='position:absolute;bottom:2px;right:2px;font-size:9px;color:var(--err-tx)';m.textContent=icon;cell.appendChild(m)}}
       else{cell.innerHTML=`<span class="fq">?</span>`;cell.onclick=()=>blSelectCell(i)}
     }else{
-      if(blTheme==='sports'){const word=BL_SPORTS_WORDS[icon]||icon;cell.innerHTML=`<span class="fi" style="font-size:10px;font-weight:700;letter-spacing:.02em;text-align:center;padding:2px;line-height:1.2;color:var(--tx0)">${word}</span>`}
+      if(blTheme==='sports'){const word=BL_SPORTS_WORDS[icon]||icon;cell.innerHTML=`<span class="fi" style="font-size:8px;font-weight:800;text-align:center;padding:2px;line-height:1.1;color:var(--tx0);word-break:break-word;display:block;width:100%">${word}</span>`}
       else if(blTheme==='cards'){cell.innerHTML=blCardHtml(icon,'big')}
       else{cell.innerHTML=`<span class="fi">${icon}</span>`}
     }
@@ -2156,7 +2156,10 @@ function blBuildPicker(){
   [...new Set(blGrid)].sort(()=>Math.random()-.5).forEach(icon=>{
     const b=document.createElement('button');b.className='pk';b.dataset.icon=icon;
     if(blTheme==='cards'){b.innerHTML=blCardHtml(icon)}
-    else if(blTheme==='sports'){b.innerHTML=`<span style="font-size:10px;font-weight:700;color:var(--tx0)">${BL_SPORTS_WORDS[icon]||icon}</span>`}
+    else if(blTheme==='sports'){
+      b.style.cssText='width:auto;min-width:46px;max-width:80px;height:auto;min-height:46px;padding:4px 6px;white-space:normal;line-height:1.2;';
+      b.innerHTML=`<span style="font-size:9px;font-weight:800;color:var(--tx0);text-align:center;display:block;word-break:break-word">${BL_SPORTS_WORDS[icon]||icon}</span>`;
+    }
     else{b.textContent=icon}
     b.onclick=()=>blPickIcon(icon,b);
     p.appendChild(b);

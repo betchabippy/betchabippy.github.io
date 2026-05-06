@@ -1891,7 +1891,7 @@ function wsStartCountdown(){
   let remaining=wsTimerSecs;
   function tick(){
     if(!timerRow) return;
-    timerRow.textContent=remaining>0?`⏱ ${remaining}s remaining`:'⏱ Time's up!';
+    timerRow.textContent=remaining>0?`⏱ ${remaining}s remaining`:'⏱ Times up!';
     timerRow.style.color=remaining<=10?'var(--err-tx)':'var(--tx2)';
     if(remaining<=0){
       clearInterval(wsCountdownInterval);wsCountdownInterval=null;
@@ -2098,6 +2098,7 @@ const _origTpStartRecall = tpStartRecall;
 
 // ── SPLASH ────────────────────────────────────────────────────────────────────
 function splashGo(game){
+  console.log('splashGo called:', game);
   document.getElementById('splash').style.display='none';
   goGame(game);
 }
@@ -3924,11 +3925,11 @@ function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
-gtBuildThemes();
-blBuildThemes();
-orInitThemeGrids();
-tpCheckPendingOnLoad(); // check for pending tippa challenge on startup
-aiqCheckDaily(); // load daily quote state
+try{gtBuildThemes();}catch(e){console.error('gtBuildThemes failed:',e);}
+try{blBuildThemes();}catch(e){console.error('blBuildThemes failed:',e);}
+try{orInitThemeGrids();}catch(e){console.error('orInitThemeGrids failed:',e);}
+try{tpCheckPendingOnLoad();}catch(e){console.error('tpCheckPendingOnLoad failed:',e);}
+try{aiqCheckDaily();}catch(e){console.error('aiqCheckDaily failed:',e);}
 // Copy logo from header to splash
 (function(){
   const hdrLogo=document.querySelector('.hdr img');

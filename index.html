@@ -371,6 +371,11 @@ button:active{transform:scale(.98)}
       <button class="db dim" onclick="tpSoloSetHint('places',this)">Places</button>
       <button class="db dim" onclick="tpSoloSetHint('things',this)">Things</button>
     </div>
+    <div class="st" style="margin-top:8px">Word difficulty</div>
+    <div class="dr" id="tp-solo-difficulty">
+      <button class="db on" onclick="tpSoloSetDiff('easy',this)">Easier</button>
+      <button class="db dim" onclick="tpSoloSetDiff('hard',this)">Harder</button>
+    </div>
   </div>
   <button class="btn-p" onclick="tpSoloStart()" style="width:100%;padding:10px;font-size:14px">Start →</button>
 </div>
@@ -441,6 +446,7 @@ button:active{transform:scale(.98)}
       <div class="stat"><strong id="tp-solo-rs">—</strong>Speed pts</div>
       <div class="stat"><strong id="tp-solo-rr">—</strong>Retries used</div>
     </div>
+    <div id="tp-solo-bonuses" style="font-size:11px;color:var(--tx2);text-align:center;margin-bottom:8px"></div>
     <button class="cb" onclick="shareScore('tippa-solo')">📤 Share my score</button>
   </div>
   <div class="ctrls">
@@ -466,6 +472,11 @@ button:active{transform:scale(.98)}
       <button class="db dim" onclick="tpSetH('animals',this)">Animals</button>
       <button class="db dim" onclick="tpSetH('places',this)">Places</button>
       <button class="db dim" onclick="tpSetH('things',this)">Things</button>
+    </div>
+    <div class="st" style="margin-top:8px">Word difficulty</div>
+    <div class="dr" id="tp-create-difficulty">
+      <button class="db on" onclick="tpSetDiff('easy',this)">Easier</button>
+      <button class="db dim" onclick="tpSetDiff('hard',this)">Harder</button>
     </div>
     <div class="st" style="margin-top:8px">Recall window for receiver</div>
     <div class="dr" id="tp-recall-window" style="flex-wrap:wrap">
@@ -594,8 +605,8 @@ button:active{transform:scale(.98)}
     <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Crony</p><p style="font-size:12px;color:var(--tx1)">Each letter of the word starts a word in your sentence. Longer words, bigger points. Get Bippy to rate it!</p></div>
   </div>
   <div class="g2">
-    <div class="card" style="cursor:pointer" onclick="goScr('ws-solo')"><div class="st">Solo play</div><p class="hdesc">Get a random word, build your best acronym. Bippy judges coherence.</p><button style="width:100%;font-size:12px">Play solo</button></div>
-    <div class="card" style="cursor:pointer" onclick="goScr('ws-send')"><div class="st">Send a challenge</div><p class="hdesc">Pick a word, write your secret sentence. Bonus for matching.</p><button style="width:100%;font-size:12px">Send challenge</button></div>
+    <div class="card" style="cursor:pointer" onclick="goScr('ws-solo')"><div class="st">Solo play</div><p class="hdesc">Get a random word, build your best backronym. Bippy judges coherence.</p><button style="width:100%;font-size:12px">Play solo</button></div>
+    <div class="card" style="cursor:pointer" onclick="goScr('ws-send')"><div class="st">Send a challenge</div><p class="hdesc">Pick a word, write your secret sentence, challenge a friend to come up with their own. Bonus for matching.</p><button style="width:100%;font-size:12px">Send challenge</button></div>
   </div>
   <div class="card" style="cursor:pointer;margin-bottom:10px" onclick="goScr('ws-join')"><div class="st">Join a challenge</div><p class="hdesc">Got a CRONY code from a friend? Enter it here to play their challenge.</p><button style="width:100%;font-size:12px">Enter code</button></div>
   <div class="card"><div class="st">How Crony works</div>
@@ -608,7 +619,14 @@ button:active{transform:scale(.98)}
 
 <!-- WORDSY SOLO -->
 <div id="s-ws-solo" class="scr">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Solo play</p><button onclick="goScr('ws-home')" style="font-size:11px;padding:5px 10px">Back</button></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+    <p style="font-size:14px;font-weight:600">Solo play</p>
+    <button onclick="goScr('ws-home')" style="font-size:11px;padding:5px 10px">Back</button>
+  </div>
+  <div class="card" style="margin-bottom:10px;background:var(--amber-lt);border-color:var(--amber-bd)">
+    <p style="font-size:12px;font-weight:600;color:var(--amber-tx);margin-bottom:2px">Get a random word, build your best backronym. Bippy judges coherence.</p>
+    <p style="font-size:11px;color:var(--tx1)">A <strong>backronym</strong>: each letter starts a word in your sentence. STORM → <em>Sometimes Thunder Ominously Roars Mightily.</em></p>
+  </div>
   <div class="card">
     <div class="st">Word length</div>
     <div class="dr" id="ws-lens">
@@ -637,7 +655,14 @@ button:active{transform:scale(.98)}
 
 <!-- WORDSY SEND -->
 <div id="s-ws-send" class="scr">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><p style="font-size:14px;font-weight:600">Create a challenge</p><button onclick="goScr('ws-home')" style="font-size:11px;padding:5px 10px">Back</button></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+    <p style="font-size:14px;font-weight:600">Send a challenge</p>
+    <button onclick="goScr('ws-home')" style="font-size:11px;padding:5px 10px">Back</button>
+  </div>
+  <div class="card" style="margin-bottom:10px;background:var(--amber-lt);border-color:var(--amber-bd)">
+    <p style="font-size:12px;font-weight:600;color:var(--amber-tx);margin-bottom:2px">Pick a word, write your secret sentence, challenge a friend to come up with their own. Bonus for matching.</p>
+    <p style="font-size:11px;color:var(--tx1)">A <strong>backronym</strong>: each letter starts a word in your sentence. STORM → <em>Sometimes Thunder Ominously Roars Mightily.</em></p>
+  </div>
   <div class="card">
     <div class="st">Challenge word</div>
     <div style="display:flex;gap:6px;margin-bottom:6px">
@@ -1372,6 +1397,7 @@ let tpSoloRetriesLeft=0, tpSoloWordState=[], tpSoloRetriesUsed=0;
 function tpSoloSetCount(n,btn){tpSoloCount=n;dimOthers('tp-solo-count',btn)}
 function tpSoloSetTime(t,btn){tpSoloTime=t;dimOthers('tp-solo-times',btn)}
 function tpSoloSetHint(h,btn){tpSoloHint=h;dimOthers('tp-solo-hints',btn)}
+function tpSoloSetDiff(d,btn){tpSoloDiff=d;dimOthers('tp-solo-difficulty',btn)}
 function tpSoloSetRecall(secs,btn){tpSoloRecallSecs=secs;dimOthers('tp-solo-recall-times',btn)}
 
 // Check if there's an active solo challenge in localStorage
@@ -1387,9 +1413,14 @@ function tpSoloCheck(){
 
 function tpSoloStart(){
   // Pick random words
-  const pool=RWORDS[tpSoloHint]||RWORDS.none;
-  const shuffled=[...pool].sort(()=>Math.random()-.5);
+  const usedWords=tpGetUsedWords();
+  const poolKey=(tpSoloHint==='none'?'none':tpSoloHint)+'_'+tpSoloDiff;
+  const pool=RWORDS[poolKey]||RWORDS['none_easy'];
+  const available=pool.filter(w=>!usedWords[w.toLowerCase()]);
+  const source=available.length>=tpSoloCount?available:pool;
+  const shuffled=[...source].sort(()=>Math.random()-.5);
   tpSoloWords=shuffled.slice(0,tpSoloCount).map(w=>w.toLowerCase());
+  tpMarkUsed(tpSoloWords);
   // Show memorize screen
   const mw=document.getElementById('tp-solo-words');
   mw.innerHTML='';
@@ -1576,16 +1607,26 @@ function tpSoloSubmit(){
   const waitedHrs=waitedMs/3600000;
   const waitBonus=waitedHrs>26?Math.min(25,Math.round(((waitedHrs-26)/22)*25)):0;
 
-  // Retry penalty: -5 pts per retry used
+  // Score: 10pts per correct word base, + speed bonus (0-50pts), + wait bonus
   const retryPenalty=tpSoloRetriesUsed*5;
-  const base=Math.round(tpSoloSpeedScore*correct*(all?1.5:1));
-  const finalScore=Math.max(0,base+waitBonus-retryPenalty);
+  const wordBase=correct*10; // guaranteed 10pts per correct word
+  const speedBonus=Math.round((tpSoloSpeedScore/100)*50*correct); // 0-50pts based on speed
+  const base=wordBase+speedBonus+(all?25:0); // +25 all-correct bonus
+  const finalScore=Math.max(correct>0?correct*5:0, base+waitBonus-retryPenalty);
 
   // Show results
   document.getElementById('tp-solo-tot').textContent=finalScore;
   document.getElementById('tp-solo-rc').textContent=correct+'/'+total;
-  document.getElementById('tp-solo-rs').textContent=tpSoloSpeedScore;
+  document.getElementById('tp-solo-rs').textContent=Math.round((tpSoloSpeedScore/100)*50*correct)+'pts';
   document.getElementById('tp-solo-rr').textContent=tpSoloRetriesUsed;
+  const bonusEl=document.getElementById('tp-solo-bonuses');
+  if(bonusEl){
+    const parts=[];
+    if(all) parts.push('🎯 All correct +25pts');
+    if(waitBonus>0) parts.push(`⏳ Wait bonus +${waitBonus}pts`);
+    if(retryPenalty>0) parts.push(`↩️ Retry penalty -${retryPenalty}pts`);
+    bonusEl.textContent=parts.join(' · ');
+  }
 
   const rw=document.getElementById('tp-solo-res-words');rw.innerHTML='';
   tpSoloWordState.forEach(ws=>{
@@ -1619,21 +1660,58 @@ function tpSoloReset(){
 
 // ── TIPPA DATA ────────────────────────────────────────────────────────────────
 const RWORDS={
-  none:['Umbrella','Cobalt','Lantern','Mirage','Sphinx','Velvet','Quartz','Fable','Nimbus','Anchor','Dagger','Fossil','Cinder','Prism','Lagoon','Tundra','Cipher','Mosaic','Raven','Ember','Shadow','Ember','Glacier','Thunder','Whisper','Cascade','Zenith','Horizon','Solstice','Phantom'],
-  animals:['Falcon','Panther','Cobra','Dolphin','Jaguar','Osprey','Badger','Viper','Condor','Otter','Marmot','Ibis','Lynx','Narwhal','Pelican','Quokka','Tapir','Wombat','Gecko','Bison','Kestrel','Lemur','Mongoose','Puffin','Salamander','Toucan','Vulture','Walrus','Yak','Zebu'],
-  places:['Desert','Canyon','Jungle','Valley','Harbor','Tundra','Lagoon','Meadow','Summit','Glacier','Savanna','Delta','Plateau','Bayou','Fjord','Prairie','Marsh','Peninsula','Estuary','Rainforest','Steppe','Archipelago','Volcano','Oasis','Reef','Gorge','Basin','Cavern','Dune','Inlet'],
-  things:['Compass','Lantern','Anchor','Goblet','Satchel','Canteen','Sundial','Hammock','Sextant','Bellows','Pulley','Mortar','Flagon','Quiver','Satchel','Chalice','Brazier','Awning','Spyglass','Cauldron','Bellows','Parchment','Locket','Hourglass','Prism','Casket','Trinket','Vial','Clasp','Talisman']
+  none_easy:['Table','Chair','Glass','Apple','Clock','Bread','Stone','Light','Cloud','Smile','River','Music','Plant','Spoon','Lunch','Floor','Brush','Shelf','Match','Storm','Toast','Bench','Frame','Grape','Cream','Dress','Snake','Wheel','Thumb','Beach'],
+  none_hard:['Umbrella','Cobalt','Lantern','Mirage','Sphinx','Velvet','Quartz','Fable','Nimbus','Anchor','Dagger','Fossil','Cinder','Prism','Lagoon','Tundra','Cipher','Mosaic','Raven','Ember','Shadow','Glacier','Thunder','Whisper','Cascade','Zenith','Horizon','Solstice','Phantom','Vortex'],
+  animals_easy:['Rabbit','Turtle','Parrot','Kitten','Puppy','Sheep','Horse','Eagle','Shark','Tiger','Zebra','Panda','Otter','Gecko','Moose','Crane','Raven','Trout','Bison','Goose'],
+  animals_hard:['Falcon','Panther','Cobra','Dolphin','Jaguar','Osprey','Badger','Viper','Condor','Narwhal','Pelican','Quokka','Tapir','Wombat','Kestrel','Lemur','Mongoose','Puffin','Salamander','Toucan'],
+  places_easy:['Desert','Canyon','Jungle','Valley','Harbor','Meadow','Summit','Prairie','Lagoon','Island','Forest','Cavern','Cliff','Beach','Swamp','Marsh','River','Plain','Ridge','Coast'],
+  places_hard:['Tundra','Glacier','Savanna','Delta','Plateau','Bayou','Fjord','Peninsula','Estuary','Rainforest','Steppe','Archipelago','Volcano','Oasis','Gorge','Basin','Dune','Inlet','Atoll','Taiga'],
+  things_easy:['Compass','Lantern','Canteen','Hammock','Locket','Trinket','Goblet','Anchor','Pulley','Prism','Quiver','Vial','Basket','Bottle','Bucket','Button','Candle','Crayon','Feather','Kettle'],
+  things_hard:['Satchel','Sundial','Sextant','Bellows','Mortar','Flagon','Chalice','Brazier','Awning','Spyglass','Cauldron','Parchment','Hourglass','Casket','Clasp','Talisman','Scabbard','Astrolabe','Thurible','Vambrace']
 };
-function getRWord(hint){
-  const pool=RWORDS[hint]||RWORDS.none;
-  return pool[Math.floor(Math.random()*pool.length)];
+
+const TP_USED_KEY='tp_used_words';
+function tpGetUsedWords(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(TP_USED_KEY)||'{}');
+    const weekAgo=Date.now()-7*24*60*60*1000;
+    // Clean old entries
+    const clean={};
+    Object.entries(raw).forEach(([w,ts])=>{if(ts>weekAgo)clean[w]=ts;});
+    return clean;
+  }catch(e){return {};}
 }
-let tpWords=[],tpTime=10,tpHint='none',tpCode='',tpSpeedScore=0,tpMemStart=0,tpMI=null,tpRecallWindow=5*60;
+function tpMarkUsed(words){
+  const used=tpGetUsedWords();
+  const now=Date.now();
+  words.forEach(w=>used[w.toLowerCase()]=now);
+  localStorage.setItem(TP_USED_KEY,JSON.stringify(used));
+}
+function getRWord(hint,difficulty){
+  const key=(hint==='none'?'none':hint)+'_'+(difficulty||'easy');
+  const pool=RWORDS[key]||RWORDS['none_easy'];
+  const used=tpGetUsedWords();
+  const available=pool.filter(w=>!used[w.toLowerCase()]);
+  const source=available.length>0?available:pool; // fallback if all used
+  return source[Math.floor(Math.random()*source.length)];
+}
+let tpWords=[],tpTime=10,tpHint='none',tpDiff='easy',tpCode='',tpSpeedScore=0,tpMemStart=0,tpMI=null,tpRecallWindow=5*60;
 function tpAdd(){const i=document.getElementById('tp-wi');const w=i.value.trim().toLowerCase();if(!w||tpWords.length>=5||tpWords.includes(w))return;tpWords.push(w);i.value='';tpRenderWords()}
-function tpRand(){if(tpWords.length>=5)return;const pool=(RWORDS[tpHint]||RWORDS.none);const av=pool.filter(w=>!tpWords.includes(w.toLowerCase()));const word=(av.length?av:pool)[Math.floor(Math.random()*(av.length||pool.length))];tpWords.push(word.toLowerCase());tpRenderWords()}
+function tpRand(){
+  if(tpWords.length>=5)return;
+  const poolKey=(tpHint==='none'?'none':tpHint)+'_'+tpDiff;
+  const pool=RWORDS[poolKey]||RWORDS['none_easy'];
+  const used=tpGetUsedWords();
+  const av=pool.filter(w=>!tpWords.includes(w.toLowerCase())&&!used[w.toLowerCase()]);
+  const source=av.length?av:pool.filter(w=>!tpWords.includes(w.toLowerCase()));
+  const word=source[Math.floor(Math.random()*source.length)];
+  if(word)tpWords.push(word.toLowerCase());
+  tpRenderWords();
+}
 function tpRenderWords(){const d=document.getElementById('tp-wdisp');d.innerHTML='';tpWords.forEach((w,i)=>{const s=document.createElement('span');s.className='wp';s.innerHTML=`${w}<span onclick="tpWords.splice(${i},1);tpRenderWords()" style="cursor:pointer;color:var(--tx2);font-size:13px;margin-left:2px">×</span>`;d.appendChild(s)})}
 function tpSetT(t,btn){tpTime=t;dimOthers('tp-times',btn)}
 function tpSetH(h,btn){tpHint=h;dimOthers('tp-hints',btn)}
+function tpSetDiff(d,btn){tpDiff=d;dimOthers('tp-create-difficulty',btn)}
 function tpSetRecallWindow(secs,btn){tpRecallWindow=secs;dimOthers('tp-recall-window',btn)}
 async function tpCreate(){
   if(!tpWords.length){alert('Add at least one word first.');return}
@@ -1862,7 +1940,11 @@ function blPickIcon(icon,btn){
 }
 
 // ── WORDSY DATA ───────────────────────────────────────────────────────────────
-const WSP={4:['FIRE','JUMP','BLUE','FAST','DARK','GOLD','WIND','BONE','GRAY','HOPE','CALM','BOLD','STAR','LAKE'],6:['PLANET','BRIDGE','WINTER','FROZEN','SHADOW','MARBLE','FOREST','DANGER','CASTLE','SILVER','DESERT','MIRROR'],8:['MOUNTAIN','SYMPHONY','UNIVERSE','TWILIGHT','CHAMPION','WANDERER','LABYRINTH','SPECTRUM','CARNIVAL','FLAMINGO']};
+const WSP={
+  4:['FIRE','JUMP','BLUE','FAST','DARK','GOLD','WIND','BONE','GRAY','HOPE','CALM','BOLD','STAR','LAKE','RAIN','FROG','DESK','BIRD','FISH','TREE','CAKE','ROAD','WALL','BELL','SAND','MOON','SONG','GAME','DOOR','LAMP'],
+  6:['PLANET','BRIDGE','WINTER','FROZEN','SHADOW','MARBLE','FOREST','DANGER','CASTLE','SILVER','DESERT','MIRROR','GARDEN','ROCKET','CANDLE','SIMPLE','GENTLE','HARBOR','JUNGLE','KITTEN','LEMON','MUFFIN','NAPKIN','ORANGE','PARROT','RABBIT','TEAPOT','BUTTON','PILLOW','SUNSET'],
+  8:['MOUNTAIN','SYMPHONY','UNIVERSE','TWILIGHT','CHAMPION','WANDERER','LABYRINTH','SPECTRUM','CARNIVAL','FLAMINGO','ELEPHANT','MARATHON','CALENDAR','BASEBALL','BIRTHDAY','NOTEBOOK','UMBRELLA','SANDWICH','FOOTBALL','THOUSAND','LANGUAGE','SUNSHINE','VACATION','TOGETHER','TREASURE']
+};
 let wsTimerSecs=30,wsLen=4,wsSendTimerSecs=30,wsCurWord='',wsSenderWord='',wsSenderSent=[],wsChallCode='';
 function wsSetTimer(s,btn){wsTimerSecs=s;dimOthers('ws-timer-btns',btn)}
 function wsSetLen(l,btn){wsLen=l;dimOthers('ws-lens',btn)}

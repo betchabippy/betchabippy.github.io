@@ -2119,6 +2119,7 @@ function recordGotcha(score,diff,theme){recordStat('gotcha',{score,detail:`${the
 function recordTippa(score,correct){recordStat('tippa',{score,detail:`${correct} recalled`})}
 function recordBlink(score,diff,theme){recordStat('blink',{score,detail:`${theme} · ${diff}`})}
 function recordWordie(score,word){recordStat('wordie',{score,detail:`Word: ${word}`})}
+function recordWordsy(score,word){recordStat('wordie',{score,detail:`Word: ${word}`})}
 function recordOrderly(score,round,theme){recordStat('orderly',{score,detail:`${theme} · Round ${round}`})}
 
 // ── ORDERLY DATA ─────────────────────────────────────────────────────────────
@@ -3437,6 +3438,18 @@ let aiqFanboyPositions=[], aiqFanboyRevealed=0;
 function aiqSetCat(cat,btn){aiqCat=cat} // legacy no-op
 
 // Filler words for the 5x5 grid
+// Connector words — can be revealed for -15pts each
+const AIQ_FANBOYS = new Set([
+  'for','and','nor','but','or','yet','so',
+  'the','a','an','in','on','at','to','of','with','by','from','into','over',
+  'under','about','after','before','between','through','during','within',
+  'is','are','was','were','it','its','as','if','not','no','all','been',
+  'have','has','that','this','when','where','who','which','just','even',
+  'than','then','there','their','what','how','my','your','his','her','our',
+  'be','do','did','will','can','more','most','only','up','out','like','one',
+  'every','never','always','some','any','each','both','once','still'
+]);
+
 const AIQ_FILLERS = [
   'time','great','love','life','world','dream','heart','mind','soul','power',
   'light','dark','true','good','long','high','deep','wide','free','bold',

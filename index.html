@@ -1103,6 +1103,7 @@ button:active{transform:scale(.98)}
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
     <div style="display:flex;align-items:center;gap:7px">
       <span style="font-size:11px;padding:3px 8px;border-radius:20px;background:#FFF7ED;border:1px solid #FDBA74;font-weight:600;color:#9A3412">💬 And I Quote</span>
+      <span id="aiq-cat-badge" style="font-size:10px;padding:2px 7px;border-radius:20px;background:var(--bg2);color:var(--tx1)"></span>
     </div>
     <button onclick="goScr('aiq-home');aiqCheckDaily()" style="font-size:11px;padding:5px 10px">Quit</button>
   </div>
@@ -1159,8 +1160,7 @@ button:active{transform:scale(.98)}
     <div class="winbar" id="aiq-win" style="display:block"></div>
     <div id="aiq-author-final" style="text-align:center;font-size:13px;color:var(--tx1);margin-top:8px;font-style:italic;font-weight:600"></div>
     <div class="ctrls" style="margin-top:10px">
-      <button onclick="goScr('aiq-home');aiqCheckDaily()" style="flex:1;font-size:11px">Change game</button>
-      <button onclick="aiqStart()" style="flex:2;font-size:11px" class="btn-p">Next quote →</button>
+      <button onclick="goScr('aiq-home')" style="flex:2;font-size:11px" class="btn-p">Done →</button>
     </div>
   </div>
 
@@ -1195,7 +1195,7 @@ function goScr(id){
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   const el=document.getElementById('s-'+id);
   if(el)el.classList.add('on');
-  if(id==='aiq-home') setTimeout(aiqCheckDaily,10);
+  if(id==='aiq-home') setTimeout(aiqCheckDaily,20);
 }
 function goGame(g){
   const screens={gt:'gt-themes',tp:'tp-home',bl:'bl-themes',ws:'ws-home',or:'or-home',st:'st-home'};
@@ -3548,14 +3548,21 @@ function aiqStart(){
   // Build 5x5 grid
   aiqBuildGrid();
 
-  // Render
+  // Full reset of all UI elements
   document.getElementById('aiq-score').textContent=100;
   document.getElementById('aiq-clue').textContent='"'+aiqQuote.clue+'"';
+  const aiqCb=document.getElementById('aiq-cat-badge');
+  if(aiqCb) aiqCb.textContent=aiqQuote.category;
   document.getElementById('aiq-author-reveal').style.display='none';
-  document.getElementById('aiq-author-btn').disabled=false;
-  document.getElementById('aiq-author-btn').style.opacity='1';
+  document.getElementById('aiq-author-final').textContent='';
   document.getElementById('aiq-result').style.display='none';
   document.getElementById('aiq-win').style.display='none';
+  document.getElementById('aiq-win').textContent='';
+  // Reset hint buttons
+  ['aiq-first-btn','aiq-last-btn','aiq-author-btn'].forEach(id=>{
+    const b=document.getElementById(id);
+    if(b){b.disabled=false;b.style.opacity='1';}
+  });
   aiqUpdateConnectorBtn();
   aiqRenderGrid();
   aiqRenderBlanks();

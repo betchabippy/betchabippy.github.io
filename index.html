@@ -1288,12 +1288,7 @@ const GAME_LINK='\n\n▶ Play at https://betchabippy.com';
 function shareScore(game){
   const d=SS[game]||{};let txt='';
   if(game==='gotcha')txt=`💡 ${APP}\n🃏 Gotcha — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ⏱ ${d.time||'—'} · 🎯 ${d.acc||'—'}\n\nCan you beat it?`+GAME_LINK;
-  else if(game==='tippa-solo')txt=`💡 ${APP}
-💬 Tippa Solo
-
-🏆 ${d.score||0} pts · ✅ ${d.correct||'—'} recalled
-
-Can you beat it?`+GAME_LINK;
+  else if(game==='tippa-solo')txt=`💡 ${APP}\n💬 Tippa Solo\n\n🏆 ${d.score||0} pts · ✅ ${d.correct||'—'} recalled\n\nCan you beat it?`+GAME_LINK;
   else if(game==='tippa')txt=`💡 ${APP}\n💬 Tippa\n\n🏆 ${d.score||0} pts · ✅ ${d.correct||'—'} recalled\n\nCan you beat it?`+GAME_LINK;
   else if(game==='blink')txt=`💡 ${APP}\n👁 Blinka — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ✅ ${d.acc||'—'}\n\nCan you beat it?`+GAME_LINK;
   else txt=`💡 ${APP}\n📝 Crony\n\n🏆 ${d.score||0} pts · 📖 ${d.word||'—'}\n\nCan you beat it?`+GAME_LINK;
@@ -1372,7 +1367,17 @@ function gtStartGame(){
 
 // Gotcha game
 let mcCards=[],mcFlipped=[],mcMatched=0,mcMoves=0,mcLocked=false,mcTimer,mcSec=0,mcStarted=false,mcPairs=2;
-function mcCalcScore(){if(mcMoves===0)return 0;const pairs=mcPairs;const t=GT_THEMES.find(x=>x.id===gtTheme);const m=(t?t.mult:1)*(gtTheme==='nameit'&&gtCat==='custom'?1.15:1);return Math.round((pairs*100*(pairs/mcMoves)+Math.max(0,300-mcSec*2))*m)}
+function mcCalcScore(){
+  if(mcMoves===0) return 0;
+  const pairs=mcPairs;
+  const efficiency=pairs/mcMoves; // 1.0=perfect, lower=worse
+  const t=GT_THEMES.find(x=>x.id===gtTheme);
+  const m=(t?t.mult:1)*(gtTheme==='nameit'&&gtCat==='custom'?1.2:1);
+  const base=pairs*5; // 5pts per pair
+  const speedBonus=Math.max(0,Math.round(pairs*3*(1-mcSec/(pairs*8)))); // up to 3pts/pair for speed
+  const efficiencyBonus=Math.round(pairs*4*efficiency); // up to 4pts/pair for efficiency
+  return Math.round((base+speedBonus+efficiencyBonus)*m);
+}
 function mcNew(){
   clearInterval(mcTimer);mcSec=0;mcMoves=0;mcMatched=0;mcFlipped=[];mcLocked=false;mcStarted=false;
   ['mc-mv','mc-pr'].forEach(id=>{document.getElementById(id).textContent='0'});
@@ -1660,10 +1665,10 @@ function tpSoloSubmit(){
 
   // Score: 10pts per correct word base, + speed bonus (0-50pts), + wait bonus
   const retryPenalty=tpSoloRetriesUsed*5;
-  const wordBase=correct*10; // guaranteed 10pts per correct word
-  const speedBonus=Math.round((tpSoloSpeedScore/100)*50*correct); // 0-50pts based on speed
-  const base=wordBase+speedBonus+(all?25:0); // +25 all-correct bonus
-  const finalScore=Math.max(correct>0?correct*5:0, base+waitBonus-retryPenalty);
+  const wordBase=correct*8; // 8pts per correct word
+  const speedBonus=Math.round((tpSoloSpeedScore/100)*20); // 0-20pts total speed bonus
+  const base=wordBase+speedBonus+(all?15:0); // +15 all-correct bonus
+  const finalScore=Math.max(correct>0?correct*3:0, base+waitBonus-retryPenalty);
 
   // Show results
   document.getElementById('tp-solo-tot').textContent=finalScore;
@@ -1921,10 +1926,10 @@ function tpSoloSubmit(){
 
   // Score: 10pts per correct word base, + speed bonus (0-50pts), + wait bonus
   const retryPenalty=tpSoloRetriesUsed*5;
-  const wordBase=correct*10; // guaranteed 10pts per correct word
-  const speedBonus=Math.round((tpSoloSpeedScore/100)*50*correct); // 0-50pts based on speed
-  const base=wordBase+speedBonus+(all?25:0); // +25 all-correct bonus
-  const finalScore=Math.max(correct>0?correct*5:0, base+waitBonus-retryPenalty);
+  const wordBase=correct*8; // 8pts per correct word
+  const speedBonus=Math.round((tpSoloSpeedScore/100)*20); // 0-20pts total speed bonus
+  const base=wordBase+speedBonus+(all?15:0); // +15 all-correct bonus
+  const finalScore=Math.max(correct>0?correct*3:0, base+waitBonus-retryPenalty);
 
   // Show results
   document.getElementById('tp-solo-tot').textContent=finalScore;
@@ -2159,7 +2164,7 @@ function blBuildSizes(){
 function blSetSpeed(sp,btn){blSpeed=sp;blSpeedName=btn.textContent.trim();dimOthers('bl-speeds',btn)}
 
 let blGrid=[],blHidden=[],blPhase='idle',blSel=null,blRecalled={},blFadeTimer=null,blRecallStart=0,blCorrect=0;
-function blCalcScore(cor,ts){const total=blRows*blCols;const mult=total<=4?0.7:total<=6?0.9:total<=8?1:total<=9?1.2:total<=12?1.4:1.7;return Math.round(cor*20*mult+Math.max(0,60-ts))}
+function blCalcScore(cor,ts){const total=blRows*blCols;const mult=total<=4?0.7:total<=6?0.9:total<=8?1:total<=9?1.2:total<=12?1.4:1.7;return Math.round(cor*8*mult+Math.max(0,10-Math.floor(ts/5)))}
 function blStartGame(){
   const t=BL_THEMES.find(x=>x.id===blTheme);
   document.getElementById('bl-theme-badge').textContent=t.ic+' '+t.n;
@@ -2268,43 +2273,51 @@ function wsStartSolo(){
   wsRenderRows('ws-word-disp','ws-timer-row','ws-letter-rows','ws-live',wsCurWord,'always');
   wsStartCountdown();
 }
-function wsCalc(rowsId,scoreId,word){let total=0;word.split('').forEach((l,i)=>{const inp=document.getElementById(`${rowsId}-${i}`);const sc=document.getElementById(`${rowsId}-sc-${i}`);if(!inp)return;const v=inp.value.trim();const valid=v.length>0&&v[0].toUpperCase()===l;inp.className='li'+(v.length>0?(valid?' ok':' err'):'');const pts=valid?v.length:0;total+=pts;if(sc)sc.textContent=valid?`${pts} pts`:'must start with '+l});const el=document.getElementById(scoreId);if(el)el.textContent=total;return total}
+function wsCalc(rowsId,scoreId,word){let total=0;word.split('').forEach((l,i)=>{const inp=document.getElementById(`${rowsId}-${i}`);const sc=document.getElementById(`${rowsId}-sc-${i}`);if(!inp)return;const v=inp.value.trim();const valid=v.length>0&&v[0].toUpperCase()===l;inp.className='li'+(v.length>0?(valid?' ok':' err'):'');const pts=valid?Math.min(v.length,8):0; // cap at 8pts per wordtotal+=pts;if(sc)sc.textContent=valid?`${pts} pts`:'must start with '+l});const el=document.getElementById(scoreId);if(el)el.textContent=total;return total}
 
 function wsRenderRows(dispId, timerId, rowsId, liveId, word, mode){
   // Show the word
   const disp = document.getElementById(dispId);
   if(disp){
-    disp.innerHTML = word.split('').map((l,i) =>
-      `<span style="display:inline-block;min-width:22px;text-align:center;font-weight:900;font-size:22px;letter-spacing:2px;color:var(--purple-tx)">${l}</span>`
+    disp.innerHTML = word.split('').map(l =>
+      '<span style="display:inline-block;min-width:22px;text-align:center;font-weight:900;font-size:22px;letter-spacing:2px;color:var(--purple-tx)">'+l+'</span>'
     ).join('');
   }
   // Build one input row per letter
   const rows = document.getElementById(rowsId);
   if(rows){
-    rows.innerHTML = word.split('').map((letter,i) => `
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="width:22px;text-align:center;font-weight:900;font-size:16px;color:var(--purple-tx);flex-shrink:0">${letter}</span>
-        <input id="${rowsId}-${i}" type="text" placeholder="starts with ${letter}..."
-          style="flex:1;padding:7px 10px;border-radius:8px;border:1.5px solid var(--bd2);background:var(--bg1);font-size:13px;color:var(--tx0);font-family:inherit"
-          oninput="wsUpdateLive('${rowsId}','${liveId}','${word}')"
-          autocomplete="off" autocorrect="off" spellcheck="false"/>
-      </div>`
-    ).join('');
+    rows.innerHTML = word.split('').map((letter,i) => {
+      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
+        + '<span style="width:22px;text-align:center;font-weight:900;font-size:16px;color:var(--purple-tx);flex-shrink:0">'+letter+'</span>'
+        + '<input id="'+rowsId+'-'+i+'" type="text" placeholder="starts with '+letter+'..." '
+        + 'style="flex:1;padding:7px 10px;border-radius:8px;border:1.5px solid var(--bd2);background:var(--bg1);font-size:13px;color:var(--tx0);font-family:inherit" '
+        + 'oninput="wsUpdateLive(this)" '
+        + 'autocomplete="off" autocorrect="off" spellcheck="false"/>'
+        + '</div>';
+    }).join('');
+    rows.dataset.rowsId = rowsId;
+    rows.dataset.liveId = liveId;
+    rows.dataset.word = word;
     // Focus first input
     const first = document.getElementById(rowsId+'-0');
     if(first) setTimeout(()=>first.focus(), 100);
   }
 }
 
-function wsUpdateLive(rowsId, liveId, word){
+function wsUpdateLive(inp){
+  const rows = inp.closest('[data-rows-id], [data-rowsId]') || inp.parentElement.parentElement;
+  const rowsId = rows.dataset.rowsId || rows.id;
+  const liveId = rows.dataset.liveId;
+  const word = rows.dataset.word || wsCurWord;
+  if(!word) return;
   const letters = word.split('');
   let filled = 0;
   letters.forEach((_,i) => {
-    const v = (document.getElementById(`${rowsId}-${i}`)?.value||'').trim();
+    const v = (document.getElementById(rowsId+'-'+i)?.value||'').trim();
     if(v) filled++;
   });
   const pct = letters.length ? filled/letters.length : 0;
-  document.getElementById(liveId).textContent = Math.round(pct * word.length * 10);
+  if(liveId) document.getElementById(liveId).textContent = Math.round(pct * word.length * 10);
 }
 
 function wsGetWords(rowsId,word){return word.split('').map((_,i)=>{const inp=document.getElementById(`${rowsId}-${i}`);return inp?inp.value.trim().toLowerCase():''})}
@@ -2333,7 +2346,7 @@ async function wsSubmitSolo(){
   const words=wsGetWords('ws-letter-rows',wsCurWord);const base=wsCalc('ws-letter-rows','ws-live',wsCurWord);const mult=1; // timer pressure replaces visibility multiplierconst sentence=words.filter(Boolean).join(' ');
   const aiBox=document.getElementById('ws-ai');aiBox.style.display='block';
   // Bippy AI scoring — coming soon
-  const finalScore=Math.round(base*mult*2);
+  const finalScore=Math.round(base*mult);
   aiBox.innerHTML=`<div style="text-align:center;padding:8px">
     <div style="font-size:22px;margin-bottom:4px">🤖</div>
     <div style="font-size:13px;font-weight:700;margin-bottom:2px">Bippy scoring — coming soon!</div>
@@ -2629,7 +2642,7 @@ function orRandSeq(len,themeId){
   const items=orGetItems(themeId);
   return Array.from({length:len},()=>items[Math.floor(Math.random()*items.length)]);
 }
-function orCalcScore(len,round,streak){return Math.round(len*10*round*(1+streak*0.1))}
+function orCalcScore(len,round,streak){return Math.round(len*6*round*(1+streak*0.1))}
 function orEffectiveSeq(seq){
   // In liner mode the answer order = the order items flashed, not grid order
   if(orStyle==='liner'&&orLinerFlashOrder.length===seq.length){
@@ -3449,7 +3462,7 @@ async function scSubmit(){
 
   // Score: base=wordCount*30, time bonus, penalty deduction
   const timeBonus = scTimeLeft * 3;
-  const base = wordCount * 30;
+  const base = wordCount * 10;
   const roundScore = Math.max(0, base + timeBonus - scPenaltyTotal);
   scTotalScore += roundScore;
   document.getElementById('sc-score').textContent = scTotalScore;
@@ -4361,6 +4374,35 @@ const BB_PLAYER_ID_KEY = 'bb_player_id';
 
 let bbPlayer = null; // {id, username, device_id}
 
+
+// ── PROFANITY FILTER ──────────────────────────────────────────────────────────
+const BB_BANNED = [
+  'fuck','shit','cunt','cock','dick','pussy','ass','arse','bitch','bastard',
+  'nigger','nigga','faggot','fag','dyke','spic','chink','kike','wetback',
+  'whore','slut','twat','wank','jerk','piss','damn','hell','crap',
+  'retard','retarded','homo','tranny','rape','rapist','nazi','hitler',
+  'porn','sex','penis','vagina','boob','tit','butt','nude','naked',
+  'kill','murder','suicide','terrorist','jihad'
+];
+
+function bbNormalize(str){
+  return str.toLowerCase()
+    .replace(/4/g,'a').replace(/@/g,'a')
+    .replace(/3/g,'e')
+    .replace(/1/g,'i').replace(/!/g,'i')
+    .replace(/0/g,'o')
+    .replace(/5/g,'s').replace(/[$]/g,'s')
+    .replace(/7/g,'t')
+    .replace(/8/g,'b')
+    .replace(/[^a-z]/g,''); // strip remaining non-letters
+}
+
+function bbIsProfane(username){
+  const normalized = bbNormalize(username);
+  // Check if any banned word appears in the normalized username
+  return BB_BANNED.some(word => normalized.includes(bbNormalize(word)));
+}
+
 function bbGetDeviceId(){
   let id = localStorage.getItem(BB_DEVICE_KEY);
   if(!id){
@@ -4398,6 +4440,13 @@ function usernameCheck(val){
     else status.textContent='Letters, numbers and underscores only';
     return;
   }
+
+  // Profanity check
+  if(bbIsProfane(val)){
+    status.style.color='var(--err-tx)';
+    status.textContent='That username is not allowed — please choose another';
+    return;
+  }
   
   status.style.color='var(--tx2)';
   status.textContent='Checking availability...';
@@ -4433,6 +4482,13 @@ async function usernameSubmit(){
   const btn = document.getElementById('username-btn');
   btn.textContent='Saving...'; btn.disabled=true;
   
+  // Double-check profanity before submitting
+  if(bbIsProfane(val)){
+    document.getElementById('username-status').textContent='That username is not allowed.';
+    btn.textContent="Lets play! →"; btn.disabled=false;
+    return;
+  }
+
   const device_id = bbGetDeviceId();
   
   try{

@@ -4378,14 +4378,7 @@ let bbPlayer = null; // {id, username, device_id}
 
 
 // ── PROFANITY FILTER ──────────────────────────────────────────────────────────
-const BB_BANNED = [
-  'fuck','shit','cunt','cock','dick','pussy','ass','arse','bitch','bastard',
-  'nigger','nigga','faggot','fag','dyke','spic','chink','kike','wetback',
-  'whore','slut','twat','wank','jerk','piss','damn','hell','crap',
-  'retard','retarded','homo','tranny','rape','rapist','nazi','hitler',
-  'porn','sex','penis','vagina','boob','tit','butt','nude','naked',
-  'kill','murder','suicide','terrorist','jihad'
-];
+const BB_BANNED = atob('ZnVjayxzaGl0LGN1bnQsY29jayxkaWNrLHB1c3N5LGFzcyxhcnNlLGJpdGNoLGJhc3RhcmQsbmlnZ2VyLG5pZ2dhLGZhZ2dvdCxmYWcsZHlrZSxzcGljLGNoaW5rLGtpa2Usd2V0YmFjayx3aG9yZSxzbHV0LHR3YXQsd2FuayxqZXJrLHBpc3MsZGFtbixoZWxsLGNyYXAscmV0YXJkLHJldGFyZGVkLGhvbW8sdHJhbm55LHJhcGUscmFwaXN0LG5hemksaGl0bGVyLHBvcm4sc2V4LHBlbmlzLHZhZ2luYSxib29iLHRpdCxidXR0LG51ZGUsbmFrZWQsa2lsbCxtdXJkZXIsc3VpY2lkZSx0ZXJyb3Jpc3QsamloYWQ=').split(',');
 
 function bbNormalize(str){
   return str.toLowerCase()
@@ -4396,13 +4389,12 @@ function bbNormalize(str){
     .replace(/5/g,'s').replace(/[$]/g,'s')
     .replace(/7/g,'t')
     .replace(/8/g,'b')
-    .replace(/[^a-z]/g,''); // strip remaining non-letters
+    .replace(/[^a-z]/g,'');
 }
 
 function bbIsProfane(username){
   const normalized = bbNormalize(username);
-  // Check if any banned word appears in the normalized username
-  return BB_BANNED.some(word => normalized.includes(bbNormalize(word)));
+  return BB_BANNED.some(function(word){ return normalized.includes(bbNormalize(word)); });
 }
 
 function bbGetDeviceId(){

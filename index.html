@@ -1289,11 +1289,11 @@ function gc(pfx){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0
 const GAME_LINK='\n\n▶ Play at https://betchabippy.com';
 function shareScore(game){
   const d=SS[game]||{};let txt='';
-  if(game==='gotcha')txt=`💡 ${APP}\n🃏 Gotcha — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ⏱ ${d.time||'—'} · 🎯 ${d.acc||'—'}\n\nCan you beat it?`+GAME_LINK;
-  else if(game==='tippa-solo')txt=`💡 ${APP}\n💬 Tippa Solo\n\n🏆 ${d.score||0} pts · ✅ ${d.correct||'—'} recalled\n\nCan you beat it?`+GAME_LINK;
-  else if(game==='tippa')txt=`💡 ${APP}\n💬 Tippa\n\n🏆 ${d.score||0} pts · ✅ ${d.correct||'—'} recalled\n\nCan you beat it?`+GAME_LINK;
-  else if(game==='blink')txt=`💡 ${APP}\n👁 Blinka — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ✅ ${d.acc||'—'}\n\nCan you beat it?`+GAME_LINK;
-  else txt=`💡 ${APP}\n📝 Crony\n\n🏆 ${d.score||0} pts · 📖 ${d.word||'—'}\n\nCan you beat it?`+GAME_LINK;
+  if(game==='gotcha')txt=`💡 ${APP}\n🃏 Gotcha — ${d.theme||""} · ${d.diff||""}\n\n🏆 ${d.score||0} pts · ⏱ ${d.time||"—"} · 🎯 ${d.acc||"—"}\n\nCan you beat it?`+GAME_LINK;
+  else if(game==='tippa-solo')txt=`💡 ${APP}\n💬 Tippa Solo\n\n🏆 ${d.score||0} pts · ✅ ${d.correct||"—"} recalled\n\nCan you beat it?`+GAME_LINK;
+  else if(game==='tippa')txt=`💡 ${APP}\n💬 Tippa\n\n🏆 ${d.score||0} pts · ✅ ${d.correct||"—"} recalled\n\nCan you beat it?`+GAME_LINK;
+  else if(game==='blink')txt=`💡 ${APP}\n👁 Blinka — ${d.theme||""} · ${d.diff||""}\n\n🏆 ${d.score||0} pts · ✅ ${d.acc||"—"}\n\nCan you beat it?`+GAME_LINK;
+  else txt=`💡 ${APP}\n📝 Crony\n\n🏆 ${d.score||0} pts · 📖 ${d.word||"—"}\n\nCan you beat it?`+GAME_LINK;
   if(navigator.share){navigator.share({text:txt}).catch(()=>{})}else{navigator.clipboard.writeText(txt).then(()=>showToast('Score copied!')).catch(()=>{})}
 }
 
@@ -1322,11 +1322,11 @@ function gtBuildThemes(){
     let ph='<div class="tprev">';
     if(t.pv)t.pv.forEach(e=>{ph+=`<div class="tpc">${e}</div>`});
     else if(t.pvc)t.pvc.forEach(c=>{ph+=`<div class="tpc" style="background:${c};border-color:${c}"></div>`});
-    else if(t.pvk)t.pvk.forEach(c=>{const r=c.includes('♥')||c.includes('♦');ph+=`<div class="tpc" style="font-size:9px;font-weight:700;color:${tt(r,'#E53935','#111')};flex-direction:column;gap:0"><span>${c.replace(/[♠♥♦♣]/,"")}</span><span>${c.match(/[♠♥♦♣]/)[0]}</span></div>`});
+    else if(t.pvk)t.pvk.forEach(c=>{const r=c.includes('♥')||c.includes('♦');ph+=`<div class="tpc" style="font-size:9px;font-weight:700;color:${tt(r,"#E53935","#111")};flex-direction:column;gap:0"><span>${c.replace(/[♠♥♦♣]/,"")}</span><span>${c.match(/[♠♥♦♣]/)[0]}</span></div>`});
     else if(t.pvn)t.pvn.forEach((n,i)=>{const nb=GTN[i];ph+=`<div class="tpc" style="background:${nb.bg};color:${nb.fg};font-size:12px;font-weight:700;border-color:${nb.bg}">${n}</div>`});
     else if(t.pvni)ph+=`<div class="tpc">🍕</div><div class="tpc" style="font-size:8px;font-weight:700">PIZZA</div><div class="tpc">🐶</div><div class="tpc" style="font-size:8px;font-weight:700">DOG</div>`;
     ph+='</div>';
-    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}${tt(gtTheme===t.id,'<div class="ck">✓</div>')}`;
+    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}${tt(gtTheme===t.id,"<div class=\"ck\">✓</div>")}`;
     g.appendChild(div);
   });
   gtBuildSizes();
@@ -1407,7 +1407,7 @@ function mcNew(){
 function mcRenderFace(c){
   if(c.type==='emoji')return`<span style="font-size:30px">${c.val}</span>`;
   if(c.type==='color')return`<div style="width:46px;height:46px;background:${c.val.h};border-radius:9px"></div>`;
-  if(c.type==='card'){const r=c.val.s==='♥'||c.val.s==='♦';return`<div style="text-align:center;line-height:1"><div style="font-size:20px;font-weight:700;color:${c.val.c}">${c.val.v}</div><div style="font-size:20px;color:${tt(r,'#E53935','#111')}">${c.val.s}</div></div>`}
+  if(c.type==='card'){const r=c.val.s==='♥'||c.val.s==='♦';return`<div style="text-align:center;line-height:1"><div style="font-size:20px;font-weight:700;color:${c.val.c}">${c.val.v}</div><div style="font-size:20px;color:${tt(r,"#E53935","#111")}">${c.val.s}</div></div>`}
   if(c.type==='number')return`<div style="width:46px;height:46px;background:${c.val.bg};border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:${c.val.fg}">${c.val.n}</div>`;
   if(c.type==='ni-a')return`<span style="font-size:28px">${c.val}</span>`;
   if(c.type==='ni-b')return`<div style="background:var(--info-bg);border-radius:7px;padding:5px 7px;text-align:center;max-width:66px"><span style="font-size:10px;font-weight:700;letter-spacing:.03em;color:var(--info-tx);word-break:break-word;line-height:1.2">${c.val}</span></div>`;
@@ -1563,7 +1563,7 @@ function tpSoloTickCountdown(data){
     const h=Math.floor(remaining/3600000);
     const m=Math.floor((remaining%3600000)/60000);
     const s=Math.floor((remaining%60000)/1000);
-    cd.textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    cd.textContent=`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
   }
   update(); // run immediately
   tpCountdownInterval=setInterval(update,1000);
@@ -1613,7 +1613,7 @@ function tpSoloShowRecall(isRetry){
   });
 
   // Update retries badge
-  document.getElementById('tp-solo-retries-left').textContent=`${tpSoloRetriesLeft} retr${tt(tpSoloRetriesLeft===1,'y','ies')} left`;
+  document.getElementById('tp-solo-retries-left').textContent=`${tpSoloRetriesLeft} retr${tt(tpSoloRetriesLeft===1,"y","ies")} left`;
   goScr('tp-solo-recall');
 }
 
@@ -1690,7 +1690,7 @@ function tpSoloSubmit(){
   tpSoloWordState.forEach(ws=>{
     const row=document.createElement('div');
     row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd)';
-    row.innerHTML=`<span style="font-size:13px;font-weight:600">${ws.word}</span><span class="${tt(ws.status==='correct','ok-tag','no-tag')}">${tt(ws.status==='correct','correct','missed')}</span>`;
+    row.innerHTML=`<span style="font-size:13px;font-weight:600">${ws.word}</span><span class="${tt(ws.status==="correct","ok-tag","no-tag")}">${tt(ws.status==="correct","correct","missed")}</span>`;
     rw.appendChild(row);
   });
 
@@ -1874,7 +1874,7 @@ function tpSoloShowRecall(isRetry){
   });
 
   // Update retries badge
-  document.getElementById('tp-solo-retries-left').textContent=`${tpSoloRetriesLeft} retr${tt(tpSoloRetriesLeft===1,'y','ies')} left`;
+  document.getElementById('tp-solo-retries-left').textContent=`${tpSoloRetriesLeft} retr${tt(tpSoloRetriesLeft===1,"y","ies")} left`;
   goScr('tp-solo-recall');
 }
 
@@ -1951,7 +1951,7 @@ function tpSoloSubmit(){
   tpSoloWordState.forEach(ws=>{
     const row=document.createElement('div');
     row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd)';
-    row.innerHTML=`<span style="font-size:13px;font-weight:600">${ws.word}</span><span class="${tt(ws.status==='correct','ok-tag','no-tag')}">${tt(ws.status==='correct','correct','missed')}</span>`;
+    row.innerHTML=`<span style="font-size:13px;font-weight:600">${ws.word}</span><span class="${tt(ws.status==="correct","ok-tag","no-tag")}">${tt(ws.status==="correct","correct","missed")}</span>`;
     rw.appendChild(row);
   });
 
@@ -2095,7 +2095,7 @@ async function tpSubmit(){
     const inp=document.getElementById('tpr-'+i);const ans=(inp?inp.value.trim().toLowerCase():'');const ok=ans===w;
     if(ok)cor++;answers.push(ans);
     const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd)';
-    row.innerHTML=`<span style="font-size:13px;font-weight:600">${w}</span><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:var(--tx1)">${ans||'—'}</span><span class="${tt(ok,'ok-tag','no-tag')}">${tt(ok,'correct','wrong')}</span></div>`;
+    row.innerHTML=`<span style="font-size:13px;font-weight:600">${w}</span><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:var(--tx1)">${ans||"—"}</span><span class="${tt(ok,"ok-tag","no-tag")}">${tt(ok,"correct","wrong")}</span></div>`;
     rw.appendChild(row);
   });
   const all=cor===tpWords.length;const wb=Math.floor(Math.random()*26);
@@ -2143,10 +2143,10 @@ function blBuildThemes(){
     const div=document.createElement('div');div.className='tc'+(blTheme===t.id?' sel':' dim');div.dataset.id=t.id;div.onclick=()=>{blTheme=t.id;blBuildThemes()};
     let ph='<div class="tprev">';
     if(t.pvc)t.pvc.forEach(e=>{ph+=`<div class="tpc" style="font-size:16px;border:none;background:transparent">${e}</div>`});
-    else if(t.pvk)t.pvk.forEach(c=>{const r=c.includes('♥')||c.includes('♦');ph+=`<div class="tpc" style="font-size:9px;font-weight:700;color:${tt(r,'#E53935','#111')};flex-direction:column;gap:0"><span>${c.replace(/[♠♥♦♣]/,"")}</span><span>${c.match(/[♠♥♦♣]/)[0]}</span></div>`});
+    else if(t.pvk)t.pvk.forEach(c=>{const r=c.includes('♥')||c.includes('♦');ph+=`<div class="tpc" style="font-size:9px;font-weight:700;color:${tt(r,"#E53935","#111")};flex-direction:column;gap:0"><span>${c.replace(/[♠♥♦♣]/,"")}</span><span>${c.match(/[♠♥♦♣]/)[0]}</span></div>`});
     else t.pv.forEach(e=>{ph+=`<div class="tpc">${e}</div>`});
     ph+='</div>';
-    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}${tt(blTheme===t.id,'<div class="ck">✓</div>')}`;
+    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}${tt(blTheme===t.id,"<div class=\"ck\">✓</div>")}`;
     g.appendChild(div);
   });
   blBuildSizes();
@@ -2512,13 +2512,13 @@ function tpCheckPendingOnLoad(){
   const isReady = remaining <= 0;
   banner.style.display = 'block';
   if(isReady){
-    desc.textContent = `${data.words.length} word${tt(data.words.length>1,'s')} · Ready to recall!`;
+    desc.textContent = `${data.words.length} word${tt(data.words.length>1,"s")} · Ready to recall!`;
     btn.textContent = 'Recall now →';
     btn.style.background = 'var(--teal)';
   } else {
     const h = Math.floor(remaining/3600000);
     const m = Math.floor((remaining%3600000)/60000);
-    desc.textContent = `${data.words.length} word${tt(data.words.length>1,'s')} · Unlocks in ${h}h ${m}m`;
+    desc.textContent = `${data.words.length} word${tt(data.words.length>1,"s")} · Unlocks in ${h}h ${m}m`;
     btn.textContent = 'Locked 🔒';
     btn.style.background = 'var(--purple)';
   }
@@ -2533,7 +2533,7 @@ function tpCheckPending(){
     const remaining = data.unlockAt - Date.now();
     const h = Math.floor(remaining/3600000);
     const m = Math.floor((remaining%3600000)/60000);
-    alert(`Not yet! Come back in ${h} hour${tt(h!==1,'s')} and ${m} minute${tt(m!==1,'s')}.`);
+    alert(`Not yet! Come back in ${h} hour${tt(h!==1,"s")} and ${m} minute${tt(m!==1,"s")}.`);
     return;
   }
   // Ready — load the challenge and go to recall
@@ -2598,7 +2598,7 @@ function renderStats(){
       </div>
       <div style="max-height:160px;overflow-y:auto">`;
     arr.slice().reverse().slice(0,10).forEach(e=>{
-      html+=`<div class="hist-item"><span style="color:var(--tx2)">${e.date}</span><span>${e.detail||''}</span><span style="font-weight:700;color:var(--purple-tx)">${e.score} pts</span></div>`;
+      html+=`<div class="hist-item"><span style="color:var(--tx2)">${e.date}</span><span>${e.detail||""}</span><span style="font-weight:700;color:var(--purple-tx)">${e.score} pts</span></div>`;
     });
     html+=`</div></div>`;
   });
@@ -2693,7 +2693,7 @@ function orBuildThemeGrid(containerId, selectedId, setter){
       else ph+=`<div class="tpc">${e}</div>`;
     });
     ph+='</div>';
-    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}${tt(selectedId===t.id,'<div class="ck">✓</div>')}`;
+    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}${tt(selectedId===t.id,"<div class=\"ck\">✓</div>")}`;
     g.appendChild(div);
   });
 }
@@ -3120,7 +3120,7 @@ async function orRecvTap(val){
   res.style.color=allCorrect?'var(--ok-tx)':'var(--err-tx)';
   res.textContent=allCorrect
     ? `🏆 Perfect! Score: ${score} pts`
-    : `✗ Got ${correctCount}/${orRecvSeq.length} — Score: ${score} pts. Sequence was: ${effectiveRecvSeq.join(' ')}`;
+    : `✗ Got ${correctCount}/${orRecvSeq.length} — Score: ${score} pts. Sequence was: ${effectiveRecvSeq.join(" ")}`;
   document.getElementById('or-recv-done').style.display='block';
   SS['orderly-recv']={score,word:orRecvSeq.join(' ')};
   recordOrderly(score,1,OR_THEMES[orRecvTheme]?.name);
@@ -3975,7 +3975,7 @@ function aiqMidnightCountdown(){
   const h=Math.floor(ms/3600000);
   const m=Math.floor((ms%3600000)/60000);
   const s=Math.floor((ms%60000)/1000);
-  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 }
 
 function aiqCheckDaily(){
@@ -3993,7 +3993,7 @@ function aiqCheckDaily(){
         <div style="font-size:36px;margin-bottom:8px">✅</div>
         <p style="font-size:15px;font-weight:700;margin-bottom:4px">You've played today!</p>
         <p style="font-size:12px;color:var(--tx1);line-height:1.7;margin-bottom:12px">
-          Today's quote: <em>"${q.words.join(' ')}"</em><br>
+          Today's quote: <em>"${q.words.join(" ")}"</em><br>
           <strong>— ${q.author}</strong>
         </p>
         <div style="font-size:13px;font-weight:700;color:var(--purple-tx);margin-bottom:4px">Your score: ${data.score} pts</div>
@@ -4249,7 +4249,7 @@ function aiqCheckGameOver(){
     const win=document.getElementById('aiq-win');
     win.style.display='block';
     win.style.background='var(--err-bg)';win.style.borderColor='var(--err-bd)';win.style.color='var(--err-tx)';
-    win.innerHTML=`Out of points! The quote was: <em>${aiqQuote.words.join(' ')}</em>`;
+    win.innerHTML=`Out of points! The quote was: <em>${aiqQuote.words.join(" ")}</em>`;
     document.getElementById('aiq-author-final').textContent='— '+aiqQuote.author;
     document.getElementById('aiq-result').style.display='block';
     localStorage.setItem(AIQ_STORE, JSON.stringify({date:aiqTodayKey(),score:0,solved:false}));
@@ -4333,10 +4333,10 @@ function aiqSubmit(){
     const win=document.getElementById('aiq-win');
     win.style.display='block';
     win.style.background='var(--ok-bg)';win.style.borderColor='var(--ok-bd)';win.style.color='var(--ok-tx)';
-    win.innerHTML=`🏆 Solved! <strong>${aiqScore} pts</strong>${tt(aiqNoClues,' — No clues used! +50 bonus 🌟')}`;
+    win.innerHTML=`🏆 Solved! <strong>${aiqScore} pts</strong>${tt(aiqNoClues," — No clues used! +50 bonus 🌟")}`;
     // Always reveal quote + author together on solve
     document.getElementById('aiq-author-final').innerHTML=
-      `<em>"${aiqQuote.words.join(' ')}"</em><br><strong>— ${aiqQuote.author}</strong>`;
+      `<em>"${aiqQuote.words.join(" ")}"</em><br><strong>— ${aiqQuote.author}</strong>`;
     document.getElementById('aiq-result').style.display='block';
     // Save daily result
     localStorage.setItem(AIQ_STORE, JSON.stringify({date:aiqTodayKey(),score:aiqScore,solved:true}));
@@ -4359,7 +4359,7 @@ function aiqSubmit(){
     // Flash penalty
     const pen=document.createElement('div');
     pen.style.cssText='text-align:center;color:var(--err-tx);font-weight:700;font-size:13px;margin:6px 0;';
-    pen.textContent=`-10 pts · ${wrongSlots.length} word${tt(wrongSlots.length!==1,'s')} wrong`;
+    pen.textContent=`-10 pts · ${wrongSlots.length} word${tt(wrongSlots.length!==1,"s")} wrong`;
     const submitBtn=document.getElementById('aiq-result').previousElementSibling;
     submitBtn.parentNode.insertBefore(pen,submitBtn);
     setTimeout(()=>pen.remove(),2000);
@@ -4592,7 +4592,7 @@ async function bbLoadFriendsLeaderboard(game){
     
     const friendIds = friends.map(f=>f.friend_id);
     const allIds = [bbPlayer.id, ...friendIds];
-    const inClause = `(${allIds.map(id=>`"${id}"`).join(',')})`;
+    const inClause = `(${allIds.map(id=>`"${id}"`).join(",")})`;
     
     const sRes = await fetch(
       `${SB_URL}/rest/v1/scores?game=eq.${game}&player_id=in.${inClause}&order=score.desc&limit=10&select=score,detail,played_at,players(username)`,

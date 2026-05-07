@@ -187,6 +187,28 @@ button:active{transform:scale(.98)}
 <body>
 <div id="app">
 
+
+<!-- ====== USERNAME ONBOARDING ====== -->
+<div id="username-screen" style="position:fixed;inset:0;background:var(--bg0);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px">
+  <div style="width:100%;max-width:360px">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:48px;margin-bottom:8px">💡</div>
+      <h1 style="font-size:22px;font-weight:800;color:var(--tx0);margin-bottom:4px">Welcome to BetchaBippy!</h1>
+      <p style="font-size:13px;color:var(--tx1)">Pick a username to track your scores and compete on the leaderboard.</p>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="st">Choose your username</div>
+      <input id="username-input" type="text" maxlength="15" placeholder="e.g. SwiftPanda42"
+        style="width:100%;padding:10px 12px;border-radius:10px;border:2px solid var(--bd2);background:var(--bg1);font-size:15px;color:var(--tx0);font-family:inherit;box-sizing:border-box;margin-bottom:6px"
+        oninput="usernameCheck(this.value)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <div id="username-status" style="font-size:11px;min-height:16px;margin-bottom:4px"></div>
+      <p style="font-size:10px;color:var(--tx2)">3–15 characters · letters, numbers, underscores only</p>
+    </div>
+    <button id="username-btn" class="btn-p" onclick="usernameSubmit()" style="width:100%;padding:12px;font-size:15px;font-weight:700;opacity:0.4" disabled>Let's play! →</button>
+    <button onclick="usernameSkip()" style="width:100%;margin-top:8px;font-size:12px;color:var(--tx2);background:none;border:none;cursor:pointer;padding:8px">Skip for now — play as guest</button>
+  </div>
+</div>
+
 <!-- SPLASH SCREEN -->
 <div class="splash" id="splash">
   <div class="splash-logo">
@@ -938,6 +960,26 @@ button:active{transform:scale(.98)}
     <div class="gic" style="background:var(--bg2);color:var(--tx1);border-color:var(--bd2)">📊</div>
     <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Stats</p><p style="font-size:12px;color:var(--tx1)">Your personal records across all games</p></div>
   </div>
+  <!-- Player identity bar -->
+  <div id="stats-player-bar" style="margin-bottom:10px"></div>
+  <!-- Leaderboard -->
+  <div class="card" style="margin-bottom:10px">
+    <div class="st" style="margin-bottom:8px">Leaderboards</div>
+    <div class="dr" id="lb-game-btns" style="flex-wrap:wrap;margin-bottom:10px">
+      <button class="db on" onclick="lbSelectGame('gotcha',this)" style="flex:none;padding:5px 8px;font-size:11px">🃏 Gotcha</button>
+      <button class="db dim" onclick="lbSelectGame('blink',this)" style="flex:none;padding:5px 8px;font-size:11px">👁 Blinka</button>
+      <button class="db dim" onclick="lbSelectGame('crony',this)" style="flex:none;padding:5px 8px;font-size:11px">📝 Crony</button>
+      <button class="db dim" onclick="lbSelectGame('scrambler',this)" style="flex:none;padding:5px 8px;font-size:11px">🔤 Scrambler</button>
+      <button class="db dim" onclick="lbSelectGame('aiq',this)" style="flex:none;padding:5px 8px;font-size:11px">💬 And I Quote</button>
+    </div>
+    <div style="display:flex;margin-bottom:10px;border-radius:10px;overflow:hidden;border:1.5px solid var(--bd2)">
+      <button id="lb-tab-global" onclick="lbSetTab('global')"
+        style="flex:1;padding:8px;font-size:12px;font-weight:700;background:var(--purple-lt);color:var(--purple-tx);border:none;cursor:pointer">🌍 Global</button>
+      <button id="lb-tab-friends" onclick="lbSetTab('friends')"
+        style="flex:1;padding:8px;font-size:12px;font-weight:600;background:var(--bg1);color:var(--tx1);border:none;cursor:pointer">👯 Friends</button>
+    </div>
+    <div id="lb-content"><p style="text-align:center;font-size:12px;color:var(--tx2);padding:16px">Loading...</p></div>
+  </div>
   <div id="st-content"></div>
   <button onclick="if(confirm('Reset ALL stats?'))resetAllStats()" style="width:100%;font-size:12px;color:var(--err-tx);border-color:var(--err-bd);margin-top:4px">Reset all stats</button>
 </div>
@@ -1245,16 +1287,16 @@ function gc(pfx){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0
 const GAME_LINK='\n\n▶ Play at https://betchabippy.com';
 function shareScore(game){
   const d=SS[game]||{};let txt='';
-  if(game==='gotcha')txt=`🧠 ${APP}\n🃏 Gotcha — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ⏱ ${d.time||'—'} · 🎯 ${d.acc||'—'}\n\nCan you beat it?`+GAME_LINK;
-  else if(game==='tippa-solo')txt=`🧠 ${APP}
+  if(game==='gotcha')txt=`💡 ${APP}\n🃏 Gotcha — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ⏱ ${d.time||'—'} · 🎯 ${d.acc||'—'}\n\nCan you beat it?`+GAME_LINK;
+  else if(game==='tippa-solo')txt=`💡 ${APP}
 💬 Tippa Solo
 
 🏆 ${d.score||0} pts · ✅ ${d.correct||'—'} recalled
 
 Can you beat it?`+GAME_LINK;
-  else if(game==='tippa')txt=`🧠 ${APP}\n💬 Tippa\n\n🏆 ${d.score||0} pts · ✅ ${d.correct||'—'} recalled\n\nCan you beat it?`+GAME_LINK;
-  else if(game==='blink')txt=`🧠 ${APP}\n👁 Blinka — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ✅ ${d.acc||'—'}\n\nCan you beat it?`+GAME_LINK;
-  else txt=`🧠 ${APP}\n📝 Crony\n\n🏆 ${d.score||0} pts · 📖 ${d.word||'—'}\n\nCan you beat it?`+GAME_LINK;
+  else if(game==='tippa')txt=`💡 ${APP}\n💬 Tippa\n\n🏆 ${d.score||0} pts · ✅ ${d.correct||'—'} recalled\n\nCan you beat it?`+GAME_LINK;
+  else if(game==='blink')txt=`💡 ${APP}\n👁 Blinka — ${d.theme||''} · ${d.diff||''}\n\n🏆 ${d.score||0} pts · ✅ ${d.acc||'—'}\n\nCan you beat it?`+GAME_LINK;
+  else txt=`💡 ${APP}\n📝 Crony\n\n🏆 ${d.score||0} pts · 📖 ${d.word||'—'}\n\nCan you beat it?`+GAME_LINK;
   if(navigator.share){navigator.share({text:txt}).catch(()=>{})}else{navigator.clipboard.writeText(txt).then(()=>showToast('Score copied!')).catch(()=>{})}
 }
 
@@ -1381,7 +1423,7 @@ function mcFlip(i,el){
         const w=document.getElementById('mc-win');w.style.display='block';w.textContent=`All matched! 🏆 ${fs} pts · ${Math.floor(mcSec/60)}:${p2(mcSec%60)} · ${Math.round(mcPairs/mcMoves*100)}% accuracy`;
         document.getElementById('mc-share').style.display='block';
         SS.gotcha={score:fs,time:Math.floor(mcSec/60)+':'+p2(mcSec%60),acc:Math.round((gtRows*gtCols/2)/mcMoves*100)+'%',theme:GT_THEMES.find(t=>t.id===gtTheme)?.n,diff:gtDiffName};
-        recordGotcha(fs,gtDiffName,GT_THEMES.find(t=>t.id===gtTheme)?.n);
+        recordGotcha(fs,gtDiffName,GT_THEMES.find(t=>t.id===gtTheme)?.n);bbSubmitScore('gotcha',fs,(GT_THEMES.find(t=>t.id===gtTheme)?.n||gtTheme)+' '+gtDiffName);
       }
     }else{setTimeout(()=>{mcCards[a.i].f=mcCards[b.i].f=false;a.el.classList.remove('flipped');b.el.classList.remove('flipped');mcFlipped=[];mcLocked=false;document.getElementById('mc-live').textContent=mcCalcScore()},950)}
   }
@@ -1536,7 +1578,11 @@ function tpSoloTryRecall(){
   tpSoloShowRecall();
 }
 
-function tpSoloShowRecall(){
+function tpSoloShowRecall(isRetry){
+  // Show "one more chance" banner if retrying
+  const banner=document.getElementById('tp-retry-banner');
+  if(banner) banner.style.display=isRetry?'block':'none';
+
   // Show hint
   const hr=document.getElementById('tp-solo-hint-rec');
   if(tpSoloHint!=='none'){hr.style.display='block';hr.innerHTML=`<span class="hp">Hint: ${tpSoloHint}</span>`}
@@ -1576,8 +1622,12 @@ function tpSoloSubmit(){
     const ans=(inp?inp.value.trim().toLowerCase():'');
     ws.answer=ans;
     ws.attempts++;
-    if(ans===ws.word){
+    // Match any word in the set regardless of order
+    const remaining=tpSoloWordState.filter(w=>w.status==='pending'&&w.word!==ws.word).map(w=>w.word);
+    const allWords=tpSoloWordState.map(w=>w.word);
+    if(allWords.includes(ans)){
       ws.status='correct';
+      ws.word=ans; // lock in what they guessed
     } else {
       // wrong — use a retry if available
       if(tpSoloRetriesLeft>0){
@@ -1593,8 +1643,8 @@ function tpSoloSubmit(){
   });
 
   if(!allDone&&anyWrongWithRetries){
-    // Still words to retry — refresh the recall screen
-    tpSoloShowRecall();
+    // Still words to retry — show retry banner then refresh recall screen
+    tpSoloShowRecall(true);
     return;
   }
 
@@ -1789,7 +1839,11 @@ function tpSoloTryRecall(){
   tpSoloShowRecall();
 }
 
-function tpSoloShowRecall(){
+function tpSoloShowRecall(isRetry){
+  // Show "one more chance" banner if retrying
+  const banner=document.getElementById('tp-retry-banner');
+  if(banner) banner.style.display=isRetry?'block':'none';
+
   // Show hint
   const hr=document.getElementById('tp-solo-hint-rec');
   if(tpSoloHint!=='none'){hr.style.display='block';hr.innerHTML=`<span class="hp">Hint: ${tpSoloHint}</span>`}
@@ -1829,8 +1883,12 @@ function tpSoloSubmit(){
     const ans=(inp?inp.value.trim().toLowerCase():'');
     ws.answer=ans;
     ws.attempts++;
-    if(ans===ws.word){
+    // Match any word in the set regardless of order
+    const remaining=tpSoloWordState.filter(w=>w.status==='pending'&&w.word!==ws.word).map(w=>w.word);
+    const allWords=tpSoloWordState.map(w=>w.word);
+    if(allWords.includes(ans)){
       ws.status='correct';
+      ws.word=ans; // lock in what they guessed
     } else {
       // wrong — use a retry if available
       if(tpSoloRetriesLeft>0){
@@ -1846,8 +1904,8 @@ function tpSoloSubmit(){
   });
 
   if(!allDone&&anyWrongWithRetries){
-    // Still words to retry — refresh the recall screen
-    tpSoloShowRecall();
+    // Still words to retry — show retry banner then refresh recall screen
+    tpSoloShowRecall(true);
     return;
   }
 
@@ -2183,7 +2241,7 @@ function blPickIcon(icon,btn){
     const w=document.getElementById('bl-win');w.style.display='block';w.textContent=`${cor}/${blHidden.length} correct · 🏆 ${score} pts · ${acc} · ${ts2}s recall`;
     document.getElementById('bl-live').textContent=score;document.getElementById('bl-again').style.display='flex';document.getElementById('bl-share').style.display='block';
     SS.blink={score,acc,diff:blDiffName,theme:BL_THEMES.find(t=>t.id===blTheme)?.n};
-    recordBlink(score,blDiffName,BL_THEMES.find(t=>t.id===blTheme)?.n);
+    recordBlink(score,blDiffName,BL_THEMES.find(t=>t.id===blTheme)?.n);bbSubmitScore('blink',score,(BL_THEMES.find(t=>t.id===blTheme)?.n||blTheme)+' '+blDiffName);
   }
 }
 
@@ -2273,9 +2331,19 @@ function wsStartCountdown(){
 
 async function wsSubmitSolo(){
   const words=wsGetWords('ws-letter-rows',wsCurWord);const base=wsCalc('ws-letter-rows','ws-live',wsCurWord);const mult=1; // timer pressure replaces visibility multiplierconst sentence=words.filter(Boolean).join(' ');
-  const aiBox=document.getElementById('ws-ai');aiBox.style.display='block';aiBox.textContent='Asking Bippy to rate your sentence...';
-  try{const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:250,messages:[{role:'user',content:`Word: "${wsCurWord}". Acronym sentence: "${sentence}". Rate coherence 1-3 stars. Reply ONLY with JSON: {"rating":2,"comment":"witty remark max 12 words","score":${Math.round(base*mult*2)}}`}]})});const data=await resp.json();const txt=data.content.map(c=>c.text||'').join('');const parsed=JSON.parse(txt.replace(/```json|```/g,'').trim());const stars='★'.repeat(parsed.rating)+'☆'.repeat(3-parsed.rating);aiBox.innerHTML=`<strong>Coherence ${stars}</strong> — ${parsed.comment}<br><br>Final score: <strong>${parsed.score} pts</strong>`;document.getElementById('ws-live').textContent=parsed.score;document.getElementById('ws-share').style.display='block';SS.crony={score:parsed.score,word:wsCurWord};recordCrony(parsed.score,wsCurWord)}
-  catch(e){const fb=Math.round(base*mult*2);aiBox.textContent=`Score: ${fb} pts (Bippy unavailable)`;document.getElementById('ws-live').textContent=fb;document.getElementById('ws-share').style.display='block';SS.crony={score:fb,word:wsCurWord};recordCrony(fb,wsCurWord)}
+  const aiBox=document.getElementById('ws-ai');aiBox.style.display='block';
+  // Bippy AI scoring — coming soon
+  const finalScore=Math.round(base*mult*2);
+  aiBox.innerHTML=`<div style="text-align:center;padding:8px">
+    <div style="font-size:22px;margin-bottom:4px">🤖</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:2px">Bippy scoring — coming soon!</div>
+    <div style="font-size:11px;color:var(--tx2);margin-bottom:8px">AI-powered sentence ratings are on the way.</div>
+    <div style="font-size:15px;font-weight:800">Score: ${finalScore} pts</div>
+  </div>`;
+  document.getElementById('ws-live').textContent=finalScore;
+  document.getElementById('ws-share').style.display='block';
+  SS.crony={score:finalScore,word:wsCurWord};
+  recordCrony(finalScore,wsCurWord);bbSubmitScore('crony',finalScore,wsCurWord);;
 }
 function wsBuildSender(){const word=(document.getElementById('ws-send-inp').value||'').replace(/[^A-Z]/g,'');if(!word)return;wsSenderWord=word;wsRenderRows('ws-send-disp-h','ws-send-timer-h','ws-sender-rows','ws-sender-score',word,'always')}
 async function wsCreateChallenge(){
@@ -2492,6 +2560,9 @@ function recordStat(game,entry){const arr=loadStats(game);arr.push({...entry,dat
 function resetAllStats(){STAT_GAMES.forEach(g=>localStorage.removeItem(statKey(g)));renderStats();showToast('All stats reset')}
 
 function renderStats(){
+  renderStatsPlayerBar();
+  lbRender();
+
   const el=document.getElementById('st-content');if(!el)return;
   let html='';
   STAT_GAMES.forEach(game=>{
@@ -3396,21 +3467,14 @@ async function scSubmit(){
 
   // Bippy coherence check
   const aiBox=document.getElementById('sc-ai-box');
-  aiBox.textContent='Asking Bippy to rate your sentence...';
-  try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,
-        messages:[{role:'user',content:`Words: ${scCurrentWords.join(', ')}. Correct order: "${scCorrectOrder.join(' ')}". Player answered: "${built}". Rate the player's sentence coherence 1-3 stars. JSON only: {"rating":2,"comment":"max 10 words"}`}]})});
-    const data=await resp.json();
-    const txt=data.content.map(c=>c.text||'').join('');
-    const p=JSON.parse(txt.replace(/```json|```/g,'').trim());
-    const stars='★'.repeat(p.rating)+'☆'.repeat(3-p.rating);
-    aiBox.innerHTML=`<strong>Coherence ${stars}</strong> — ${p.comment}`;
-  }catch(e){
-    aiBox.textContent='Bippy unavailable — score based on time and accuracy.';
-  }
+  // Bippy AI scoring — coming soon
+  aiBox.innerHTML=`<div style="text-align:center;padding:8px">
+    <div style="font-size:22px;margin-bottom:4px">🤖</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:2px">Bippy scoring — coming soon!</div>
+    <div style="font-size:11px;color:var(--tx2)">AI-powered sentence ratings are on the way.</div>
+  </div>`;
 
-  recordOrderly(scTotalScore, scRound, 'Scrambler');
+  recordOrderly(scTotalScore,scRound,'Scrambler');bbSubmitScore('scrambler',scTotalScore,'Round '+scRound);;
   SS.scrambler={score:scTotalScore, round:scRound};
 
   // Hide "next round" if challenge mode (single round)
@@ -3942,7 +4006,7 @@ function aiqCheckDaily(){
 
 function aiqShareDaily(score, category){
   const today=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
-  const txt=`🧠 BetchaBippy® Mind Games
+  const txt=`💡 BetchaBippy® Mind Games
 💬 And I Quote — ${today}
 
 🏆 ${score} pts · ${category}
@@ -4262,6 +4326,9 @@ function aiqSubmit(){
     // Save daily result
     localStorage.setItem(AIQ_STORE, JSON.stringify({date:aiqTodayKey(),score:aiqScore,solved:true}));
     recordStat('aiq',{score:aiqScore,detail:aiqQuote.category+' · '+aiqQuote.author});
+    aiqUpdateStreak().then(streak=>{
+      bbSubmitScore('aiq',aiqScore,`streak:${streak.current}`);
+    });
     SS.aiq={score:aiqScore};
   } else {
     // Wrong — penalise and clear incorrect placements
@@ -4286,6 +4353,334 @@ function aiqSubmit(){
   }
 }
 
+
+// ── PLAYER PROFILES & LEADERBOARDS ───────────────────────────────────────────
+const BB_DEVICE_KEY = 'bb_device_id';
+const BB_PLAYER_KEY = 'bb_player';
+const BB_PLAYER_ID_KEY = 'bb_player_id';
+
+let bbPlayer = null; // {id, username, device_id}
+
+function bbGetDeviceId(){
+  let id = localStorage.getItem(BB_DEVICE_KEY);
+  if(!id){
+    id = 'dev_' + Math.random().toString(36).substr(2,9) + Date.now().toString(36);
+    localStorage.setItem(BB_DEVICE_KEY, id);
+  }
+  return id;
+}
+
+async function bbInit(){
+  // Check if we have a saved player
+  const saved = localStorage.getItem(BB_PLAYER_KEY);
+  if(saved){
+    bbPlayer = JSON.parse(saved);
+    document.getElementById('username-screen').style.display='none';
+    return;
+  }
+  // Show username prompt
+  document.getElementById('username-screen').style.display='flex';
+}
+
+let usernameCheckTimer = null;
+function usernameCheck(val){
+  const status = document.getElementById('username-status');
+  const btn = document.getElementById('username-btn');
+  btn.disabled = true; btn.style.opacity='0.4';
+  
+  if(!val){ status.textContent=''; return; }
+  
+  // Validate format
+  if(!/^[a-zA-Z0-9_]{3,15}$/.test(val)){
+    status.style.color='var(--err-tx)';
+    if(val.length < 3) status.textContent='Too short — minimum 3 characters';
+    else if(val.length > 15) status.textContent='Too long — maximum 15 characters';
+    else status.textContent='Letters, numbers and underscores only';
+    return;
+  }
+  
+  status.style.color='var(--tx2)';
+  status.textContent='Checking availability...';
+  
+  clearTimeout(usernameCheckTimer);
+  usernameCheckTimer = setTimeout(async ()=>{
+    try{
+      const res = await fetch(`${SB_URL}/rest/v1/players?username=eq.${encodeURIComponent(val)}&select=username`,{
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+      });
+      const data = await res.json();
+      if(data.length > 0){
+        status.style.color='var(--err-tx)';
+        status.textContent='Already taken — try another!';
+      } else {
+        status.style.color='var(--ok-tx)';
+        status.textContent='✓ Available!';
+        btn.disabled=false; btn.style.opacity='1';
+      }
+    }catch(e){
+      // Allow offline
+      status.style.color='var(--ok-tx)';
+      status.textContent='✓ Looks good!';
+      btn.disabled=false; btn.style.opacity='1';
+    }
+  }, 500);
+}
+
+async function usernameSubmit(){
+  const val = document.getElementById('username-input').value.trim();
+  if(!/^[a-zA-Z0-9_]{3,15}$/.test(val)) return;
+  
+  const btn = document.getElementById('username-btn');
+  btn.textContent='Saving...'; btn.disabled=true;
+  
+  const device_id = bbGetDeviceId();
+  
+  try{
+    const res = await fetch(`${SB_URL}/rest/v1/players`,{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+      body: JSON.stringify({username:val, device_id})
+    });
+    const data = await res.json();
+    const player = Array.isArray(data) ? data[0] : data;
+    bbPlayer = {id:player.id, username:player.username, device_id};
+    localStorage.setItem(BB_PLAYER_KEY, JSON.stringify(bbPlayer));
+    document.getElementById('username-screen').style.display='none';
+  }catch(e){
+    // Save locally even if Supabase fails
+    bbPlayer = {id:null, username:val, device_id};
+    localStorage.setItem(BB_PLAYER_KEY, JSON.stringify(bbPlayer));
+    document.getElementById('username-screen').style.display='none';
+  }
+}
+
+function usernameSkip(){
+  // Play as guest — no leaderboard
+  bbPlayer = {id:null, username:'Guest', device_id:bbGetDeviceId()};
+  document.getElementById('username-screen').style.display='none';
+}
+
+// ── SCORE SUBMISSION ──────────────────────────────────────────────────────────
+async function bbSubmitScore(game, score, detail){
+  if(!bbPlayer || !bbPlayer.id || bbPlayer.username==='Guest') return;
+  try{
+    await fetch(`${SB_URL}/rest/v1/scores`,{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'},
+      body: JSON.stringify({player_id:bbPlayer.id, game, score, detail})
+    });
+  }catch(e){ console.log('Score submit failed:', e); }
+}
+
+// ── AIQ STREAK TRACKING ───────────────────────────────────────────────────────
+const AIQ_STREAK_KEY = 'aiq_streak_local';
+
+function aiqGetLocalStreak(){
+  try{ return JSON.parse(localStorage.getItem(AIQ_STREAK_KEY)||'{"current":0,"longest":0,"last":""}'); }
+  catch(e){ return {current:0,longest:0,last:''}; }
+}
+
+async function aiqUpdateStreak(){
+  const today = aiqTodayKey();
+  const local = aiqGetLocalStreak();
+  
+  if(local.last === today) return local; // already played today
+  
+  const yesterday = (()=>{
+    const d=new Date(); d.setDate(d.getDate()-1);
+    return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+  })();
+  
+  const newStreak = local.last === yesterday ? local.current + 1 : 1;
+  const longest = Math.max(newStreak, local.longest);
+  const updated = {current:newStreak, longest, last:today};
+  localStorage.setItem(AIQ_STREAK_KEY, JSON.stringify(updated));
+  
+  // Sync to Supabase if logged in
+  if(bbPlayer && bbPlayer.id){
+    try{
+      // Upsert streak
+      await fetch(`${SB_URL}/rest/v1/aiq_streaks`,{
+        method:'POST',
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+        body: JSON.stringify({player_id:bbPlayer.id, current_streak:newStreak, longest_streak:longest, last_played_date:today})
+      });
+    }catch(e){}
+  }
+  return updated;
+}
+
+// ── LEADERBOARD ───────────────────────────────────────────────────────────────
+const LEADERBOARD_GAMES = [
+  {key:'gotcha',   label:'🃏 Gotcha'},
+  {key:'blink',    label:'👁 Blinka'},
+  {key:'crony',    label:'📝 Crony'},
+  {key:'scrambler',label:'🔤 Scrambler'},
+  {key:'aiq',      label:'💬 And I Quote'},
+];
+
+async function bbLoadGlobalLeaderboard(game){
+  try{
+    const res = await fetch(
+      `${SB_URL}/rest/v1/scores?game=eq.${game}&order=score.desc&limit=10&select=score,detail,played_at,players(username)`,
+      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}}
+    );
+    return await res.json();
+  }catch(e){ return []; }
+}
+
+async function bbLoadFriendsLeaderboard(game){
+  if(!bbPlayer || !bbPlayer.id) return [];
+  try{
+    // Get friend IDs
+    const fRes = await fetch(
+      `${SB_URL}/rest/v1/friends?player_id=eq.${bbPlayer.id}&select=friend_id`,
+      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}}
+    );
+    const friends = await fRes.json();
+    if(!friends.length) return [];
+    
+    const friendIds = friends.map(f=>f.friend_id);
+    const allIds = [bbPlayer.id, ...friendIds];
+    const inClause = `(${allIds.map(id=>`"${id}"`).join(',')})`;
+    
+    const sRes = await fetch(
+      `${SB_URL}/rest/v1/scores?game=eq.${game}&player_id=in.${inClause}&order=score.desc&limit=10&select=score,detail,played_at,players(username)`,
+      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}}
+    );
+    return await sRes.json();
+  }catch(e){ return []; }
+}
+
+function bbRenderLeaderboard(rows, containerId, game){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  
+  if(!rows || !rows.length){
+    el.innerHTML='<p style="text-align:center;font-size:12px;color:var(--tx2);padding:16px">No scores yet — be the first!</p>';
+    return;
+  }
+  
+  const medals = ['🥇','🥈','🥉'];
+  el.innerHTML = rows.map((row,i)=>{
+    const name = row.players?.username || 'Guest';
+    const isMe = bbPlayer && name===bbPlayer.username;
+    const medal = medals[i] || `${i+1}.`;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd);${isMe?'background:var(--purple-lt);border-radius:8px;padding:8px;':''}">
+      <span style="font-size:16px;width:28px;text-align:center">${medal}</span>
+      <span style="flex:1;font-size:13px;font-weight:${isMe?'700':'500'};color:var(--tx0)">${name}${isMe?' (you)':''}</span>
+      <span style="font-size:13px;font-weight:700;color:var(--purple-tx)">${row.score} pts</span>
+    </div>`;
+  }).join('');
+}
+
+async function bbShowLeaderboard(game, tab){
+  const globalEl = document.getElementById(`lb-global-${game}`);
+  const friendsEl = document.getElementById(`lb-friends-${game}`);
+  
+  if(tab==='global'){
+    if(globalEl) globalEl.style.display='block';
+    if(friendsEl) friendsEl.style.display='none';
+    if(globalEl && globalEl.innerHTML.includes('Loading')){
+      const rows = await bbLoadGlobalLeaderboard(game);
+      bbRenderLeaderboard(rows, `lb-global-${game}`, game);
+    }
+  } else {
+    if(globalEl) globalEl.style.display='none';
+    if(friendsEl) friendsEl.style.display='block';
+    if(friendsEl && friendsEl.innerHTML.includes('Loading')){
+      const rows = await bbLoadFriendsLeaderboard(game);
+      bbRenderLeaderboard(rows, `lb-friends-${game}`, game);
+    }
+  }
+}
+
+
+// ── LEADERBOARD UI CONTROL ────────────────────────────────────────────────────
+let lbCurrentGame = 'gotcha';
+let lbCurrentTab = 'global';
+const lbCache = {}; // cache loaded leaderboards
+
+function lbSelectGame(game, btn){
+  lbCurrentGame = game;
+  dimOthers('lb-game-btns', btn);
+  lbRender();
+}
+
+function lbSetTab(tab){
+  lbCurrentTab = tab;
+  const gBtn = document.getElementById('lb-tab-global');
+  const fBtn = document.getElementById('lb-tab-friends');
+  if(gBtn) gBtn.style.cssText = tab==='global'
+    ? 'flex:1;padding:8px;font-size:12px;font-weight:700;background:var(--purple-lt);color:var(--purple-tx);border:none;cursor:pointer'
+    : 'flex:1;padding:8px;font-size:12px;font-weight:600;background:var(--bg1);color:var(--tx1);border:none;cursor:pointer';
+  if(fBtn) fBtn.style.cssText = tab==='friends'
+    ? 'flex:1;padding:8px;font-size:12px;font-weight:700;background:var(--purple-lt);color:var(--purple-tx);border:none;cursor:pointer'
+    : 'flex:1;padding:8px;font-size:12px;font-weight:600;background:var(--bg1);color:var(--tx1);border:none;cursor:pointer';
+  lbRender();
+}
+
+async function lbRender(){
+  const content = document.getElementById('lb-content');
+  if(!content) return;
+  content.innerHTML='<p style="text-align:center;font-size:12px;color:var(--tx2);padding:16px">Loading...</p>';
+  
+  const cacheKey = `${lbCurrentGame}_${lbCurrentTab}`;
+  let rows = lbCache[cacheKey];
+  
+  if(!rows){
+    rows = lbCurrentTab==='global'
+      ? await bbLoadGlobalLeaderboard(lbCurrentGame)
+      : await bbLoadFriendsLeaderboard(lbCurrentGame);
+    lbCache[cacheKey] = rows;
+  }
+  
+  if(!rows || !rows.length){
+    const msg = lbCurrentTab==='friends' && (!bbPlayer||bbPlayer.username==='Guest')
+      ? '<p style="text-align:center;font-size:12px;color:var(--tx2);padding:16px">Sign in with a username to see friends!</p>'
+      : '<p style="text-align:center;font-size:12px;color:var(--tx2);padding:16px">No scores yet — be the first! 🏆</p>';
+    content.innerHTML = msg;
+    return;
+  }
+  
+  const medals = ['🥇','🥈','🥉'];
+  content.innerHTML = rows.map((row,i)=>{
+    const name = row.players?.username || 'Guest';
+    const isMe = bbPlayer && name===bbPlayer.username;
+    const medal = i<3 ? medals[i] : `<span style="font-size:12px;color:var(--tx2)">${i+1}.</span>`;
+    const extra = lbCurrentGame==='aiq' && row.detail ? ` <span style="font-size:10px;color:var(--tx2)">${row.detail}</span>` : '';
+    return `<div style="display:flex;align-items:center;gap:8px;padding:7px 6px;border-radius:8px;${isMe?'background:var(--purple-lt);':''}">
+      <span style="width:24px;text-align:center;font-size:${i<3?'18':'12'}px">${medal}</span>
+      <span style="flex:1;font-size:13px;font-weight:${isMe?'700':'500'};color:var(--tx0)">${name}${isMe?' <span style="font-size:10px;color:var(--purple-tx)">(you)</span>':''}</span>
+      <span style="font-size:13px;font-weight:700;color:var(--purple-tx)">${row.score}${extra}</span>
+    </div>`;
+  }).join('');
+}
+
+function lbRefresh(){
+  // Clear cache and reload
+  Object.keys(lbCache).forEach(k=>delete lbCache[k]);
+  lbRender();
+}
+
+function renderStatsPlayerBar(){
+  const bar = document.getElementById('stats-player-bar');
+  if(!bar) return;
+  if(bbPlayer && bbPlayer.username && bbPlayer.username!=='Guest'){
+    bar.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--purple-lt);border-radius:10px;border:1px solid var(--purple-bd)">
+      <span style="font-size:20px">👤</span>
+      <span style="font-size:13px;font-weight:700;color:var(--purple-tx);flex:1">Playing as <strong>${bbPlayer.username}</strong></span>
+      <button onclick="lbRefresh()" style="font-size:10px;padding:4px 8px;border-radius:6px">↻ Refresh</button>
+    </div>`;
+  } else {
+    bar.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg1);border-radius:10px;border:1px solid var(--bd2)">
+      <span style="font-size:20px">👤</span>
+      <span style="font-size:12px;color:var(--tx1);flex:1">Playing as guest — scores not saved to leaderboard</span>
+      <button onclick="document.getElementById('username-screen').style.display='flex'" style="font-size:10px;padding:4px 8px;border-radius:6px;background:var(--purple-lt);color:var(--purple-tx);border-color:var(--purple-bd)">Join</button>
+    </div>`;
+  }
+}
+
 // ── PWA INSTALL ───────────────────────────────────────────────────────────────
 let deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('ib').style.display='block'});
@@ -4293,6 +4688,8 @@ function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
+// Init player profile
+try{bbInit();}catch(e){console.error('bbInit failed:',e);}
 try{gtBuildThemes();}catch(e){console.error('gtBuildThemes failed:',e);}
 try{blBuildThemes();}catch(e){console.error('blBuildThemes failed:',e);}
 try{orInitThemeGrids();}catch(e){console.error('orInitThemeGrids failed:',e);}

@@ -1742,6 +1742,13 @@ const RWORDS={
 
 // Check if there's an active solo challenge in localStorage
 
+let tpWords=[],tpTime=10,tpHint='none',tpDiff='easy',tpCode='',tpSpeedScore=0,tpMemStart=0,tpMI=null,tpRecallWindow=5*60;
+
+function tpSetH(h,btn){tpHint=h;dimOthers('tp-hints',btn)}
+function tpSetDiff(d,btn){tpDiff=d;dimOthers('tp-create-difficulty',btn)}
+function tpSetRecallWindow(s,btn){tpRecallWindow=s;dimOthers('tp-recall-window',btn)}
+function tpSetCount(n,btn){/* challenge word count set via add/random */}
+
 function tpRand(){
   if(tpWords.length>=5)return;
   const poolKey=(tpHint==='none'?'none':tpHint)+'_'+tpDiff;
@@ -1755,9 +1762,9 @@ function tpRand(){
 }
 function tpRenderWords(){const d=document.getElementById('tp-wdisp');d.innerHTML='';tpWords.forEach((w,i)=>{const s=document.createElement('span');s.className='wp';s.innerHTML=`${w}<span onclick="tpWords.splice(${i},1);tpRenderWords()" style="cursor:pointer;color:var(--tx2);font-size:13px;margin-left:2px">×</span>`;d.appendChild(s)})}
 function tpSetT(t,btn){tpTime=t;dimOthers('tp-times',btn)}
-function tpSetH(h,btn){tpHint=h;dimOthers('tp-hints',btn)}
-function tpSetDiff(d,btn){tpDiff=d;dimOthers('tp-create-difficulty',btn)}
-function tpSetRecallWindow(secs,btn){tpRecallWindow=secs;dimOthers('tp-recall-window',btn)}
+
+
+
 async function tpCreate(){
   if(!tpWords.length){alert('Add at least one word first.');return}
   tpCode=gc('TIPPA');
@@ -2119,18 +2126,19 @@ function wsStartCountdown(){
 async function wsSubmitSolo(){
   const words=wsGetWords('ws-letter-rows',wsCurWord);const base=wsCalc('ws-letter-rows','ws-live',wsCurWord);const mult=1; // timer pressure replaces visibility multiplierconst sentence=words.filter(Boolean).join(' ');
   const aiBox=document.getElementById('ws-ai');aiBox.style.display='block';
-  // Bippy AI scoring — coming soon
-  const finalScore=Math.round(base*mult);
-  aiBox.innerHTML=`<div style="text-align:center;padding:8px">
-    <div style="font-size:22px;margin-bottom:4px">🤖</div>
-    <div style="font-size:13px;font-weight:700;margin-bottom:2px">Bippy scoring — coming soon!</div>
-    <div style="font-size:11px;color:var(--tx2);margin-bottom:8px">AI-powered sentence ratings are on the way.</div>
-    <div style="font-size:15px;font-weight:800">Score: ${finalScore} pts</div>
-  </div>`;
+  const sentence=words.filter(Boolean).join(' ');
+  const bippy=bippyRate(sentence.length);
+  const finalScore=Math.round(base*mult*bippy.rating);
+  aiBox.innerHTML='<div style="text-align:center;padding:8px">'
+    +'<div style="font-size:22px;margin-bottom:4px">🤖</div>'
+    +'<div style="font-size:16px;color:var(--amber-tx);margin-bottom:6px">'+bippy.stars+'</div>'
+    +'<div style="font-size:13px;font-weight:600;color:var(--tx0);margin-bottom:8px;font-style:italic">&ldquo;'+bippy.msg+'&rdquo;</div>'
+    +'<div style="font-size:15px;font-weight:800">Score: '+finalScore+' pts</div>'
+    +'</div>';
   document.getElementById('ws-live').textContent=finalScore;
   document.getElementById('ws-share').style.display='block';
   SS.crony={score:finalScore,word:wsCurWord};
-  recordCrony(finalScore,wsCurWord);bbSubmitScore('crony',finalScore,wsCurWord);;
+  recordCrony(finalScore,wsCurWord);bbSubmitScore('crony',finalScore,wsCurWord);bbSubmitScore('crony',finalScore,wsCurWord);;
 }
 function wsBuildSender(){const word=(document.getElementById('ws-send-inp').value||'').replace(/[^A-Z]/g,'');if(!word)return;wsSenderWord=word;wsRenderRows('ws-send-disp-h','ws-send-timer-h','ws-sender-rows','ws-sender-score',word,'always')}
 async function wsCreateChallenge(){
@@ -3258,12 +3266,13 @@ async function scSubmit(){
 
   // Bippy coherence check
   const aiBox=document.getElementById('sc-ai-box');
-  // Bippy AI scoring — coming soon
-  aiBox.innerHTML=`<div style="text-align:center;padding:8px">
-    <div style="font-size:22px;margin-bottom:4px">🤖</div>
-    <div style="font-size:13px;font-weight:700;margin-bottom:2px">Bippy scoring — coming soon!</div>
-    <div style="font-size:11px;color:var(--tx2)">AI-powered sentence ratings are on the way.</div>
-  </div>`;
+  // Bippy mock rating
+  const _bippyRating=bippyRate(built.length);
+  aiBox.innerHTML='<div style="text-align:center;padding:8px">'
+    +'<div style="font-size:22px;margin-bottom:4px">🤖</div>'
+    +'<div style="font-size:16px;color:var(--amber-tx);margin-bottom:6px">'+_bippyRating.stars+'</div>'
+    +'<div style="font-size:13px;font-weight:600;color:var(--tx0);margin-bottom:4px;font-style:italic">&ldquo;'+_bippyRating.msg+'&rdquo;</div>'
+    +'</div>';
 
   recordOrderly(scTotalScore,scRound,'Scrambler');bbSubmitScore('scrambler',scTotalScore,'Round '+scRound);;
   SS.scrambler={score:scTotalScore, round:scRound};
@@ -4514,6 +4523,44 @@ function renderStatsPlayerBar(){
       <button onclick="bbShowUsernameScreen()" style="font-size:10px;padding:4px 8px;border-radius:6px;background:var(--purple-lt);color:var(--purple-tx);border-color:var(--purple-bd)">Join</button>
     </div>`;
   }
+}
+
+
+// ── BIPPY MOCK PHRASES ────────────────────────────────────────────────────────
+const BIPPY_PHRASES = [
+  {stars:3, msg:"Genius! I may need to steal that one."},
+  {stars:3, msg:"Oh, that's good. That's REALLY good."},
+  {stars:3, msg:"I didn't see that coming. Impressed."},
+  {stars:3, msg:"Clean, clever, and correct. Rare combo!"},
+  {stars:2, msg:"Interesting. Not what I would have done!"},
+  {stars:2, msg:"Gee, are you clever! Well, sort of."},
+  {stars:2, msg:"They did say you were the creative one."},
+  {stars:2, msg:"I've seen worse. I've also seen better."},
+  {stars:2, msg:"It makes sense if you squint a little."},
+  {stars:2, msg:"Bold choice. I respect the confidence."},
+  {stars:2, msg:"Hmm. I'm going to need a moment with this."},
+  {stars:2, msg:"Technically correct — the best kind of correct."},
+  {stars:1, msg:"Well... you certainly tried."},
+  {stars:1, msg:"My circuits are... confused. But okay."},
+  {stars:1, msg:"I'm sure it made sense in your head."},
+  {stars:1, msg:"Creative. Chaotic. Uniquely yours."},
+  {stars:1, msg:"I admire the commitment to a theme. What theme? Unknown."},
+  {stars:1, msg:"You spelled all the words right, so... there's that."},
+  {stars:1, msg:"Bippy is speechless. That's new."},
+  {stars:1, msg:"A for effort. The other letters are pending."}
+];
+
+function bippyRate(sentenceLength){
+  // Weight toward higher stars for longer sentences
+  const bonus = sentenceLength > 20 ? 1 : 0;
+  const rand = Math.random();
+  let eligible;
+  if(rand < 0.25 + bonus*0.15) eligible = BIPPY_PHRASES.filter(p=>p.stars===3);
+  else if(rand < 0.65 + bonus*0.1) eligible = BIPPY_PHRASES.filter(p=>p.stars===2);
+  else eligible = BIPPY_PHRASES.filter(p=>p.stars===1);
+  const pick = eligible[Math.floor(Math.random()*eligible.length)];
+  const stars = '★'.repeat(pick.stars)+'☆'.repeat(3-pick.stars);
+  return {stars, msg:pick.msg, rating:pick.stars};
 }
 
 // ── PWA INSTALL ───────────────────────────────────────────────────────────────

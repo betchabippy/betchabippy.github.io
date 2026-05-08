@@ -1322,11 +1322,17 @@ function gtBuildThemes(){
     let ph='<div class="tprev">';
     if(t.pv)t.pv.forEach(e=>{ph+=`<div class="tpc">${e}</div>`});
     else if(t.pvc)t.pvc.forEach(c=>{ph+=`<div class="tpc" style="background:${c};border-color:${c}"></div>`});
-    else if(t.pvk)t.pvk.forEach(c=>{const r=c.includes('♥')||c.includes('♦');ph+=`<div class="tpc" style="font-size:9px;font-weight:700;color:${tt(r,"#E53935","#111")};flex-direction:column;gap:0"><span>${c.replace(/[♠♥♦♣]/,"")}</span><span>${c.match(/[♠♥♦♣]/)[0]}</span></div>`});
+    else if(t.pvk)t.pvk.forEach(c=>{
+      const r=c.includes('♥')||c.includes('♦');
+      const col=r?'#E53935':'#111';
+      const val=c.replace(/[♠♥♦♣]/,'');
+      const suit=c.match(/[♠♥♦♣]/)[0];
+      ph+='<div class="tpc" style="font-size:9px;font-weight:700;color:'+col+';flex-direction:column;gap:0"><span>'+val+'</span><span>'+suit+'</span></div>';
+    });
     else if(t.pvn)t.pvn.forEach((n,i)=>{const nb=GTN[i];ph+=`<div class="tpc" style="background:${nb.bg};color:${nb.fg};font-size:12px;font-weight:700;border-color:${nb.bg}">${n}</div>`});
     else if(t.pvni)ph+=`<div class="tpc">🍕</div><div class="tpc" style="font-size:8px;font-weight:700">PIZZA</div><div class="tpc">🐶</div><div class="tpc" style="font-size:8px;font-weight:700">DOG</div>`;
     ph+='</div>';
-    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}${tt(gtTheme===t.id,"<div class=\"ck\">✓</div>")}`;
+    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}`+(gtTheme===t.id?'<div class="ck">&#10003;</div>':'');
     g.appendChild(div);
   });
   gtBuildSizes();
@@ -1407,7 +1413,8 @@ function mcNew(){
 function mcRenderFace(c){
   if(c.type==='emoji')return`<span style="font-size:30px">${c.val}</span>`;
   if(c.type==='color')return`<div style="width:46px;height:46px;background:${c.val.h};border-radius:9px"></div>`;
-  if(c.type==='card'){const r=c.val.s==='♥'||c.val.s==='♦';return`<div style="text-align:center;line-height:1"><div style="font-size:20px;font-weight:700;color:${c.val.c}">${c.val.v}</div><div style="font-size:20px;color:${tt(r,"#E53935","#111")}">${c.val.s}</div></div>`}
+  const _cc=r?"#E53935":"#111";
+  if(c.type==='card'){const r=c.val.s==='♥'||c.val.s==='♦';return`<div style="text-align:center;line-height:1"><div style="font-size:20px;font-weight:700;color:${c.val.c}">${c.val.v}</div><div style="font-size:20px;color:${_cc}">${c.val.s}</div></div>`}
   if(c.type==='number')return`<div style="width:46px;height:46px;background:${c.val.bg};border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:${c.val.fg}">${c.val.n}</div>`;
   if(c.type==='ni-a')return`<span style="font-size:28px">${c.val}</span>`;
   if(c.type==='ni-b')return`<div style="background:var(--info-bg);border-radius:7px;padding:5px 7px;text-align:center;max-width:66px"><span style="font-size:10px;font-weight:700;letter-spacing:.03em;color:var(--info-tx);word-break:break-word;line-height:1.2">${c.val}</span></div>`;
@@ -1613,7 +1620,8 @@ function tpSoloShowRecall(isRetry){
   });
 
   // Update retries badge
-  document.getElementById('tp-solo-retries-left').textContent=`${tpSoloRetriesLeft} retr${tt(tpSoloRetriesLeft===1,"y","ies")} left`;
+  const _ry=tpSoloRetriesLeft===1?"y":"ies";
+  document.getElementById('tp-solo-retries-left').textContent=`${tpSoloRetriesLeft} retr${_ry} left`;
   goScr('tp-solo-recall');
 }
 
@@ -1690,7 +1698,9 @@ function tpSoloSubmit(){
   tpSoloWordState.forEach(ws=>{
     const row=document.createElement('div');
     row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd)';
-    row.innerHTML=`<span style="font-size:13px;font-weight:600">${ws.word}</span><span class="${tt(ws.status==="correct","ok-tag","no-tag")}">${tt(ws.status==="correct","correct","missed")}</span>`;
+    const _wst=ws.status==="correct"?"ok-tag":"no-tag";
+    const _wsm=ws.status==="correct"?"correct":"missed";
+    row.innerHTML=`<span style="font-size:13px;font-weight:600">${ws.word}</span><span class="${_wst}">${_wsm}</span>`;
     rw.appendChild(row);
   });
 
@@ -1728,285 +1738,10 @@ const RWORDS={
   things_hard:['Satchel','Sundial','Sextant','Bellows','Mortar','Flagon','Chalice','Brazier','Awning','Spyglass','Cauldron','Parchment','Hourglass','Casket','Clasp','Talisman','Scabbard','Astrolabe','Thurible','Vambrace']
 };
 
-function tpSoloSetCount(n,btn){tpSoloCount=n;dimOthers('tp-solo-count',btn)}
-function tpSoloSetTime(t,btn){tpSoloTime=t;dimOthers('tp-solo-times',btn)}
-function tpSoloSetHint(h,btn){tpSoloHint=h;dimOthers('tp-solo-hints',btn)}
 
-function tpSoloSetRecall(secs,btn){tpSoloRecallSecs=secs;dimOthers('tp-solo-recall-times',btn)}
 
 // Check if there's an active solo challenge in localStorage
-function tpSoloCheck(){
-  const saved=localStorage.getItem(TP_SOLO_KEY);
-  if(saved){
-    // Active challenge exists — go straight to locked/recall screen
-    tpSoloLoadLocked();
-  } else {
-    goScr('tp-solo');
-  }
-}
 
-function tpSoloStart(){
-  console.log('tpSoloStart called, tpSoloDiff=',tpSoloDiff,'tpSoloHint=',tpSoloHint,'RWORDS keys=',Object.keys(RWORDS));
-  // Pick random words
-  const usedWords=tpGetUsedWords();
-  const poolKey=(tpSoloHint==='none'?'none':tpSoloHint)+'_'+tpSoloDiff;
-  const pool=RWORDS[poolKey]||RWORDS['none_easy'];
-  const available=pool.filter(w=>!usedWords[w.toLowerCase()]);
-  const source=available.length>=tpSoloCount?available:pool;
-  const shuffled=[...source].sort(()=>Math.random()-.5);
-  tpSoloWords=shuffled.slice(0,tpSoloCount).map(w=>w.toLowerCase());
-  tpMarkUsed(tpSoloWords);
-  // Show memorize screen
-  const mw=document.getElementById('tp-solo-words');
-  mw.innerHTML='';
-  tpSoloWords.forEach(w=>{
-    const s=document.createElement('span');s.className='mw';s.textContent=w;mw.appendChild(s);
-  });
-  const hr=document.getElementById('tp-solo-hint-row');
-  if(tpSoloHint!=='none'){hr.style.display='block';hr.innerHTML=`<span class="hp">Hint: ${tpSoloHint}</span>`}
-  else hr.style.display='none';
-  goScr('tp-solo-mem');
-  tpSoloRunTimer();
-}
-
-function tpSoloRunTimer(){
-  clearInterval(tpSoloMI);
-  tpSoloMemStart=Date.now();
-  const arc=document.getElementById('tp-solo-arc');
-  const txt=document.getElementById('tp-solo-tmr');
-  const circ=188;
-  function tick(){
-    const elapsed=(Date.now()-tpSoloMemStart)/1000;
-    const rem=Math.max(0,tpSoloTime-elapsed);
-    txt.textContent=Math.ceil(rem);
-    arc.style.strokeDashoffset=circ-(circ*(rem/tpSoloTime));
-    if(rem<=0){clearInterval(tpSoloMI);tpSoloDone()}
-  }
-  tick();tpSoloMI=setInterval(tick,100);
-}
-
-function tpSoloDone(){
-  clearInterval(tpSoloMI);
-  const used=(Date.now()-tpSoloMemStart)/1000;
-  tpSoloSpeedScore=Math.max(0,Math.round((1-(Math.min(used,tpSoloTime)/tpSoloTime))*100));
-  // Save to localStorage with timestamp
-  const data={
-    words:tpSoloWords,
-    hint:tpSoloHint,
-    speedScore:tpSoloSpeedScore,
-    lockedAt:Date.now(),
-    unlockAt:Date.now()+(tpSoloRecallSecs*1000),
-    retries:tpSoloWords.length,
-    completed:false
-  };
-  localStorage.setItem(TP_SOLO_KEY,JSON.stringify(data));
-  tpSoloLoadLocked();
-}
-
-function tpSoloLoadLocked(){
-  const saved=localStorage.getItem(TP_SOLO_KEY);
-  if(!saved){goScr('tp-home');return}
-  const data=JSON.parse(saved);
-  tpSoloWords=data.words;
-  tpSoloSpeedScore=data.speedScore;
-  tpSoloRetriesLeft=data.retries;
-  tpSoloHint=data.hint||'none';
-
-  document.getElementById('tp-solo-locked-count').textContent=data.words.length+' word'+(data.words.length>1?'s':'');
-  document.getElementById('tp-solo-retries-disp').textContent=data.retries+' retr'+(data.retries===1?'y':'ies');
-  document.getElementById('tp-solo-locked-hint').textContent=data.hint==='none'?'None':data.hint;
-  // Show recall window
-  const recallMs=data.unlockAt-data.lockedAt;
-  const recallMins=Math.round(recallMs/60000);
-  let recallLabel=recallMins<60?recallMins+'min':Math.round(recallMins/60)+'hr';
-  const existingRow=document.getElementById('tp-recall-window-row');
-  if(!existingRow){
-    const row=document.createElement('div');row.id='tp-recall-window-row';
-    row.className='row';row.innerHTML=`<span style="font-size:12px;color:var(--tx1);flex:1">Recall window</span><span style="font-size:12px;font-weight:600">${recallLabel}</span>`;
-    document.getElementById('tp-solo-locked-hint').parentNode.appendChild(row);
-  }
-  goScr('tp-solo-locked');
-  tpSoloTickCountdown(data);
-}
-
-
-function tpSoloTryRecall(){
-  const saved=localStorage.getItem(TP_SOLO_KEY);
-  if(!saved){goScr('tp-home');return}
-  const data=JSON.parse(saved);
-  if(Date.now()<data.unlockAt){
-    alert('Not yet! Come back when the countdown hits zero.');return;
-  }
-  tpSoloWords=data.words;
-  tpSoloSpeedScore=data.speedScore;
-  tpSoloRetriesLeft=data.retries;
-  tpSoloRetriesUsed=0;
-  // init word state: each word starts as 'pending'
-  tpSoloWordState=data.words.map(w=>({word:w,status:'pending',answer:'',attempts:0}));
-  tpSoloShowRecall();
-}
-
-function tpSoloShowRecall(isRetry){
-  // Show "one more chance" banner if retrying
-  const banner=document.getElementById('tp-retry-banner');
-  if(banner) banner.style.display=isRetry?'block':'none';
-
-  // Show hint
-  const hr=document.getElementById('tp-solo-hint-rec');
-  if(tpSoloHint!=='none'){hr.style.display='block';hr.innerHTML=`<span class="hp">Hint: ${tpSoloHint}</span>`}
-  else hr.style.display='none';
-
-  // Build word input rows
-  const container=document.getElementById('tp-solo-word-rows');
-  container.innerHTML='';
-  tpSoloWordState.forEach((ws,i)=>{
-    const row=document.createElement('div');
-    row.style.cssText='padding:8px 0;border-bottom:1px solid var(--bd)';
-    if(ws.status==='correct'){
-      row.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:13px;font-weight:600;color:var(--ok-tx)">✓ ${ws.word}</span><span class="ok-tag">correct</span></div>`;
-    } else if(ws.status==='failed'){
-      row.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:13px;font-weight:600;color:var(--err-tx)">✗ ${ws.word}</span><span class="no-tag">missed</span></div>`;
-    } else {
-      const label=ws.attempts>0?`<span style="font-size:10px;color:var(--warn-tx)">Retry</span>`:'';
-      row.innerHTML=`<div style="font-size:11px;color:var(--tx2);margin-bottom:4px">Word ${i+1} ${label}</div><input class="wi" id="ts-inp-${i}" style="margin:0" placeholder="Type the word..." value="${ws.answer}">`;
-    }
-    container.appendChild(row);
-  });
-
-  // Update retries badge
-  document.getElementById('tp-solo-retries-left').textContent=`${tpSoloRetriesLeft} retr${tt(tpSoloRetriesLeft===1,"y","ies")} left`;
-  goScr('tp-solo-recall');
-}
-
-function tpSoloSubmit(){
-  const saved=localStorage.getItem(TP_SOLO_KEY);
-  const data=saved?JSON.parse(saved):{};
-  let allDone=true;
-  let anyWrongWithRetries=false;
-
-  tpSoloWordState.forEach((ws,i)=>{
-    if(ws.status!=='pending') return;
-    const inp=document.getElementById(`ts-inp-${i}`);
-    const ans=(inp?inp.value.trim().toLowerCase():'');
-    ws.answer=ans;
-    ws.attempts++;
-    // Match any word in the set regardless of order
-    const remaining=tpSoloWordState.filter(w=>w.status==='pending'&&w.word!==ws.word).map(w=>w.word);
-    const allWords=tpSoloWordState.map(w=>w.word);
-    if(allWords.includes(ans)){
-      ws.status='correct';
-      ws.word=ans; // lock in what they guessed
-    } else {
-      // wrong — use a retry if available
-      if(tpSoloRetriesLeft>0){
-        tpSoloRetriesLeft--;
-        tpSoloRetriesUsed++;
-        anyWrongWithRetries=true;
-        ws.status='pending'; // can try again
-      } else {
-        ws.status='failed';
-      }
-    }
-    if(ws.status==='pending') allDone=false;
-  });
-
-  if(!allDone&&anyWrongWithRetries){
-    // Still words to retry — show retry banner then refresh recall screen
-    tpSoloShowRecall(true);
-    return;
-  }
-
-  // All done — calculate score
-  const correct=tpSoloWordState.filter(ws=>ws.status==='correct').length;
-  const total=tpSoloWordState.length;
-  const all=correct===total;
-
-  // Wait bonus: check actual time waited
-  const waitedMs=Date.now()-(data.lockedAt||Date.now());
-  const waitedHrs=waitedMs/3600000;
-  const waitBonus=waitedHrs>26?Math.min(25,Math.round(((waitedHrs-26)/22)*25)):0;
-
-  // Score: 10pts per correct word base, + speed bonus (0-50pts), + wait bonus
-  const retryPenalty=tpSoloRetriesUsed*5;
-  const wordBase=correct*8; // 8pts per correct word
-  const speedBonus=Math.round((tpSoloSpeedScore/100)*20); // 0-20pts total speed bonus
-  const base=wordBase+speedBonus+(all?15:0); // +15 all-correct bonus
-  const finalScore=Math.max(correct>0?correct*3:0, base+waitBonus-retryPenalty);
-
-  // Show results
-  document.getElementById('tp-solo-tot').textContent=finalScore;
-  document.getElementById('tp-solo-rc').textContent=correct+'/'+total;
-  document.getElementById('tp-solo-rs').textContent=Math.round((tpSoloSpeedScore/100)*50*correct)+'pts';
-  document.getElementById('tp-solo-rr').textContent=tpSoloRetriesUsed;
-  const bonusEl=document.getElementById('tp-solo-bonuses');
-  if(bonusEl){
-    const parts=[];
-    if(all) parts.push('🎯 All correct +25pts');
-    if(waitBonus>0) parts.push(`⏳ Wait bonus +${waitBonus}pts`);
-    if(retryPenalty>0) parts.push(`↩️ Retry penalty -${retryPenalty}pts`);
-    bonusEl.textContent=parts.join(' · ');
-  }
-
-  const rw=document.getElementById('tp-solo-res-words');rw.innerHTML='';
-  tpSoloWordState.forEach(ws=>{
-    const row=document.createElement('div');
-    row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd)';
-    row.innerHTML=`<span style="font-size:13px;font-weight:600">${ws.word}</span><span class="${tt(ws.status==="correct","ok-tag","no-tag")}">${tt(ws.status==="correct","correct","missed")}</span>`;
-    rw.appendChild(row);
-  });
-
-  // Clear localStorage
-  localStorage.removeItem(TP_SOLO_KEY);
-  SS['tippa-solo']={score:finalScore,correct:correct+'/'+total};
-  recordTippa(finalScore, correct+'/'+total);
-  goScr('tp-solo-res');
-}
-
-
-function tpSoloAbandon(){
-  if(confirm('Abandon this challenge? Your progress will be lost.')){
-    if(tpCountdownInterval){clearInterval(tpCountdownInterval);tpCountdownInterval=null;}
-    localStorage.removeItem(TP_SOLO_KEY);
-    goScr('tp-home');
-    tpCheckPendingOnLoad();
-  }
-}
-function tpSoloReset(){
-  localStorage.removeItem(TP_SOLO_KEY);
-  goScr('tp-solo');
-}
-
-
-// ── TIPPA DATA ────────────────────────────────────────────────────────────────
-
-
-const TP_USED_KEY='tp_used_words';
-function tpGetUsedWords(){
-  try{
-    const raw=JSON.parse(localStorage.getItem(TP_USED_KEY)||'{}');
-    const weekAgo=Date.now()-7*24*60*60*1000;
-    // Clean old entries
-    const clean={};
-    Object.entries(raw).forEach(([w,ts])=>{if(ts>weekAgo)clean[w]=ts;});
-    return clean;
-  }catch(e){return {};}
-}
-function tpMarkUsed(words){
-  const used=tpGetUsedWords();
-  const now=Date.now();
-  words.forEach(w=>used[w.toLowerCase()]=now);
-  localStorage.setItem(TP_USED_KEY,JSON.stringify(used));
-}
-function getRWord(hint,difficulty){
-  const key=(hint==='none'?'none':hint)+'_'+(difficulty||'easy');
-  const pool=RWORDS[key]||RWORDS['none_easy'];
-  const used=tpGetUsedWords();
-  const available=pool.filter(w=>!used[w.toLowerCase()]);
-  const source=available.length>0?available:pool; // fallback if all used
-  return source[Math.floor(Math.random()*source.length)];
-}
-let tpWords=[],tpTime=10,tpHint='none',tpDiff='easy',tpCode='',tpSpeedScore=0,tpMemStart=0,tpMI=null,tpRecallWindow=5*60;
-function tpAdd(){const i=document.getElementById('tp-wi');const w=i.value.trim().toLowerCase();if(!w||tpWords.length>=5||tpWords.includes(w))return;tpWords.push(w);i.value='';tpRenderWords()}
 function tpRand(){
   if(tpWords.length>=5)return;
   const poolKey=(tpHint==='none'?'none':tpHint)+'_'+tpDiff;
@@ -2095,7 +1830,9 @@ async function tpSubmit(){
     const inp=document.getElementById('tpr-'+i);const ans=(inp?inp.value.trim().toLowerCase():'');const ok=ans===w;
     if(ok)cor++;answers.push(ans);
     const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd)';
-    row.innerHTML=`<span style="font-size:13px;font-weight:600">${w}</span><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:var(--tx1)">${ans||"—"}</span><span class="${tt(ok,"ok-tag","no-tag")}">${tt(ok,"correct","wrong")}</span></div>`;
+    const _ot=ok?"ok-tag":"no-tag";
+    const _ow=ok?"correct":"wrong";
+    row.innerHTML=`<span style="font-size:13px;font-weight:600">${w}</span><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:var(--tx1)">${ans||"—"}</span><span class="${_ot}">${_ow}</span></div>`;
     rw.appendChild(row);
   });
   const all=cor===tpWords.length;const wb=Math.floor(Math.random()*26);
@@ -2143,10 +1880,17 @@ function blBuildThemes(){
     const div=document.createElement('div');div.className='tc'+(blTheme===t.id?' sel':' dim');div.dataset.id=t.id;div.onclick=()=>{blTheme=t.id;blBuildThemes()};
     let ph='<div class="tprev">';
     if(t.pvc)t.pvc.forEach(e=>{ph+=`<div class="tpc" style="font-size:16px;border:none;background:transparent">${e}</div>`});
-    else if(t.pvk)t.pvk.forEach(c=>{const r=c.includes('♥')||c.includes('♦');ph+=`<div class="tpc" style="font-size:9px;font-weight:700;color:${tt(r,"#E53935","#111")};flex-direction:column;gap:0"><span>${c.replace(/[♠♥♦♣]/,"")}</span><span>${c.match(/[♠♥♦♣]/)[0]}</span></div>`});
+    else if(t.pvk)t.pvk.forEach(c=>{
+      const r=c.includes('♥')||c.includes('♦');
+      const col=r?'#E53935':'#111';
+      const val=c.replace(/[♠♥♦♣]/,'');
+      const suit=c.match(/[♠♥♦♣]/)[0];
+      ph+='<div class="tpc" style="font-size:9px;font-weight:700;color:'+col+';flex-direction:column;gap:0"><span>'+val+'</span><span>'+suit+'</span></div>';
+    });
     else t.pv.forEach(e=>{ph+=`<div class="tpc">${e}</div>`});
     ph+='</div>';
-    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}${tt(blTheme===t.id,"<div class=\"ck\">✓</div>")}`;
+    const blCk=blTheme===t.id?'<div class="ck">&#10003;</div>':'';
+    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}`+blCk;
     g.appendChild(div);
   });
   blBuildSizes();
@@ -2275,34 +2019,62 @@ function wsStartSolo(){
   wsRenderRows('ws-word-disp','ws-timer-row','ws-letter-rows','ws-live',wsCurWord,'always');
   wsStartCountdown();
 }
-function wsCalc(rowsId,scoreId,word){let total=0;word.split('').forEach((l,i)=>{const inp=document.getElementById(`${rowsId}-${i}`);const sc=document.getElementById(`${rowsId}-sc-${i}`);if(!inp)return;const v=inp.value.trim();const valid=v.length>0&&v[0].toUpperCase()===l;inp.className='li'+(v.length>0?(valid?' ok':' err'):'');const pts=valid?Math.min(v.length,8):0; // cap at 8pts per wordtotal+=pts;if(sc)sc.textContent=valid?`${pts} pts`:'must start with '+l});const el=document.getElementById(scoreId);if(el)el.textContent=total;return total}
+function wsCalc(rowsId,scoreId,word){
+  let total=0;
+  word.split('').forEach((l,i)=>{
+    const inp=document.getElementById(rowsId+'-'+i);
+    const sc=document.getElementById(rowsId+'-sc-'+i);
+    if(!inp) return;
+    const v=inp.value.trim();
+    const valid=v.length>0&&v[0].toUpperCase()===l;
+    inp.className='li'+(v.length>0?(valid?' ok':' err'):'');
+    const pts=valid?Math.min(v.length,8):0;
+    total+=pts;
+    if(sc) sc.textContent=valid?(pts+' pts'):('must start with '+l);
+  });
+  const el=document.getElementById(scoreId);
+  if(el) el.textContent=total;
+  return total;
+}
 
-function wsRenderRows(dispId, timerId, rowsId, liveId, word, mode){
-  // Show the word
-  const disp = document.getElementById(dispId);
+function wsRenderRows(dispId,timerId,rowsId,liveId,word,mode){
+  const disp=document.getElementById(dispId);
   if(disp){
-    disp.innerHTML = word.split('').map(l =>
-      '<span style="display:inline-block;min-width:22px;text-align:center;font-weight:900;font-size:22px;letter-spacing:2px;color:var(--purple-tx)">'+l+'</span>'
-    ).join('');
+    disp.innerHTML='';
+    word.split('').forEach(function(l){
+      const sp=document.createElement('span');
+      sp.style.cssText='display:inline-block;min-width:22px;text-align:center;font-weight:900;font-size:22px;letter-spacing:2px;color:var(--purple-tx)';
+      sp.textContent=l;
+      disp.appendChild(sp);
+    });
   }
-  // Build one input row per letter
-  const rows = document.getElementById(rowsId);
+  const rows=document.getElementById(rowsId);
   if(rows){
-    rows.innerHTML = word.split('').map((letter,i) => {
-      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
-        + '<span style="width:22px;text-align:center;font-weight:900;font-size:16px;color:var(--purple-tx);flex-shrink:0">'+letter+'</span>'
-        + '<input id="'+rowsId+'-'+i+'" type="text" placeholder="starts with '+letter+'..." '
-        + 'style="flex:1;padding:7px 10px;border-radius:8px;border:1.5px solid var(--bd2);background:var(--bg1);font-size:13px;color:var(--tx0);font-family:inherit" '
-        + 'oninput="wsUpdateLive(this)" '
-        + 'autocomplete="off" autocorrect="off" spellcheck="false"/>'
-        + '</div>';
-    }).join('');
-    rows.dataset.rowsId = rowsId;
-    rows.dataset.liveId = liveId;
-    rows.dataset.word = word;
-    // Focus first input
-    const first = document.getElementById(rowsId+'-0');
-    if(first) setTimeout(()=>first.focus(), 100);
+    rows.innerHTML='';
+    word.split('').forEach(function(letter,i){
+      const wrap=document.createElement('div');
+      wrap.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:6px';
+      const lbl=document.createElement('span');
+      lbl.style.cssText='width:22px;text-align:center;font-weight:900;font-size:16px;color:var(--purple-tx);flex-shrink:0';
+      lbl.textContent=letter;
+      const inp=document.createElement('input');
+      inp.id=rowsId+'-'+i;
+      inp.type='text';
+      inp.placeholder='starts with '+letter+'...';
+      inp.style.cssText='flex:1;padding:7px 10px;border-radius:8px;border:1.5px solid var(--bd2);background:var(--bg1);font-size:13px;color:var(--tx0);font-family:inherit';
+      inp.setAttribute('autocomplete','off');
+      inp.setAttribute('autocorrect','off');
+      inp.setAttribute('spellcheck','false');
+      inp.oninput=function(){wsUpdateLive(this);};
+      wrap.appendChild(lbl);
+      wrap.appendChild(inp);
+      rows.appendChild(wrap);
+    });
+    rows.dataset.rowsId=rowsId;
+    rows.dataset.liveId=liveId;
+    rows.dataset.word=word;
+    const first=document.getElementById(rowsId+'-0');
+    if(first) setTimeout(function(){first.focus();},100);
   }
 }
 
@@ -2512,13 +2284,15 @@ function tpCheckPendingOnLoad(){
   const isReady = remaining <= 0;
   banner.style.display = 'block';
   if(isReady){
-    desc.textContent = `${data.words.length} word${tt(data.words.length>1,"s")} · Ready to recall!`;
+    const _ws=data.words.length>1?"s":"";
+    desc.textContent = `${data.words.length} word${_ws} · Ready to recall!`;
     btn.textContent = 'Recall now →';
     btn.style.background = 'var(--teal)';
   } else {
     const h = Math.floor(remaining/3600000);
     const m = Math.floor((remaining%3600000)/60000);
-    desc.textContent = `${data.words.length} word${tt(data.words.length>1,"s")} · Unlocks in ${h}h ${m}m`;
+    const _ws=data.words.length>1?"s":"";
+    desc.textContent = `${data.words.length} word${_ws} · Unlocks in ${h}h ${m}m`;
     btn.textContent = 'Locked 🔒';
     btn.style.background = 'var(--purple)';
   }
@@ -2533,7 +2307,9 @@ function tpCheckPending(){
     const remaining = data.unlockAt - Date.now();
     const h = Math.floor(remaining/3600000);
     const m = Math.floor((remaining%3600000)/60000);
-    alert(`Not yet! Come back in ${h} hour${tt(h!==1,"s")} and ${m} minute${tt(m!==1,"s")}.`);
+    const _hs=h!==1?"s":"";
+    const _ms=m!==1?"s":"";
+    alert(`Not yet! Come back in ${h} hour${_hs} and ${m} minute${_ms}.`);
     return;
   }
   // Ready — load the challenge and go to recall
@@ -2693,7 +2469,7 @@ function orBuildThemeGrid(containerId, selectedId, setter){
       else ph+=`<div class="tpc">${e}</div>`;
     });
     ph+='</div>';
-    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}${tt(selectedId===t.id,"<div class=\"ck\">✓</div>")}`;
+    div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}`+(selectedId===t.id?'<div class="ck">&#10003;</div>':'');
     g.appendChild(div);
   });
 }
@@ -4333,7 +4109,8 @@ function aiqSubmit(){
     const win=document.getElementById('aiq-win');
     win.style.display='block';
     win.style.background='var(--ok-bg)';win.style.borderColor='var(--ok-bd)';win.style.color='var(--ok-tx)';
-    win.innerHTML=`🏆 Solved! <strong>${aiqScore} pts</strong>${tt(aiqNoClues," — No clues used! +50 bonus 🌟")}`;
+    const _aiqb=aiqNoClues?" — No clues used! +50 bonus 🌟":"";
+    win.innerHTML=`🏆 Solved! <strong>${aiqScore} pts</strong>${_aiqb}`;
     // Always reveal quote + author together on solve
     document.getElementById('aiq-author-final').innerHTML=
       `<em>"${aiqQuote.words.join(" ")}"</em><br><strong>— ${aiqQuote.author}</strong>`;
@@ -4359,7 +4136,8 @@ function aiqSubmit(){
     // Flash penalty
     const pen=document.createElement('div');
     pen.style.cssText='text-align:center;color:var(--err-tx);font-weight:700;font-size:13px;margin:6px 0;';
-    pen.textContent=`-10 pts · ${wrongSlots.length} word${tt(wrongSlots.length!==1,"s")} wrong`;
+    const _wss=wrongSlots.length!==1?"s":"";
+    pen.textContent=`-10 pts · ${wrongSlots.length} word${_wss} wrong`;
     const submitBtn=document.getElementById('aiq-result').previousElementSibling;
     submitBtn.parentNode.insertBefore(pen,submitBtn);
     setTimeout(()=>pen.remove(),2000);
@@ -4719,6 +4497,7 @@ function lbRefresh(){
   lbRender();
 }
 
+function bbShowUsernameScreen(){document.getElementById("username-screen").style.display="flex";}
 function renderStatsPlayerBar(){
   const bar = document.getElementById('stats-player-bar');
   if(!bar) return;
@@ -4732,7 +4511,7 @@ function renderStatsPlayerBar(){
     bar.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg1);border-radius:10px;border:1px solid var(--bd2)">
       <span style="font-size:20px">👤</span>
       <span style="font-size:12px;color:var(--tx1);flex:1">Playing as guest — scores not saved to leaderboard</span>
-      <button onclick="document.getElementById('username-screen').style.display='flex'" style="font-size:10px;padding:4px 8px;border-radius:6px;background:var(--purple-lt);color:var(--purple-tx);border-color:var(--purple-bd)">Join</button>
+      <button onclick="bbShowUsernameScreen()" style="font-size:10px;padding:4px 8px;border-radius:6px;background:var(--purple-lt);color:var(--purple-tx);border-color:var(--purple-bd)">Join</button>
     </div>`;
   }
 }

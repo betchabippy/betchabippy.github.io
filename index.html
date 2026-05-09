@@ -1699,6 +1699,18 @@ try{blBuildThemes()}catch(e){console.error('blBuildThemes:',e)}
 try{orInitThemeGrids()}catch(e){console.error('orInitThemeGrids:',e)}
 try{tpCheckPendingOnLoad()}catch(e){console.error('tpCheckPendingOnLoad:',e)}
 try{aiqCheckDaily()}catch(e){console.error('aiqCheckDaily:',e)}
+
+// Deep link: if opened via a shared score link, navigate straight to that game
+(function(){
+  const params=new URLSearchParams(window.location.search);const g=params.get('game');if(!g)return;
+  const direct={gotcha:'gt',tippa:'tp',blinka:'bl',crony:'ws',sequencer:'or',orderly:'or'};
+  const nav5=()=>document.querySelectorAll('.bn').forEach((b,i)=>b.classList.toggle('on',i===4));
+  setTimeout(()=>{
+    if(direct[g]){goGame(direct[g])}
+    else if(g==='scrambler'){document.getElementById('splash').style.display='none';goScr('sc-home');nav5()}
+    else if(g==='aiq'){document.getElementById('splash').style.display='none';goScr('aiq-home');aiqCheckDaily();nav5()}
+  },300);
+})();
 </script>
 </body>
 </html>

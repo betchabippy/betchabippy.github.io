@@ -445,10 +445,22 @@ button:active{transform:scale(.98)}
 
 <!-- TIPPA WAITING -->
 <div id="s-tp-wait" class="scr">
-  <div class="card" style="text-align:center;padding:20px 14px;margin-bottom:10px"><p style="font-size:15px;font-weight:600;margin-bottom:6px">Words locked away</p><p style="font-size:12px;color:var(--tx1);line-height:1.7">Memorized in <strong id="tp-spd-disp">—</strong>. Recall opens after the window.</p></div>
-  <div class="lsb"><span class="ll">Score ceiling</span><span class="lv" id="tp-ceil">—</span></div>
-  <div class="card"><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Speed score</span><span id="tp-spd-sc" style="font-size:12px;font-weight:600;color:var(--purple-tx)">—</span></div><div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Words</span><span id="tp-wc" style="font-size:12px;font-weight:600">—</span></div></div>
-  <div class="ctrls"><button onclick="goScr('tp-home')">Home</button><button onclick="tpStartRecall()" style="flex:2">Remember now (demo)</button></div>
+  <div class="card" style="text-align:center;padding:24px 16px;margin-bottom:10px">
+    <div style="font-size:40px;margin-bottom:10px">🔒</div>
+    <p style="font-size:16px;font-weight:700;margin-bottom:6px">Words locked away</p>
+    <p style="font-size:12px;color:var(--tx1);line-height:1.7;margin-bottom:16px">Memorized in <strong id="tp-spd-disp">—</strong>. Come back when the countdown hits zero!</p>
+    <div style="background:var(--purple-lt);border-radius:12px;padding:14px;border:1px solid var(--purple-bd)">
+      <div style="font-size:11px;color:var(--purple);margin-bottom:4px">Recall unlocks in</div>
+      <div id="tp-recv-countdown" style="font-size:32px;font-weight:800;color:var(--purple-tx);font-family:monospace">—</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Speed score</span><span id="tp-spd-sc" style="font-size:12px;font-weight:600;color:var(--purple-tx)">—</span></div>
+    <div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Words</span><span id="tp-wc" style="font-size:12px;font-weight:600">—</span></div>
+    <div class="row"><span style="font-size:12px;color:var(--tx1);flex:1">Score ceiling</span><span id="tp-ceil" style="font-size:12px;font-weight:600;color:var(--purple-tx)">—</span></div>
+  </div>
+  <button id="tp-recv-recall-btn" onclick="tpCheckPending()" style="width:100%;padding:10px;font-size:14px;display:none" class="btn-p">Recall now →</button>
+  <button onclick="goScr('tp-home')" style="width:100%;font-size:12px;color:var(--tx2);background:none;border:none;cursor:pointer;padding:8px;margin-top:4px">← Back to home</button>
 </div>
 
 <!-- TIPPA RECALL -->
@@ -1044,15 +1056,17 @@ function tpSoloShowRecall(isRetry){
 }
 function tpSoloSubmit(){
   const saved=localStorage.getItem(TP_SOLO_KEY);const data=saved?JSON.parse(saved):{};
-  let allDone=true,anyWrong=false;
-  tpSoloWordState.forEach((ws,i)=>{
-    if(ws.status!=='pending')return;
-    const inp=document.getElementById(`ts-inp-${i}`);const ans=(inp?inp.value.trim().toLowerCase():'');ws.answer=ans;ws.attempts++;
-    if(tpSoloWordState.map(w=>w.word).includes(ans)){ws.status='correct';ws.word=ans}
-    else if(tpSoloRetriesLeft>0){tpSoloRetriesLeft--;tpSoloRetriesUsed++;anyWrong=true;ws.status='pending'}
-    else ws.status='failed';
-    if(ws.status==='pending')allDone=false;
-  });
+  // Collect answers for all pending slots
+  const pendingIdxs=tpSoloWordState.map((ws,i)=>ws.status==='pending'?i:-1).filter(i=>i>=0);
+  pendingIdxs.forEach(i=>{const inp=document.getElementById(`ts-inp-${i}`);tpSoloWordState[i].answer=(inp?inp.value.trim().toLowerCase():'');tpSoloWordState[i].attempts++});
+  // Order-independent matching — any correct word counts regardless of which box it's in
+  const alreadyCorrect=new Set(tpSoloWordState.filter(ws=>ws.status==='correct').map(ws=>ws.word));
+  const available=tpSoloWords.filter(w=>!alreadyCorrect.has(w));
+  const usedThisRound=new Set();
+  pendingIdxs.forEach(i=>{const ws=tpSoloWordState[i];const ans=ws.answer;if(available.includes(ans)&&!usedThisRound.has(ans)){usedThisRound.add(ans);ws.status='correct';ws.word=ans}});
+  // Handle remaining wrong answers
+  let anyWrong=false;let allDone=true;
+  tpSoloWordState.forEach(ws=>{if(ws.status!=='pending')return;if(tpSoloRetriesLeft>0){tpSoloRetriesLeft--;tpSoloRetriesUsed++;anyWrong=true}else ws.status='failed';if(ws.status==='pending')allDone=false});
   if(!allDone&&anyWrong){tpSoloShowRecall(true);return}
   const correct=tpSoloWordState.filter(ws=>ws.status==='correct').length;const total=tpSoloWordState.length;const all=correct===total;
   const waitedHrs=(Date.now()-(data.lockedAt||Date.now()))/3600000;const waitBonus=waitedHrs>26?Math.min(25,Math.round(((waitedHrs-26)/22)*25)):0;
@@ -1112,13 +1126,32 @@ function tpStartTimer(){clearInterval(tpMI);tpMemStart=Date.now();const arc=docu
 function tpDone(){
   clearInterval(tpMI);const used=(Date.now()-tpMemStart)/1000;const s=Math.max(0,Math.round((1-(Math.min(used,tpTime)/tpTime))*100));tpSpeedScore=s;
   document.getElementById('tp-spd-disp').textContent=used.toFixed(1)+'s';document.getElementById('tp-spd-sc').textContent=s+' pts per word';document.getElementById('tp-wc').textContent=tpWords.length+' word'+(tpWords.length>1?'s':'');document.getElementById('tp-ceil').textContent=Math.round(s*tpWords.length*1.5)+' pts';
-  if(tpCode&&tpCode.startsWith('TIPPA-'))localStorage.setItem(TP_RECV_KEY,JSON.stringify({code:tpCode,words:tpWords,hint:tpHint,speedScore:s,lockedAt:Date.now(),unlockAt:Date.now()+(tpRecallWindow*1000)}));
-  goScr('tp-wait');
+  const recvData={code:tpCode,words:tpWords,hint:tpHint,speedScore:s,lockedAt:Date.now(),unlockAt:Date.now()+(tpRecallWindow*1000)};
+  if(tpCode&&tpCode.startsWith('TIPPA-'))localStorage.setItem(TP_RECV_KEY,JSON.stringify(recvData));
+  goScr('tp-wait');tpRecvCountdown(recvData);
+}
+let tpRecvCountdownInterval=null;
+function tpRecvCountdown(data){
+  if(tpRecvCountdownInterval)clearInterval(tpRecvCountdownInterval);
+  if(!data){const saved=localStorage.getItem(TP_RECV_KEY);if(!saved)return;data=JSON.parse(saved)}
+  function update(){
+    const cd=document.getElementById('tp-recv-countdown');const btn=document.getElementById('tp-recv-recall-btn');if(!cd)return;
+    const remaining=data.unlockAt-Date.now();
+    if(remaining<=0){clearInterval(tpRecvCountdownInterval);tpRecvCountdownInterval=null;cd.textContent='Ready!';cd.style.color='var(--teal)';if(btn)btn.style.display='block';return}
+    const h=Math.floor(remaining/3600000);const m=Math.floor((remaining%3600000)/60000);const s=Math.floor((remaining%60000)/1000);
+    cd.textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+  update();tpRecvCountdownInterval=setInterval(update,1000);
 }
 function tpStartRecall(){const ri=document.getElementById('tp-rec-inputs');ri.innerHTML='';tpWords.forEach((_,i)=>{const inp=document.createElement('input');inp.className='wi';inp.placeholder='Word '+(i+1)+'...';inp.id='tpr-'+i;inp.oninput=()=>{let cor=0;tpWords.forEach((w,j)=>{const x=document.getElementById('tpr-'+j);if(x&&x.value.trim().toLowerCase()===w)cor++});document.getElementById('tp-rec-live').textContent=Math.round(tpSpeedScore*cor*(cor===tpWords.length?1.5:1))+' pts so far'};ri.appendChild(inp)});const rh=document.getElementById('tp-hint-rec');if(tpHint!=='none'){rh.style.display='block';rh.innerHTML=`<span class="hp">Hint: ${tpHint}</span>`}else rh.style.display='none';document.getElementById('tp-rec-live').textContent=tpSpeedScore+' pts ceiling';goScr('tp-recall')}
 async function tpSubmit(){
-  let cor=0;const answers=[];const rw=document.getElementById('tp-res-words');rw.innerHTML='';
-  tpWords.forEach((w,i)=>{const inp=document.getElementById('tpr-'+i);const ans=(inp?inp.value.trim().toLowerCase():'');const ok=ans===w;if(ok)cor++;answers.push(ans);const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd)';row.innerHTML=`<span style="font-size:13px;font-weight:600">${w}</span><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:var(--tx1)">${ans||'—'}</span><span class="${ok?'ok-tag':'no-tag'}">${ok?'correct':'wrong'}</span></div>`;rw.appendChild(row)});
+  // Collect all answers, then match order-independently
+  const answers=tpWords.map((_,i)=>{const inp=document.getElementById('tpr-'+i);return inp?inp.value.trim().toLowerCase():''});
+  const matched=new Set();let cor=0;
+  answers.forEach(ans=>{if(ans&&tpWords.includes(ans)&&!matched.has(ans)){matched.add(ans);cor++}});
+  // Show each original word as correct or missed
+  const rw=document.getElementById('tp-res-words');rw.innerHTML='';
+  tpWords.forEach(w=>{const found=matched.has(w);const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd)';row.innerHTML=`<span style="font-size:13px;font-weight:600">${w}</span><span class="${found?'ok-tag':'no-tag'}">${found?'correct':'missed'}</span>`;rw.appendChild(row)});
   const all=cor===tpWords.length;const wb=Math.floor(Math.random()*26);const total=Math.round((all?tpSpeedScore*cor*1.5:tpSpeedScore*cor)+wb);
   document.getElementById('tp-rc').textContent=cor+'/'+tpWords.length;document.getElementById('tp-rs').textContent=tpSpeedScore;document.getElementById('tp-rb').textContent='+'+wb;document.getElementById('tp-tot').textContent=total;
   SS.tippa={score:total,correct:cor+'/'+tpWords.length};recordTippa(total,cor+'/'+tpWords.length);localStorage.removeItem(TP_RECV_KEY);

@@ -215,7 +215,7 @@ button:active{transform:scale(.98)}
   <button class="bn" onclick="goGame('bl')"><span class="bn-ic">👁</span><span class="bn-lb">Blinka</span></button>
   <button class="bn" onclick="goGame('ws')"><span class="bn-ic">📝</span><span class="bn-lb">Crony</span></button>
   <button class="bn" onclick="goGame('or')"><span class="bn-ic">🔢</span><span class="bn-lb">Orderly</span></button>
-  <button class="bn" onclick="goGame('mp')"><span class="bn-ic">🗺</span><span class="bn-lb">Mappy</span></button>
+  <button class="bn" onclick="goGame('mp')"><span class="bn-ic">🗺</span><span class="bn-lb">Peeky</span></button>
 </nav>
 
 <div class="main" id="main">
@@ -830,29 +830,28 @@ button:active{transform:scale(.98)}
 <!-- MAPPY HOME -->
 <div id="s-mp-home" class="scr">
   <div class="ghdr">
-    <div class="gic" style="background:#E3F2FD;color:#1565C0;border-color:#90CAF9">🗺</div>
-    <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Mappy</p><p style="font-size:12px;color:var(--tx1)">Flip pieces, rebuild the image, and guess what it is for a bonus!</p></div>
+    <div class="gic" style="background:#E3F2FD;color:#1565C0;border-color:#90CAF9">🧩</div>
+    <div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Peeky</p><p style="font-size:12px;color:var(--tx1)">Build a famous image by flipping pieces and placing them on the board. Guess what it is early for a bonus!</p></div>
   </div>
-  <div class="card">
-    <div class="st">Filter by category</div>
-    <div class="dr" id="mp-cats">
-      <button class="db on" onclick="mpSetCat('all',this)">All</button>
-      <button class="db dim" onclick="mpSetCat('Painting',this)">🎨 Art</button>
-      <button class="db dim" onclick="mpSetCat('Photo',this)">📷 Photos</button>
-      <button class="db dim" onclick="mpSetCat('Landmark',this)">🏛 Landmarks</button>
-      <button class="db dim" onclick="mpSetCat('Sculpture',this)">🗿 Sculpt.</button>
-    </div>
+  <div class="card" style="text-align:center;padding:16px 12px">
+    <div id="mp-daily-num" style="font-size:12px;color:var(--tx2);margin-bottom:6px"></div>
+    <div id="mp-daily-grid" style="font-size:28px;margin-bottom:4px">🧩</div>
+    <p style="font-size:12px;color:var(--tx2);margin-bottom:4px">Flip up to 4 pieces at a time (pay pts for more). Place them on the grid — correct placements lock green. Guess anytime for a bonus!</p>
+    <p style="font-size:11px;color:var(--tx2)">Hints: 🔒 Corners · 👁 Sneak Peek · 🏷 Category · 🕰 Era · 👁 Flash</p>
   </div>
-  <p style="font-size:11px;color:var(--tx2);margin-bottom:8px">Tap an image to select it.</p>
-  <div id="mp-image-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px"></div>
-  <button class="btn-p" id="mp-play-btn" onclick="mpStartGame()" style="width:100%;padding:10px;font-size:14px;opacity:0.4" disabled>Play →</button>
+  <div id="mp-already-played" style="display:none;text-align:center;padding:12px;background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:10px;margin-bottom:12px">
+    <div style="font-size:18px;margin-bottom:4px">✅</div>
+    <p style="font-size:13px;font-weight:600;color:var(--ok-tx)">You've done today's Peeky!</p>
+    <p style="font-size:11px;color:var(--ok-tx);margin-top:4px">Come back tomorrow for a new one.</p>
+  </div>
+  <button class="btn-p" id="mp-play-btn" onclick="mpStartGame()" style="width:100%;padding:12px;font-size:15px">Play Today's Peeky →</button>
 </div>
 
 <!-- MAPPY PLAY -->
 <div id="s-mp-play" class="scr">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
     <div style="display:flex;align-items:center;gap:7px">
-      <span style="font-size:11px;padding:3px 8px;border-radius:20px;background:#E3F2FD;border:1px solid #90CAF9;font-weight:600;color:#1565C0">🗺 Mappy</span>
+      <span style="font-size:11px;padding:3px 8px;border-radius:20px;background:#E3F2FD;border:1px solid #90CAF9;font-weight:600;color:#1565C0">🧩 Peeky</span>
       <span id="mp-cat-badge" style="font-size:10px;padding:2px 7px;border-radius:20px;background:var(--bg2);color:var(--tx1)"></span>
     </div>
     <button onclick="mpQuit()" style="font-size:11px;padding:5px 10px">Quit</button>
@@ -860,9 +859,9 @@ button:active{transform:scale(.98)}
   <div class="lsb" style="margin-bottom:8px"><span class="ll">Score</span><span class="lv" id="mp-score">200</span></div>
   <div style="display:flex;gap:4px;margin-bottom:6px">
     <button id="mp-h-corners" onclick="mpHintCorners()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--ok-bg);border-color:var(--ok-bd);color:var(--ok-tx);line-height:1.4">🔒 Corners<br>-10pts</button>
-    <button id="mp-h-spot" onclick="mpHintSpot()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--ok-bg);border-color:var(--ok-bd);color:var(--ok-tx);line-height:1.4">👁 Spot×4<br>-10pts</button>
+    <button id="mp-h-spot" onclick="mpSneakPeek()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--ok-bg);border-color:var(--ok-bd);color:var(--ok-tx);line-height:1.4">👁 Sneak Peek<br>-10pts</button>
     <button id="mp-h-cat" onclick="mpHintCategory()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--info-bg);border-color:var(--info-bd);color:var(--info-tx);line-height:1.4">🏷 Category<br>-15pts</button>
-    <button id="mp-h-artist" onclick="mpHintArtist()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn-tx);line-height:1.4">🎨 Creator<br>-25pts</button>
+    <button id="mp-h-era" onclick="mpHintEra()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn-tx);line-height:1.4">🕰 Era<br>-20pts</button>
     <button id="mp-h-flash" onclick="mpHintFlash()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--err-bg);border-color:var(--err-bd);color:var(--err-tx);line-height:1.4">👁 Flash<br>-30pts</button>
   </div>
   <div id="mp-hints-bar" style="min-height:16px;margin-bottom:6px;font-size:11px;color:var(--purple-tx);text-align:center;font-style:italic"></div>
@@ -905,7 +904,7 @@ function goGame(g){
   goScr(screens[g]);
   if(g==='st')renderStats();
   if(g==='tp')tpCheckPendingOnLoad();
-  if(g==='mp')mpRenderImageGrid();
+  if(g==='mp')mpSetupHome();
   document.querySelectorAll('.bn').forEach(b=>b.classList.remove('on'));
   document.querySelectorAll('.bn').forEach((b,i)=>['gt','tp','bl','ws','or','mp'][i]===g&&b.classList.add('on'));
 }
@@ -1753,80 +1752,105 @@ const BIPPY_PHRASES=[{stars:3,msg:"Genius! I may need to steal that one."},{star
 function bippyRate(sentenceLength){const bonus=sentenceLength>20?1:0;const rand=Math.random();let eligible;if(rand<0.25+bonus*0.15)eligible=BIPPY_PHRASES.filter(p=>p.stars===3);else if(rand<0.65+bonus*0.1)eligible=BIPPY_PHRASES.filter(p=>p.stars===2);else eligible=BIPPY_PHRASES.filter(p=>p.stars===1);const pick=eligible[Math.floor(Math.random()*eligible.length)];return{stars:'★'.repeat(pick.stars)+'☆'.repeat(3-pick.stars),msg:pick.msg,rating:pick.stars}}
 
 // ── MAPPY ─────────────────────────────────────────────────────────────────────
-const MAPPY_IMAGES=[
-  {id:'mona_lisa',title:'Mona Lisa',creator:'Leonardo da Vinci',year:'c.1503',category:'Painting',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/400px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg',answers:['mona lisa','monalisa','la gioconda','gioconda']},
-  {id:'starry_night',title:'The Starry Night',creator:'Vincent van Gogh',year:'1889',category:'Painting',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/600px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',answers:['starry night','the starry night','van gogh']},
-  {id:'scream',title:'The Scream',creator:'Edvard Munch',year:'1893',category:'Painting',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/400px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg',answers:['the scream','scream','munch']},
-  {id:'pearl_earring',title:'Girl with a Pearl Earring',creator:'Johannes Vermeer',year:'c.1665',category:'Painting',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/400px-1665_Girl_with_a_Pearl_Earring.jpg',answers:['girl with a pearl earring','pearl earring','vermeer']},
-  {id:'great_wave',title:'The Great Wave',creator:'Katsushika Hokusai',year:'c.1831',category:'Painting',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tsunami_by_hokusai_19th_century.jpg/600px-Tsunami_by_hokusai_19th_century.jpg',answers:['the great wave','great wave','hokusai','great wave off kanagawa']},
-  {id:'american_gothic',title:'American Gothic',creator:'Grant Wood',year:'1930',category:'Painting',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Grant_DeVolson_Wood_-_American_Gothic.jpg/400px-Grant_DeVolson_Wood_-_American_Gothic.jpg',answers:['american gothic','grant wood']},
-  {id:'birth_venus',title:'The Birth of Venus',creator:'Sandro Botticelli',year:'c.1484',category:'Painting',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg/600px-Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg',answers:['birth of venus','venus','botticelli']},
-  {id:'creation_adam',title:'The Creation of Adam',creator:'Michelangelo',year:'1512',category:'Painting',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg/600px-Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg',answers:['creation of adam','adam','michelangelo','sistine']},
-  {id:'david',title:'Statue of David',creator:'Michelangelo',year:'1501–1504',category:'Sculpture',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Michelangelo%27s_David_-_right_view_2.jpg/400px-Michelangelo%27s_David_-_right_view_2.jpg',answers:['david','statue of david','michelangelo david']},
-  {id:'thinker',title:'The Thinker',creator:'Auguste Rodin',year:'1902',category:'Sculpture',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Rodin_TheThinker.jpg/400px-Rodin_TheThinker.jpg',answers:['the thinker','thinker','rodin']},
-  {id:'earthrise',title:'Earthrise',creator:'NASA / William Anders',year:'1968',category:'Photo',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/NASA-Apollo8-Dec24-Earthrise.jpg/600px-NASA-Apollo8-Dec24-Earthrise.jpg',answers:['earthrise','earth rise','apollo 8','apollo']},
-  {id:'moon_landing',title:'Moon Landing',creator:'NASA',year:'1969',category:'Photo',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Aldrin_Apollo_11_original.jpg/400px-Aldrin_Apollo_11_original.jpg',answers:['moon landing','apollo 11','aldrin','buzz aldrin','moon walk']},
-  {id:'migrant_mother',title:'Migrant Mother',creator:'Dorothea Lange',year:'1936',category:'Photo',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Lange-MigrantMother02.jpg/400px-Lange-MigrantMother02.jpg',answers:['migrant mother','dorothea lange','great depression']},
-  {id:'iwo_jima',title:'Raising the Flag on Iwo Jima',creator:'Joe Rosenthal',year:'1945',category:'Photo',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Raising_the_Flag_on_Iwo_Jima.jpg/400px-Raising_the_Flag_on_Iwo_Jima.jpg',answers:['iwo jima','raising the flag','flag raising','iwo']},
-  {id:'eiffel',title:'Eiffel Tower',creator:'Gustave Eiffel',year:'1889',category:'Landmark',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Sights_of_Paris%2C_Eiffel_tower.jpg/400px-Sights_of_Paris%2C_Eiffel_tower.jpg',answers:['eiffel tower','eiffel','paris tower']},
-  {id:'taj_mahal',title:'Taj Mahal',creator:'Shah Jahan',year:'1643',category:'Landmark',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Taj_Mahal%2C_Agra%2C_India_edit3.jpg/600px-Taj_Mahal%2C_Agra%2C_India_edit3.jpg',answers:['taj mahal','taj']},
-  {id:'great_wall',title:'Great Wall of China',creator:'Various dynasties',year:'c.7th century BC',category:'Landmark',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/The_Great_Wall_of_China_at_Jinshanling-edit.jpg/600px-The_Great_Wall_of_China_at_Jinshanling-edit.jpg',answers:['great wall','great wall of china','chinese wall']},
-  {id:'opera_house',title:'Sydney Opera House',creator:'Jørn Utzon',year:'1973',category:'Landmark',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Sydney_Australia._%2821339175489%29.jpg/600px-Sydney_Australia._%2821339175489%29.jpg',answers:['sydney opera house','opera house','sydney']},
-  {id:'colosseum',title:'Colosseum',creator:'Roman Empire',year:'80 AD',category:'Landmark',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/600px-Colosseo_2020.jpg',answers:['colosseum','coliseum','roman colosseum','colosseo']},
-  {id:'statue_liberty',title:'Statue of Liberty',creator:'Frédéric Auguste Bartholdi',year:'1886',category:'Landmark',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Southwest_corner_of_Statue_of_Liberty_National_Monument.jpg/400px-Southwest_corner_of_Statue_of_Liberty_National_Monument.jpg',answers:['statue of liberty','liberty','lady liberty']},
-  {id:'golden_gate',title:'Golden Gate Bridge',creator:'Joseph Strauss',year:'1937',category:'Landmark',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/GoldenGateBridge-001.jpg/600px-GoldenGateBridge-001.jpg',answers:['golden gate bridge','golden gate','san francisco bridge']},
-  {id:'machu_picchu',title:'Machu Picchu',creator:'Inca Empire',year:'c.1450',category:'Landmark',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/600px-Machu_Picchu%2C_Peru.jpg',answers:['machu picchu','machu','picchu','inca']},
-  {id:'stonehenge',title:'Stonehenge',creator:'Unknown',year:'c.3000 BC',category:'Landmark',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/600px-Stonehenge2007_07_30.jpg',answers:['stonehenge','stone henge','stone circle']},
-  {id:'big_ben',title:'Big Ben',creator:'Augustus Pugin',year:'1859',category:'Landmark',url:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Clock_Tower_-_Palace_of_Westminster%2C_London_-_September_2006.jpg/400px-Clock_Tower_-_Palace_of_Westminster%2C_London_-_September_2006.jpg',answers:['big ben','westminster','elizabeth tower','london clock','parliament']}
+const PEEKY_IMAGES=[
+  {id:'mona_lisa',title:'Mona Lisa',era:'1500s',category:'Painting',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/400px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg',answers:['mona lisa','monalisa','la gioconda','gioconda']},
+  {id:'starry_night',title:'The Starry Night',era:'1880s',category:'Painting',grid:5,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/600px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',answers:['starry night','the starry night','van gogh']},
+  {id:'scream',title:'The Scream',era:'1890s',category:'Painting',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/400px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg',answers:['the scream','scream','munch']},
+  {id:'pearl_earring',title:'Girl with a Pearl Earring',era:'1660s',category:'Painting',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/400px-1665_Girl_with_a_Pearl_Earring.jpg',answers:['girl with a pearl earring','pearl earring','vermeer']},
+  {id:'great_wave',title:'The Great Wave',era:'1830s',category:'Painting',grid:5,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tsunami_by_hokusai_19th_century.jpg/600px-Tsunami_by_hokusai_19th_century.jpg',answers:['the great wave','great wave','hokusai','great wave off kanagawa']},
+  {id:'american_gothic',title:'American Gothic',era:'1930s',category:'Painting',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Grant_DeVolson_Wood_-_American_Gothic.jpg/400px-Grant_DeVolson_Wood_-_American_Gothic.jpg',answers:['american gothic','grant wood']},
+  {id:'birth_venus',title:'The Birth of Venus',era:'1480s',category:'Painting',grid:5,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg/600px-Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg',answers:['birth of venus','venus','botticelli']},
+  {id:'creation_adam',title:'The Creation of Adam',era:'1510s',category:'Painting',grid:5,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg/600px-Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg',answers:['creation of adam','adam','michelangelo','sistine']},
+  {id:'david',title:'Statue of David',era:'1500s',category:'Sculpture',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Michelangelo%27s_David_-_right_view_2.jpg/400px-Michelangelo%27s_David_-_right_view_2.jpg',answers:['david','statue of david','michelangelo david']},
+  {id:'thinker',title:'The Thinker',era:'1900s',category:'Sculpture',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Rodin_TheThinker.jpg/400px-Rodin_TheThinker.jpg',answers:['the thinker','thinker','rodin']},
+  {id:'earthrise',title:'Earthrise',era:'1960s',category:'Photo',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/NASA-Apollo8-Dec24-Earthrise.jpg/600px-NASA-Apollo8-Dec24-Earthrise.jpg',answers:['earthrise','earth rise','apollo 8','apollo']},
+  {id:'moon_landing',title:'Moon Landing',era:'1960s',category:'Photo',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Aldrin_Apollo_11_original.jpg/400px-Aldrin_Apollo_11_original.jpg',answers:['moon landing','apollo 11','aldrin','buzz aldrin','moon walk']},
+  {id:'migrant_mother',title:'Migrant Mother',era:'1930s',category:'Photo',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Lange-MigrantMother02.jpg/400px-Lange-MigrantMother02.jpg',answers:['migrant mother','dorothea lange','great depression']},
+  {id:'iwo_jima',title:'Raising the Flag on Iwo Jima',era:'1940s',category:'Photo',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Raising_the_Flag_on_Iwo_Jima.jpg/400px-Raising_the_Flag_on_Iwo_Jima.jpg',answers:['iwo jima','raising the flag','flag raising','iwo']},
+  {id:'eiffel',title:'Eiffel Tower',era:'1880s',category:'Landmark',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Sights_of_Paris%2C_Eiffel_tower.jpg/400px-Sights_of_Paris%2C_Eiffel_tower.jpg',answers:['eiffel tower','eiffel','paris tower']},
+  {id:'taj_mahal',title:'Taj Mahal',era:'1640s',category:'Landmark',grid:5,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Taj_Mahal%2C_Agra%2C_India_edit3.jpg/600px-Taj_Mahal%2C_Agra%2C_India_edit3.jpg',answers:['taj mahal','taj']},
+  {id:'great_wall',title:'Great Wall of China',era:'Ancient',category:'Landmark',grid:5,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/The_Great_Wall_of_China_at_Jinshanling-edit.jpg/600px-The_Great_Wall_of_China_at_Jinshanling-edit.jpg',answers:['great wall','great wall of china','chinese wall']},
+  {id:'opera_house',title:'Sydney Opera House',era:'1970s',category:'Landmark',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Sydney_Australia._%2821339175489%29.jpg/600px-Sydney_Australia._%2821339175489%29.jpg',answers:['sydney opera house','opera house','sydney']},
+  {id:'colosseum',title:'Colosseum',era:'80 AD',category:'Landmark',grid:5,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/600px-Colosseo_2020.jpg',answers:['colosseum','coliseum','roman colosseum','colosseo']},
+  {id:'statue_liberty',title:'Statue of Liberty',era:'1880s',category:'Landmark',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Southwest_corner_of_Statue_of_Liberty_National_Monument.jpg/400px-Southwest_corner_of_Statue_of_Liberty_National_Monument.jpg',answers:['statue of liberty','liberty','lady liberty']},
+  {id:'golden_gate',title:'Golden Gate Bridge',era:'1930s',category:'Landmark',grid:5,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/GoldenGateBridge-001.jpg/600px-GoldenGateBridge-001.jpg',answers:['golden gate bridge','golden gate','san francisco bridge']},
+  {id:'machu_picchu',title:'Machu Picchu',era:'1400s',category:'Landmark',grid:6,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Machu_Picchu%2C_Peru.jpg/600px-Machu_Picchu%2C_Peru.jpg',answers:['machu picchu','machu','picchu','inca']},
+  {id:'stonehenge',title:'Stonehenge',era:'Ancient',category:'Landmark',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Stonehenge2007_07_30.jpg/600px-Stonehenge2007_07_30.jpg',answers:['stonehenge','stone henge','stone circle']},
+  {id:'big_ben',title:'Big Ben',era:'1850s',category:'Landmark',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Clock_Tower_-_Palace_of_Westminster%2C_London_-_September_2006.jpg/400px-Clock_Tower_-_Palace_of_Westminster%2C_London_-_September_2006.jpg',answers:['big ben','westminster','elizabeth tower','london clock','parliament']}
 ];
 
-let mpImage=null,mpSelectedImageId=null,mpCat='all';
-let mpGrid=Array(16).fill(null),mpLineup=new Set(),mpFaceUp=new Set();
+let mpImage=null,mpTiles=[];
+let mpGrid=[],mpLineup=new Set(),mpFaceUp=new Set();
 let mpSelected=null,mpFaceUpMax=4,mpScore=200,mpLockedCount=0;
 let mpCorrectGuess=false,mpGuessBonusEarned=0,mpGuessCount=0;
-let mpCornersUsed=false,mpCategoryUsed=false,mpArtistUsed=false,mpFlashUsed=false,mpSpotUsed=false;
+let mpCornersUsed=false,mpCategoryUsed=false,mpEraUsed=false,mpFlashUsed=false,mpSneakPeekUsed=false;
 
-function mpSetCat(cat,btn){mpCat=cat;dimOthers('mp-cats',btn);mpRenderImageGrid()}
-function mpRenderImageGrid(){
-  const grid=document.getElementById('mp-image-grid');if(!grid)return;
-  const imgs=mpCat==='all'?MAPPY_IMAGES:MAPPY_IMAGES.filter(img=>img.category===mpCat);
-  grid.innerHTML='';
-  imgs.forEach(img=>{
-    const d=document.createElement('div');const sel=mpSelectedImageId===img.id;
-    d.style.cssText=`aspect-ratio:1;border-radius:8px;background-image:url('${img.url}');background-size:cover;background-position:center;cursor:pointer;border:3px solid ${sel?'var(--purple)':'transparent'};position:relative;overflow:hidden;transition:all .15s`;
-    const lbl=document.createElement('div');lbl.style.cssText='position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.65);color:#fff;font-size:9px;padding:3px 4px;text-align:center;line-height:1.3';lbl.textContent=img.title;
-    d.appendChild(lbl);d.onclick=()=>mpSelectImage(img.id);grid.appendChild(d);
-  });
+function mpGetDailyImage(){
+  const d=new Date();
+  const seed=d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
+  return PEEKY_IMAGES[seed%PEEKY_IMAGES.length];
 }
-function mpSelectImage(id){mpSelectedImageId=id;const btn=document.getElementById('mp-play-btn');if(btn){btn.disabled=false;btn.style.opacity='1'}mpRenderImageGrid()}
+function mpDailyKey(){const d=new Date();return `peeky_${d.getFullYear()}_${d.getMonth()+1}_${d.getDate()}`}
+function mpSetupHome(){
+  const img=mpGetDailyImage();
+  const n=PEEKY_IMAGES.findIndex(x=>x.id===img.id)+1;
+  const el=document.getElementById('mp-daily-num');
+  if(el)el.textContent=`Puzzle #${n} · ${img.grid}×${img.grid} grid`;
+  const played=localStorage.getItem(mpDailyKey());
+  const ap=document.getElementById('mp-already-played');
+  const pb=document.getElementById('mp-play-btn');
+  if(played){if(ap)ap.style.display='block';if(pb){pb.disabled=true;pb.style.opacity='0.4'}}
+  else{if(ap)ap.style.display='none';if(pb){pb.disabled=false;pb.style.opacity='1'}}
+}
 function mpStartGame(){
-  if(!mpSelectedImageId)return;mpImage=MAPPY_IMAGES.find(img=>img.id===mpSelectedImageId);if(!mpImage)return;
-  const img=new Image();img.onload=mpInitGame;img.onerror=mpInitGame;img.src=mpImage.url;
+  mpImage=mpGetDailyImage();if(!mpImage)return;
+  mpPreloadTiles(mpInitGame);
+}
+function mpPreloadTiles(callback){
+  const gs=mpImage.grid||4;
+  const img=new Image();img.crossOrigin='anonymous';
+  img.onload=()=>{
+    const tsize=200,tw=img.width/gs,th=img.height/gs;
+    mpTiles=[];
+    for(let r=0;r<gs;r++){for(let c=0;c<gs;c++){
+      const cv=document.createElement('canvas');cv.width=tsize;cv.height=tsize;
+      cv.getContext('2d').drawImage(img,c*tw,r*th,tw,th,0,0,tsize,tsize);
+      mpTiles.push(cv.toDataURL());
+    }}
+    callback();
+  };
+  img.onerror=()=>{mpTiles=[];callback()};
+  img.src=mpImage.url;
 }
 function mpInitGame(){
-  mpGrid=Array(16).fill(null);const shuffled=[...Array(16).keys()].sort(()=>Math.random()-.5);
-  mpLineup=new Set(shuffled);mpFaceUp=new Set();mpSelected=null;mpFaceUpMax=4;mpScore=200;mpLockedCount=0;
+  const gs=mpImage.grid||4;const n=gs*gs;
+  mpGrid=Array(n).fill(null);const shuffled=[...Array(n).keys()].sort(()=>Math.random()-.5);
+  mpLineup=new Set(shuffled);mpFaceUp=new Set();mpSelected=null;mpFaceUpMax=4;
+  mpScore=200+(gs-4)*20;mpLockedCount=0;
   mpCorrectGuess=false;mpGuessBonusEarned=0;mpGuessCount=0;
-  mpCornersUsed=false;mpCategoryUsed=false;mpArtistUsed=false;mpFlashUsed=false;
-  document.getElementById('mp-score').textContent='200';
+  mpCornersUsed=false;mpCategoryUsed=false;mpEraUsed=false;mpFlashUsed=false;mpSneakPeekUsed=false;
+  document.getElementById('mp-score').textContent=mpScore;
   document.getElementById('mp-cat-badge').textContent=mpImage.category;
   document.getElementById('mp-hints-bar').textContent='';
   document.getElementById('mp-guess-result').textContent='';
   document.getElementById('mp-result').style.display='none';
   const gi=document.getElementById('mp-guess-input');if(gi){gi.value='';gi.disabled=false}
   const gb=document.getElementById('mp-guess-btn');if(gb)gb.disabled=false;
-  ['mp-h-corners','mp-h-cat','mp-h-artist','mp-h-flash'].forEach(id=>{const b=document.getElementById(id);if(b){b.disabled=false;b.style.opacity='1'}});
+  ['mp-h-corners','mp-h-spot','mp-h-cat','mp-h-era','mp-h-flash'].forEach(id=>{const b=document.getElementById(id);if(b){b.disabled=false;b.style.opacity='1'}});
   const ub=document.getElementById('mp-upgrade-btn');if(ub)ub.style.display='';
+  const mpg=document.getElementById('mp-grid');if(mpg){const gs2=mpImage.grid||4;mpg.style.gridTemplateColumns=`repeat(${gs2},1fr)`}
   goScr('mp-play');mpRenderGrid();mpRenderLineup();mpUpdateFaceUpInfo();
 }
-// CSS background trick: each piece shows its correct 1/4 slice of the image
 function mpBgStyle(pieceId){
-  const row=Math.floor(pieceId/4),col=pieceId%4;
-  return `background-image:url('${mpImage.url}');background-size:400% 400%;background-position:${(col/3)*100}% ${(row/3)*100}%`;
+  if(mpTiles[pieceId])return `background-image:url('${mpTiles[pieceId]}');background-size:cover`;
+  const gs=mpImage.grid||4;const n=gs-1||3;
+  const row=Math.floor(pieceId/gs),col=pieceId%gs;
+  return `background-image:url('${mpImage.url}');background-size:${gs*100}% ${gs*100}%;background-position:${(col/n)*100}% ${(row/n)*100}%`;
 }
 function mpRenderGrid(){
   const g=document.getElementById('mp-grid');if(!g)return;g.innerHTML='';
-  for(let i=0;i<16;i++){
+  const gs=mpImage?mpImage.grid||4:4;const n=gs*gs;
+  for(let i=0;i<n;i++){
     const pid=mpGrid[i];const locked=pid!==null&&pid===i;const sel=mpSelected&&mpSelected.type==='grid'&&mpSelected.gridCell===i;
     const cell=document.createElement('div');
     cell.style.cssText=`aspect-ratio:1;border-radius:6px;border:2px solid ${locked?'var(--teal)':sel?'var(--purple)':'var(--bd2)'};cursor:${locked?'default':'pointer'};transition:all .15s;position:relative;overflow:hidden`;
@@ -1880,10 +1904,11 @@ function mpTapGrid(cellIdx){
 }
 function mpCheckNewLocks(){
   mpLockedCount=mpGrid.filter((p,i)=>p===i).length;
-  if(mpLockedCount===16)setTimeout(()=>mpShowResult(true),400);
+  if(mpLockedCount===(mpImage?mpImage.grid*mpImage.grid:16))setTimeout(()=>mpShowResult(true),400);
 }
 function mpShowResult(completed){
   const finalScore=mpScore+(completed?20:0);document.getElementById('mp-score').textContent=finalScore;
+  localStorage.setItem(mpDailyKey(),JSON.stringify({score:finalScore,completed}));
   const win=document.getElementById('mp-win');win.style.display='block';
   if(completed){win.style.background='var(--ok-bg)';win.style.borderColor='var(--ok-bd)';win.style.color='var(--ok-tx)';win.innerHTML=`🎉 Puzzle complete! <strong>${finalScore} pts</strong>${mpCorrectGuess?' · Named it! +'+mpGuessBonusEarned+' bonus':' · Guess next time for a bonus!'}`}
   else{win.style.background='var(--warn-bg)';win.style.borderColor='var(--warn-bd)';win.style.color='var(--warn-tx)';win.innerHTML=`Puzzle ended — <strong>${finalScore} pts</strong> · ${mpLockedCount}/16 correct`}
@@ -1900,19 +1925,20 @@ function mpAddHintText(text){const el=document.getElementById('mp-hints-bar');if
 function mpHintCorners(){
   if(mpCornersUsed)return;mpCornersUsed=true;mpScore=Math.max(0,mpScore-10);document.getElementById('mp-score').textContent=mpScore;
   document.getElementById('mp-h-corners').disabled=true;document.getElementById('mp-h-corners').style.opacity='0.4';
-  [0,3,12,15].forEach(corner=>{
+  const gs=mpImage.grid||4;const corners=[0,gs-1,gs*(gs-1),gs*gs-1];
+  corners.forEach(corner=>{
     if(mpGrid[corner]===corner)return;
-    for(let i=0;i<16;i++){if(mpGrid[i]===corner&&i!==corner){mpGrid[i]=null;break}}
+    for(let i=0;i<gs*gs;i++){if(mpGrid[i]===corner&&i!==corner){mpGrid[i]=null;break}}
     mpLineup.delete(corner);mpFaceUp.delete(corner);
     if(mpGrid[corner]!==null&&mpGrid[corner]!==corner){const d=mpGrid[corner];mpLineup.add(d);if(mpFaceUp.size<mpFaceUpMax)mpFaceUp.add(d)}
     mpGrid[corner]=corner;
   });
   mpCheckNewLocks();mpRenderGrid();mpRenderLineup();mpUpdateFaceUpInfo();mpAddHintText('🔒 Corners locked');
 }
-function mpHintSpot(){
-  if(mpSpotUsed)return;mpSpotUsed=true;mpScore=Math.max(0,mpScore-10);document.getElementById('mp-score').textContent=mpScore;
+function mpSneakPeek(){
+  if(mpSneakPeekUsed)return;mpSneakPeekUsed=true;mpScore=Math.max(0,mpScore-10);document.getElementById('mp-score').textContent=mpScore;
   document.getElementById('mp-h-spot').disabled=true;document.getElementById('mp-h-spot').style.opacity='0.4';
-  const unmatched=[];for(let i=0;i<16;i++){if(mpGrid[i]!==null&&mpGrid[i]!==i&&!mpFaceUp.has(i))unmatched.push(i);}
+  const unmatched=[];const gs2=mpImage?mpImage.grid||4:4;for(let i=0;i<gs2*gs2;i++){if(mpGrid[i]!==null&&mpGrid[i]!==i&&!mpFaceUp.has(i))unmatched.push(i);}
   const picks=unmatched.sort(()=>Math.random()-0.5).slice(0,4);
   const overlay=document.getElementById('mp-flash-overlay');const img=document.getElementById('mp-flash-img');
   const totalW=document.querySelector('.mp-grid-wrap')||document.querySelector('[id^="mp-grid"]');
@@ -1929,7 +1955,7 @@ function mpHintSpot(){
   mpAddHintText('👁 4 spots flashed');
 }
 function mpHintCategory(){if(mpCategoryUsed)return;mpCategoryUsed=true;mpScore=Math.max(0,mpScore-15);document.getElementById('mp-score').textContent=mpScore;document.getElementById('mp-h-cat').disabled=true;document.getElementById('mp-h-cat').style.opacity='0.4';mpAddHintText(`🏷 ${mpImage.category}`)}
-function mpHintArtist(){if(mpArtistUsed)return;mpArtistUsed=true;mpScore=Math.max(0,mpScore-25);document.getElementById('mp-score').textContent=mpScore;document.getElementById('mp-h-artist').disabled=true;document.getElementById('mp-h-artist').style.opacity='0.4';mpAddHintText(`🎨 ${mpImage.creator} (${mpImage.year})`)}
+function mpHintEra(){if(mpEraUsed)return;mpEraUsed=true;mpScore=Math.max(0,mpScore-20);document.getElementById('mp-score').textContent=mpScore;document.getElementById('mp-h-era').disabled=true;document.getElementById('mp-h-era').style.opacity='0.4';mpAddHintText(`🕰 Era: ${mpImage.era}`)}
 function mpHintFlash(){
   if(mpFlashUsed)return;mpFlashUsed=true;mpScore=Math.max(0,mpScore-30);document.getElementById('mp-score').textContent=mpScore;
   document.getElementById('mp-h-flash').disabled=true;document.getElementById('mp-h-flash').style.opacity='0.4';

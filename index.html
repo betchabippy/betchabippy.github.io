@@ -1804,23 +1804,33 @@ function mpSetupHome(){
 }
 function mpStartGame(){
   mpImage=mpGetDailyImage();if(!mpImage)return;
-  mpPreloadTiles(mpInitGame);
+  const pb=document.getElementById('mp-play-btn');
+  if(pb){pb.disabled=true;pb.textContent='Loading image…';}
+  mpPreloadTiles(()=>{
+    if(pb){pb.disabled=false;pb.textContent="Play Today's Peeky →";}
+    mpInitGame();
+  });
 }
 function mpPreloadTiles(callback){
   const gs=mpImage.grid||4;
   const img=new Image();img.crossOrigin='anonymous';
   img.onload=()=>{
-    const tsize=200,tw=img.width/gs,th=img.height/gs;
+    const nw=img.naturalWidth||img.width,nh=img.naturalHeight||img.height;
+    if(!nw||!nh){mpTiles=[];callback();return;}
+    const tsize=200,tw=nw/gs,th=nh/gs;
     mpTiles=[];
-    for(let r=0;r<gs;r++){for(let c=0;c<gs;c++){
-      const cv=document.createElement('canvas');cv.width=tsize;cv.height=tsize;
-      cv.getContext('2d').drawImage(img,c*tw,r*th,tw,th,0,0,tsize,tsize);
-      mpTiles.push(cv.toDataURL());
-    }}
+    try{
+      for(let r=0;r<gs;r++){for(let c=0;c<gs;c++){
+        const cv=document.createElement('canvas');cv.width=tsize;cv.height=tsize;
+        cv.getContext('2d').drawImage(img,c*tw,r*th,tw,th,0,0,tsize,tsize);
+        mpTiles.push(cv.toDataURL());
+      }}
+    }catch(err){mpTiles=[];}
     callback();
   };
   img.onerror=()=>{mpTiles=[];callback()};
-  img.src=mpImage.url;
+  // cache-buster prevents browser reusing a non-CORS cached copy of same URL
+  img.src=mpImage.url+(mpImage.url.includes('?')?'&':'?')+'_c=1';
 }
 function mpInitGame(){
   const gs=mpImage.grid||4;const n=gs*gs;

@@ -1753,7 +1753,7 @@ function bippyRate(sentenceLength){const bonus=sentenceLength>20?1:0;const rand=
 
 // ── MAPPY ─────────────────────────────────────────────────────────────────────
 const PEEKY_IMAGES=[
-  {id:'mona_lisa',title:'Mona Lisa',era:'1500s',category:'Painting',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg?width=500',answers:['mona lisa','monalisa','la gioconda','gioconda']},
+  {id:'mona_lisa',title:'Mona Lisa',era:'1500s',category:'Painting',grid:4,url:'/images/monalisa.jpg',answers:['mona lisa','monalisa','la gioconda','gioconda']},
   {id:'starry_night',title:'The Starry Night',era:'1880s',category:'Painting',grid:5,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg?width=500',answers:['starry night','the starry night','van gogh']},
   {id:'scream',title:'The Scream',era:'1890s',category:'Painting',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/The_Scream_by_Edvard_Munch%2C_1893_-_Nasjonalgalleriet.png?width=500',answers:['the scream','scream','munch']},
   {id:'pearl_earring',title:'Girl with a Pearl Earring',era:'1660s',category:'Painting',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/1665_Girl_with_a_Pearl_Earring.jpg?width=500',answers:['girl with a pearl earring','pearl earring','vermeer']},
@@ -1786,6 +1786,8 @@ let mpCorrectGuess=false,mpGuessBonusEarned=0,mpGuessCount=0;
 let mpCornersUsed=false,mpCategoryUsed=false,mpEraUsed=false,mpFlashUsed=false,mpSneakPeekUsed=false;
 
 function mpGetDailyImage(){
+  // TEMP: locked to Mona Lisa for image path testing — restore after confirmed
+  return PEEKY_IMAGES[0];
   const d=new Date();
   const seed=d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
   return PEEKY_IMAGES[seed%PEEKY_IMAGES.length];

@@ -1779,7 +1779,7 @@ const PEEKY_IMAGES=[
   {id:'big_ben',title:'Big Ben',era:'1850s',category:'Landmark',grid:4,url:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Clock_Tower_-_Palace_of_Westminster%2C_London_-_September_2006.jpg/400px-Clock_Tower_-_Palace_of_Westminster%2C_London_-_September_2006.jpg',answers:['big ben','westminster','elizabeth tower','london clock','parliament']}
 ];
 
-let mpImage=null,mpTiles=[];
+let mpImage=null;
 let mpGrid=[],mpLineup=new Set(),mpFaceUp=new Set();
 let mpSelected=null,mpFaceUpMax=4,mpScore=200,mpLockedCount=0;
 let mpCorrectGuess=false,mpGuessBonusEarned=0,mpGuessCount=0;
@@ -1805,32 +1805,10 @@ function mpSetupHome(){
 function mpStartGame(){
   mpImage=mpGetDailyImage();if(!mpImage)return;
   const pb=document.getElementById('mp-play-btn');
-  if(pb){pb.disabled=true;pb.textContent='Loading image…';}
-  mpPreloadTiles(()=>{
-    if(pb){pb.disabled=false;pb.textContent="Play Today's Peeky →";}
-    mpInitGame();
-  });
-}
-function mpPreloadTiles(callback){
-  const gs=mpImage.grid||4;
-  const img=new Image();img.crossOrigin='anonymous';
-  img.onload=()=>{
-    const nw=img.naturalWidth||img.width,nh=img.naturalHeight||img.height;
-    if(!nw||!nh){mpTiles=[];callback();return;}
-    const tsize=200,tw=nw/gs,th=nh/gs;
-    mpTiles=[];
-    try{
-      for(let r=0;r<gs;r++){for(let c=0;c<gs;c++){
-        const cv=document.createElement('canvas');cv.width=tsize;cv.height=tsize;
-        cv.getContext('2d').drawImage(img,c*tw,r*th,tw,th,0,0,tsize,tsize);
-        mpTiles.push(cv.toDataURL());
-      }}
-    }catch(err){mpTiles=[];}
-    callback();
-  };
-  img.onerror=()=>{mpTiles=[];callback()};
-  // cache-buster prevents browser reusing a non-CORS cached copy of same URL
-  img.src=mpImage.url+(mpImage.url.includes('?')?'&':'?')+'_c=1';
+  if(pb){pb.disabled=true;pb.textContent='Loading…';}
+  const pre=new Image();
+  pre.onload=pre.onerror=()=>{if(pb){pb.disabled=false;pb.textContent="Play Today's Peeky →";}mpInitGame();};
+  pre.src=mpImage.url;
 }
 function mpInitGame(){
   const gs=mpImage.grid||4;const n=gs*gs;
@@ -1852,7 +1830,7 @@ function mpInitGame(){
   goScr('mp-play');mpRenderGrid();mpRenderLineup();mpUpdateFaceUpInfo();
 }
 function mpBgStyle(pieceId){
-  if(mpTiles[pieceId])return `background-image:url('${mpTiles[pieceId]}');background-size:cover`;
+  
   const gs=mpImage.grid||4;const n=gs-1||3;
   const row=Math.floor(pieceId/gs),col=pieceId%gs;
   return `background-image:url('${mpImage.url}');background-size:${gs*100}% ${gs*100}%;background-position:${(col/n)*100}% ${(row/n)*100}%`;
@@ -1863,42 +1841,38 @@ function mpRenderGrid(){
   for(let i=0;i<n;i++){
     const pid=mpGrid[i];const locked=pid!==null&&pid===i;const sel=mpSelected&&mpSelected.type==='grid'&&mpSelected.gridCell===i;
     const cell=document.createElement('div');
-    cell.style.cssText=`aspect-ratio:1;border-radius:6px;border:2px solid ${locked?'var(--teal)':sel?'var(--purple)':'var(--bd2)'};cursor:${locked?'default':'pointer'};transition:all .15s;position:relative;overflow:hidden;background:var(--bg2)`;
+    cell.style.cssText='aspect-ratio:1;border-radius:6px;border:2px solid '+(locked?'var(--teal)':sel?'var(--purple)':'var(--bd2)')+';cursor:'+(locked?'default':'pointer')+';transition:all .15s;position:relative;overflow:hidden;background:var(--bg2)';
     if(pid!==null){
-      if(mpTiles[pid]){
-        cell.style.backgroundImage=`url('${mpTiles[pid]}')`;
-        cell.style.backgroundSize='cover';cell.style.backgroundPosition='center';
-      }else{
-        const r=Math.floor(pid/gs),c=pid%gs,nm=gs-1||1;
-        cell.style.backgroundImage=`url('${mpImage.url}')`;
-        cell.style.backgroundSize=`${gs*100}% ${gs*100}%`;
-        cell.style.backgroundPosition=`${(c/nm)*100}% ${(r/nm)*100}%`;
-      }
-      if(locked){const ck=document.createElement('div');ck.style.cssText='position:absolute;bottom:2px;right:2px;width:14px;height:14px;border-radius:50%;background:var(--teal);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700';ck.textContent='✓';cell.appendChild(ck)}
-    }else{cell.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;color:var(--tx3);font-weight:600">${i+1}</div>`}
-    if(!locked)cell.onclick=()=>mpTapGrid(i);g.appendChild(cell);
+      const r=Math.floor(pid/gs),c=pid%gs;
+      const wrap=document.createElement('div');wrap.style.cssText='position:absolute;inset:0;overflow:hidden';
+      const im=document.createElement('img');im.src=mpImage.url;
+      im.style.width=(gs*100)+'%';im.style.height=(gs*100)+'%';im.style.objectFit='cover';
+      im.style.position='absolute';im.style.top='0';im.style.left='0';
+      im.style.transform='translate('+( -(c/gs)*100 )+'%,'+( -(r/gs)*100 )+'%)';
+      wrap.appendChild(im);cell.appendChild(wrap);
+      if(locked){const ck=document.createElement('div');ck.style.cssText='position:absolute;bottom:2px;right:2px;width:14px;height:14px;border-radius:50%;background:var(--teal);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700;z-index:2';ck.textContent='\u2713';cell.appendChild(ck)}
+    }else{cell.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;color:var(--tx3);font-weight:600">'+(i+1)+'</div>'}
+    if(!locked)cell.onclick=(function(ci){return function(){mpTapGrid(ci)}})(i);g.appendChild(cell);
   }
 }
 function mpRenderLineup(){
   const l=document.getElementById('mp-lineup');if(!l)return;l.innerHTML='';
   const gs=mpImage?mpImage.grid||4:4;
-  [...mpLineup].forEach(pid=>{
+  [...mpLineup].forEach(function(pid){
     const up=mpFaceUp.has(pid);const sel=mpSelected&&mpSelected.type==='lineup'&&mpSelected.pieceId===pid;
     const p=document.createElement('div');
-    p.style.cssText=`aspect-ratio:1;border-radius:5px;border:2px solid ${sel?'var(--purple)':'var(--bd2)'};cursor:pointer;transition:all .15s;overflow:hidden;background:var(--bg3)`;
+    p.style.cssText='aspect-ratio:1;border-radius:5px;border:2px solid '+(sel?'var(--purple)':'var(--bd2)')+';cursor:pointer;transition:all .15s;position:relative;overflow:hidden;background:var(--bg3)';
     if(up){
-      if(mpTiles[pid]){
-        p.style.backgroundImage=`url('${mpTiles[pid]}')`;
-        p.style.backgroundSize='cover';p.style.backgroundPosition='center';
-      }else{
-        const r=Math.floor(pid/gs),c=pid%gs,nm=gs-1||1;
-        p.style.backgroundImage=`url('${mpImage.url}')`;
-        p.style.backgroundSize=`${gs*100}% ${gs*100}%`;
-        p.style.backgroundPosition=`${(c/nm)*100}% ${(r/nm)*100}%`;
-      }
+      const r=Math.floor(pid/gs),c=pid%gs;
+      const wrap=document.createElement('div');wrap.style.cssText='position:absolute;inset:0;overflow:hidden';
+      const im=document.createElement('img');im.src=mpImage.url;
+      im.style.width=(gs*100)+'%';im.style.height=(gs*100)+'%';im.style.objectFit='cover';
+      im.style.position='absolute';im.style.top='0';im.style.left='0';
+      im.style.transform='translate('+( -(c/gs)*100 )+'%,'+( -(r/gs)*100 )+'%)';
+      wrap.appendChild(im);p.appendChild(wrap);
     }else{p.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:12px;color:var(--tx3)">?</div>'}
     if(sel)p.style.outline='2px solid var(--purple)';
-    p.onclick=()=>mpTapLineup(pid);l.appendChild(p);
+    p.onclick=(function(pid2){return function(){mpTapLineup(pid2)}})(pid);l.appendChild(p);
   });
 }
 function mpUpdateFaceUpInfo(){

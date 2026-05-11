@@ -195,7 +195,7 @@ button:active{transform:scale(.98)}
     <div class="splash-card" onclick="splashGo('bl')"><div class="splash-icon" style="background:var(--teal-lt);color:var(--teal-tx);border-color:var(--teal-bd)">👁</div><div><div class="splash-title">Blinka!</div><div class="splash-desc">Test your memory, but don't blink! It goes by fast!</div></div></div>
     <div class="splash-card" onclick="splashGo('ws')"><div class="splash-icon" style="background:var(--amber-lt);color:var(--amber-tx);border-color:var(--amber-bd)">📝</div><div><div class="splash-title">Crony!</div><div class="splash-desc">The backronym challenge. One word, many possibilities!</div></div></div>
     <div class="splash-card" onclick="splashGo('or')"><div class="splash-icon" style="background:var(--info-bg);color:var(--info-tx);border-color:var(--info-bd)">🔢</div><div><div class="splash-title">Orderly!</div><div class="splash-desc">And I Quote, Scrambler and Sequencer.</div></div></div>
-    <div class="splash-card" onclick="splashGo('st')"><div class="splash-icon" style="background:var(--bg2);color:var(--tx1);border-color:var(--bd2)">📊</div><div><div class="splash-title">My Stats</div><div class="splash-desc">Your personal records and history across all games.</div></div></div>
+    <div class="splash-card" onclick="splashGo('mp')"><div class="splash-icon" style="background:#E3F2FD;color:#1565C0;border-color:#90CAF9">🧩</div><div><div class="splash-title">Peeky!</div><div class="splash-desc">Flip pieces, place them on the board, and reveal a famous image. One new puzzle every day — same one for everyone!</div></div></div>
   </div>
 </div>
 
@@ -203,7 +203,7 @@ button:active{transform:scale(.98)}
 <div class="hdr">
   <img src="logo.png" alt="BetchaBippy Mind Games">
   <div style="display:flex;align-items:center;gap:8px">
-    <button onclick="goGame('st')" style="background:none;border:none;font-size:20px;cursor:pointer;padding:4px;opacity:0.7" title="Stats">📊</button>
+    <button onclick="goGame('st')" style="background:none;border:none;cursor:pointer;padding:4px;opacity:0.7;text-align:center;line-height:1" title="Stats"><span style="font-size:18px;display:block">📊</span><span style="font-size:9px;color:var(--tx2);display:block;margin-top:1px">Stats</span></button>
     <div id="ib" style="display:none"><button class="btn-p" onclick="installApp()" style="font-size:11px;padding:6px 12px">+ Install</button></div>
   </div>
 </div>
@@ -1853,23 +1853,40 @@ function mpRenderGrid(){
   for(let i=0;i<n;i++){
     const pid=mpGrid[i];const locked=pid!==null&&pid===i;const sel=mpSelected&&mpSelected.type==='grid'&&mpSelected.gridCell===i;
     const cell=document.createElement('div');
-    cell.style.cssText=`aspect-ratio:1;border-radius:6px;border:2px solid ${locked?'var(--teal)':sel?'var(--purple)':'var(--bd2)'};cursor:${locked?'default':'pointer'};transition:all .15s;position:relative;overflow:hidden`;
-    if(pid!==null){Object.assign(cell.style,{backgroundImage:`url('${mpImage.url}')`,backgroundSize:'400% 400%',backgroundPosition:`${(Math.floor(pid/4)===0?0:(Math.floor(pid/4))/3*100)}% ${((pid%4)/3*100)}%`});
-      // Fix: row drives Y, col drives X
-      const r=Math.floor(pid/4),c=pid%4;cell.style.backgroundPosition=`${(c/3)*100}% ${(r/3)*100}%`;
+    cell.style.cssText=`aspect-ratio:1;border-radius:6px;border:2px solid ${locked?'var(--teal)':sel?'var(--purple)':'var(--bd2)'};cursor:${locked?'default':'pointer'};transition:all .15s;position:relative;overflow:hidden;background:var(--bg2)`;
+    if(pid!==null){
+      if(mpTiles[pid]){
+        cell.style.backgroundImage=`url('${mpTiles[pid]}')`;
+        cell.style.backgroundSize='cover';cell.style.backgroundPosition='center';
+      }else{
+        const r=Math.floor(pid/gs),c=pid%gs,nm=gs-1||1;
+        cell.style.backgroundImage=`url('${mpImage.url}')`;
+        cell.style.backgroundSize=`${gs*100}% ${gs*100}%`;
+        cell.style.backgroundPosition=`${(c/nm)*100}% ${(r/nm)*100}%`;
+      }
       if(locked){const ck=document.createElement('div');ck.style.cssText='position:absolute;bottom:2px;right:2px;width:14px;height:14px;border-radius:50%;background:var(--teal);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700';ck.textContent='✓';cell.appendChild(ck)}
-    }else{cell.style.background='var(--bg2)';cell.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;color:var(--tx3);font-weight:600">${i+1}</div>`}
+    }else{cell.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;color:var(--tx3);font-weight:600">${i+1}</div>`}
     if(!locked)cell.onclick=()=>mpTapGrid(i);g.appendChild(cell);
   }
 }
 function mpRenderLineup(){
   const l=document.getElementById('mp-lineup');if(!l)return;l.innerHTML='';
+  const gs=mpImage?mpImage.grid||4:4;
   [...mpLineup].forEach(pid=>{
     const up=mpFaceUp.has(pid);const sel=mpSelected&&mpSelected.type==='lineup'&&mpSelected.pieceId===pid;
     const p=document.createElement('div');
-    p.style.cssText=`aspect-ratio:1;border-radius:5px;border:2px solid ${sel?'var(--purple)':'var(--bd2)'};cursor:pointer;transition:all .15s;overflow:hidden`;
-    if(up){const r=Math.floor(pid/4),c=pid%4;p.style.backgroundImage=`url('${mpImage.url}')`;p.style.backgroundSize='400% 400%';p.style.backgroundPosition=`${(c/3)*100}% ${(r/3)*100}%`}
-    else{p.style.background='var(--bg3)';p.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:12px;color:var(--tx3)">?</div>'}
+    p.style.cssText=`aspect-ratio:1;border-radius:5px;border:2px solid ${sel?'var(--purple)':'var(--bd2)'};cursor:pointer;transition:all .15s;overflow:hidden;background:var(--bg3)`;
+    if(up){
+      if(mpTiles[pid]){
+        p.style.backgroundImage=`url('${mpTiles[pid]}')`;
+        p.style.backgroundSize='cover';p.style.backgroundPosition='center';
+      }else{
+        const r=Math.floor(pid/gs),c=pid%gs,nm=gs-1||1;
+        p.style.backgroundImage=`url('${mpImage.url}')`;
+        p.style.backgroundSize=`${gs*100}% ${gs*100}%`;
+        p.style.backgroundPosition=`${(c/nm)*100}% ${(r/nm)*100}%`;
+      }
+    }else{p.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:12px;color:var(--tx3)">?</div>'}
     if(sel)p.style.outline='2px solid var(--purple)';
     p.onclick=()=>mpTapLineup(pid);l.appendChild(p);
   });
@@ -1983,7 +2000,7 @@ function mpPlayAgain(){mpSelectedImageId=null;mpSelected=null;goScr('mp-home');m
 let deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('ib').style.display='block'});
 function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;document.getElementById('ib').style.display='none'})}}
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(reg=>{reg.update();}).catch(()=>{});navigator.serviceWorker.addEventListener('controllerchange',()=>window.location.reload());}
 
 try{bbInit()}catch(e){console.error('bbInit:',e)}
 try{gtBuildThemes()}catch(e){console.error('gtBuildThemes:',e)}

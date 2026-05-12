@@ -856,10 +856,11 @@ button:active{transform:scale(.98)}
     </div>
     <button onclick="mpQuit()" style="font-size:11px;padding:5px 10px">Quit</button>
   </div>
-  <div class="lsb" style="margin-bottom:8px"><span class="ll">Score</span><span class="lv" id="mp-score">0</span></div>
+  <div style="background:var(--bg2);border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:11px;color:var(--tx2);line-height:1.6"><b style="color:var(--tx1)">How to play:</b> Flip up to 4 pieces at a time. Place them on the grid — correct placements lock green. Tap a placed piece then a new cell to move it. Guess anytime for a bonus! Sneak Peek unlocks after 6 correct placements.</div>
+  <div class="lsb" style="margin-bottom:8px"><span class="ll">Score</span><span class="lv" id="mp-score">50</span></div>
   <div style="display:flex;gap:4px;margin-bottom:6px">
-    <button id="mp-h-corners" onclick="mpHintCorners()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--ok-bg);border-color:var(--ok-bd);color:var(--ok-tx);line-height:1.4">🔒 Corners<br>-15pts</button>
-    <button id="mp-h-spot" onclick="mpSneakPeek()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn-tx);line-height:1.4">👁 Sneak Peek<br>-50% score!</button>
+    <button id="mp-h-corners" onclick="mpHintCorners()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--ok-bg);border-color:var(--ok-bd);color:var(--ok-tx);line-height:1.4">🔒 Corners<br>-20pts</button>
+    <button id="mp-h-spot" onclick="mpSneakPeek()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--bg2);border-color:var(--bd2);color:var(--tx2);line-height:1.4" disabled>🔒 Keep playing<br>to unlock</button>
     <button id="mp-h-era" onclick="mpHintEra()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn-tx);line-height:1.4">🕰 Era<br>-20pts</button>
     <button id="mp-h-flash" onclick="mpHintFlash()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--err-bg);border-color:var(--err-bd);color:var(--err-tx);line-height:1.4">👁 Flash<br>-30pts</button>
   </div>
@@ -1815,7 +1816,7 @@ function mpInitGame(){
   const gs=mpImage.grid||4;const n=gs*gs;
   mpGrid=Array(n).fill(null);const shuffled=[...Array(n).keys()].sort(()=>Math.random()-.5);
   mpLineup=new Set(shuffled);mpFaceUp=new Set();mpSelected=null;mpFaceUpMax=4;
-  mpScore=0;mpLockedCount=0;
+  mpScore=50;mpLockedCount=0;
   mpCorrectGuess=false;mpGuessBonusEarned=0;mpGuessCount=0;
   mpCornersUsed=false;mpEraUsed=false;mpFlashUsed=false;mpSneakPeekUsed=false;
   document.getElementById('mp-score').textContent=mpScore;
@@ -1825,7 +1826,7 @@ function mpInitGame(){
   document.getElementById('mp-result').style.display='none';
   const gi=document.getElementById('mp-guess-input');if(gi){gi.value='';gi.disabled=false}
   const gb=document.getElementById('mp-guess-btn');if(gb)gb.disabled=false;
-  ['mp-h-corners','mp-h-spot','mp-h-era','mp-h-flash'].forEach(id=>{const b=document.getElementById(id);if(b){b.disabled=false;b.style.opacity='1'}});
+  ['mp-h-corners','mp-h-era','mp-h-flash'].forEach(id=>{const b=document.getElementById(id);if(b){b.disabled=false;b.style.opacity='1'}});mpUpdateSneakPeekBtn();
   const ub=document.getElementById('mp-upgrade-btn');if(ub)ub.style.display='';
   const mpg=document.getElementById('mp-grid');if(mpg){const gs2=mpImage.grid||4;mpg.style.gridTemplateColumns=`repeat(${gs2},1fr)`}
   goScr('mp-play');mpRenderGrid();mpRenderLineup();mpUpdateFaceUpInfo();
@@ -1909,7 +1910,21 @@ function mpCheckNewLocks(){
   mpLockedCount=mpGrid.filter((p,i)=>p===i).length;
   const newLocks=mpLockedCount-prev;
   if(newLocks>0){mpScore+=newLocks*5;document.getElementById('mp-score').textContent=mpScore;}
+  mpUpdateSneakPeekBtn();
   if(mpLockedCount===(mpImage?mpImage.grid*mpImage.grid:16))setTimeout(()=>mpShowResult(true),400);
+}
+function mpUpdateSneakPeekBtn(){
+  const btn=document.getElementById('mp-h-spot');if(!btn)return;
+  if(mpSneakPeekUsed){btn.disabled=true;btn.style.opacity='0.4';return;}
+  if(mpLockedCount>=6){
+    btn.disabled=false;btn.style.opacity='1';
+    btn.style.background='var(--warn-bg)';btn.style.borderColor='var(--warn-bd)';btn.style.color='var(--warn-tx)';
+    btn.innerHTML='👁 Sneak Peek<br>-50pts';
+  }else{
+    btn.disabled=true;btn.style.opacity='0.5';
+    btn.style.background='var(--bg2)';btn.style.borderColor='var(--bd2)';btn.style.color='var(--tx2)';
+    btn.innerHTML='🔒 Keep playing<br>to unlock';
+  }
 }
 function mpShowResult(completed){
   const finalScore=mpScore;document.getElementById('mp-score').textContent=finalScore;
@@ -1928,7 +1943,7 @@ function mpUpgradeFaceUp(){
 }
 function mpAddHintText(text){const el=document.getElementById('mp-hints-bar');if(el)el.textContent=(el.textContent?el.textContent+' · ':'')+text}
 function mpHintCorners(){
-  if(mpCornersUsed)return;mpCornersUsed=true;mpScore=Math.max(0,mpScore-15);document.getElementById('mp-score').textContent=mpScore;
+  if(mpCornersUsed)return;mpCornersUsed=true;mpScore=Math.max(0,mpScore-20);document.getElementById('mp-score').textContent=mpScore;
   document.getElementById('mp-h-corners').disabled=true;document.getElementById('mp-h-corners').style.opacity='0.4';
   const gs=mpImage.grid||4;const corners=[0,gs-1,gs*(gs-1),gs*gs-1];
   corners.forEach(corner=>{
@@ -1941,7 +1956,7 @@ function mpHintCorners(){
   mpCheckNewLocks();mpRenderGrid();mpRenderLineup();mpUpdateFaceUpInfo();mpAddHintText('🔒 Corners locked');
 }
 function mpSneakPeek(){
-  if(mpSneakPeekUsed)return;mpSneakPeekUsed=true;mpScore=Math.floor(mpScore*0.5);document.getElementById('mp-score').textContent=mpScore;
+  if(mpSneakPeekUsed)return;mpSneakPeekUsed=true;mpScore=Math.max(0,mpScore-50);document.getElementById('mp-score').textContent=mpScore;
   document.getElementById('mp-h-spot').disabled=true;document.getElementById('mp-h-spot').style.opacity='0.4';
   const unmatched=[];const gs2=mpImage?mpImage.grid||4:4;for(let i=0;i<gs2*gs2;i++){if(mpGrid[i]!==null&&mpGrid[i]!==i&&!mpFaceUp.has(i))unmatched.push(i);}
   const picks=unmatched.sort(()=>Math.random()-0.5).slice(0,4);
@@ -1974,12 +1989,12 @@ function mpSubmitGuess(){
   mpGuessCount++;const correct=mpImage.answers.some(ans=>guess.includes(ans)||(ans.includes(guess)&&guess.length>3));
   const result=document.getElementById('mp-guess-result');
   if(correct&&!mpCorrectGuess){
-    mpCorrectGuess=true;const bonus=mpSneakPeekUsed?0:mpLineup.size*5;mpGuessBonusEarned=bonus;mpScore+=bonus;
+    mpCorrectGuess=true;const bonus=mpSneakPeekUsed?0:mpLineup.size*2;mpGuessBonusEarned=bonus;mpScore+=bonus;
     document.getElementById('mp-score').textContent=mpScore;
     result.style.color='var(--ok-tx)';result.textContent=`✓ Correct! +${bonus} bonus pts — keep completing the puzzle!`;
     if(inp){inp.value='';inp.disabled=true}const gb=document.getElementById('mp-guess-btn');if(gb)gb.disabled=true;
   }else if(correct&&mpCorrectGuess){result.style.color='var(--ok-tx)';result.textContent='✓ Already got it — finish the puzzle!'}
-  else{mpScore=Math.max(0,mpScore-10);document.getElementById('mp-score').textContent=mpScore;result.style.color='var(--err-tx)';result.textContent=`✗ Not quite! (-10pts)${mpGuessCount>=3?' Hint: '+mpImage.answers[0]:''}`;if(inp)inp.value=''}
+  else{mpScore=Math.max(0,mpScore-5);document.getElementById('mp-score').textContent=mpScore;result.style.color='var(--err-tx)';result.textContent=`✗ Not quite! (-10pts)${mpGuessCount>=3?' Hint: '+mpImage.answers[0]:''}`;if(inp)inp.value=''}
 }
 function mpQuit(){mpSelected=null;goScr('mp-home')}
 function mpPlayAgain(){mpSelectedImageId=null;mpSelected=null;goScr('mp-home');mpRenderImageGrid()}

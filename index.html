@@ -510,34 +510,65 @@ button:active{transform:scale(.98)}
 
 <!-- CRONY HOME -->
 <div id="s-ws-home" class="scr">
-  <div class="ghdr"><div class="gic" style="background:var(--amber-lt);color:var(--amber-tx);border-color:var(--amber-bd)">W</div><div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Crony</p><p style="font-size:12px;color:var(--tx1)">Each letter of the word starts a word in your sentence. Get Bippy to rate it!</p></div></div>
-  <div class="g2">
-    <div class="card" style="cursor:pointer" onclick="goScr('ws-solo')"><div class="st">Solo play</div><p class="hdesc">Get a random word, build your best backronym.</p><button style="width:100%;font-size:12px">Play solo</button></div>
-    <div class="card" style="cursor:pointer" onclick="goScr('ws-send')"><div class="st">Send a challenge</div><p class="hdesc">Pick a word, write your secret sentence, challenge a friend.</p><button style="width:100%;font-size:12px">Send challenge</button></div>
+  <div class="ghdr"><div class="gic" style="background:var(--amber-lt);color:var(--amber-tx);border-color:var(--amber-bd)">W</div><div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Crony</p><p style="font-size:12px;color:var(--tx1)">Decode a hidden sentence — one letter at a time!</p></div></div>
+  <div class="card" style="font-size:12px;color:var(--tx2);line-height:1.8;margin-bottom:10px">
+    <p style="font-weight:600;color:var(--tx1);margin-bottom:6px;font-size:13px">How to play</p>
+    Each letter of a secret word starts a word in a hidden sentence. Guess each word! Fewer clues = more points.<br>
+    <span style="color:var(--ok-tx)">No clues: 20pts</span> &nbsp;·&nbsp; <span style="color:var(--ok-tx)">Clue 1: 15pts</span> &nbsp;·&nbsp; <span style="color:var(--warn-tx)">Clue 2: 10pts</span> &nbsp;·&nbsp; <span style="color:var(--err-tx)">Clue 3: 5pts</span> &nbsp;·&nbsp; Revealed: 0pts<br>
+    Wrong guesses don't cost a thing — keep trying!
   </div>
-  <div class="card" style="cursor:pointer;margin-bottom:10px" onclick="goScr('ws-join')"><div class="st">Join a challenge</div><p class="hdesc">Got a CRONY code? Enter it here.</p><button style="width:100%;font-size:12px">Enter code</button></div>
+  <div class="card" style="text-align:center;padding:16px 12px;margin-bottom:10px">
+    <div id="ws-daily-emoji" style="font-size:32px;margin-bottom:4px">🎯</div>
+    <div id="ws-daily-theme" style="font-size:14px;font-weight:600;margin-bottom:4px"></div>
+    <div id="ws-daily-num" style="font-size:12px;color:var(--tx2)"></div>
+  </div>
+  <div id="ws-already-played" style="display:none;text-align:center;padding:12px;background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:10px;margin-bottom:10px">
+    <div style="font-size:18px;margin-bottom:4px">✅</div>
+    <p style="font-size:13px;font-weight:600;color:var(--ok-tx)">You've done today's Crony!</p>
+    <p style="font-size:11px;color:var(--ok-tx);margin-top:4px">Come back tomorrow for a new puzzle.</p>
+  </div>
+  <button class="btn-p" id="ws-start-btn" onclick="wsStartDaily()" style="width:100%;padding:12px;font-size:15px;margin-bottom:8px">Play Today's Crony →</button>
+  <button onclick="goScr('ws-send')" style="width:100%;padding:10px;font-size:13px">Send a challenge to a friend</button>
 </div>
 
-<!-- CRONY SOLO -->
-<div id="s-ws-solo" class="scr">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><p style="font-size:14px;font-weight:600">Solo play</p><button onclick="goScr('ws-home')" style="font-size:11px;padding:5px 10px">Back</button></div>
-  <div class="card">
-    <div class="st">Word length</div>
-    <div class="dr" id="ws-lens"><button class="db on" onclick="wsSetLen(4,this)">Short (4–5)</button><button class="db dim" onclick="wsSetLen(6,this)">Medium (6–7)</button><button class="db dim" onclick="wsSetLen(8,this)">Long (8–10)</button></div>
-    <div class="st" style="margin-top:8px">Time limit</div>
-    <div class="dr" id="ws-timer-btns"><button class="db on" onclick="wsSetTimer(30,this)">30s</button><button class="db dim" onclick="wsSetTimer(60,this)">60s</button><button class="db dim" onclick="wsSetTimer(90,this)">90s</button><button class="db dim" onclick="wsSetTimer(0,this)">No limit</button></div>
+<div id="s-ws-play" class="scr">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <span style="font-size:12px;color:var(--tx2)" id="ws-progress">Word 1 of 5</span>
+    <div class="lsb" style="margin:0"><span class="ll">Score</span><span class="lv" id="ws-play-score">0</span></div>
   </div>
-  <button onclick="wsStartSolo()" style="width:100%;padding:8px;font-size:13px;margin-bottom:12px">Get a word</button>
-  <div id="ws-play" style="display:none">
-    <div class="lsb"><span class="ll">Live score</span><span class="lv" id="ws-live">0</span></div>
-    <div class="card"><div class="st">Your word</div><div class="tword" id="ws-word-disp"></div><div id="ws-timer-row" style="text-align:center;font-size:11px;color:var(--tx2);margin-bottom:10px;min-height:14px"></div><div id="ws-letter-rows"></div></div>
-    <div class="ctrls"><button onclick="wsStartSolo()">New word</button><button onclick="wsSubmitSolo()" style="flex:2">Submit for Bippy scoring</button></div>
-    <div class="ai-box" id="ws-ai" style="display:none"></div>
-    <div id="ws-share" style="display:none"><button class="cb" onclick="shareScore('crony')">📤 Share my score</button></div>
+  <div id="ws-sentence-bar" style="font-size:14px;font-family:monospace;letter-spacing:.04em;padding:10px 12px;background:var(--bg2);border-radius:10px;margin-bottom:14px;line-height:2;word-spacing:10px"></div>
+  <div style="text-align:center;margin-bottom:14px">
+    <div id="ws-letter-badge" style="width:68px;height:68px;border-radius:50%;background:var(--amber-lt);color:var(--amber-tx);font-size:34px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;border:2px solid var(--amber-bd)"></div>
+    <p style="font-size:12px;color:var(--tx2)" id="ws-max-pts">Guess now for 20pts!</p>
+  </div>
+  <div id="ws-clues-area" style="margin-bottom:10px"></div>
+  <div style="display:flex;gap:6px;margin-bottom:8px">
+    <input id="ws-guess-input" class="wi" style="flex:1;margin:0;text-transform:uppercase;font-family:monospace;letter-spacing:.08em;font-size:15px" placeholder="Your answer..." oninput="this.value=this.value.toUpperCase().replace(/[^A-Z]/g,'')" onkeydown="if(event.key==='Enter')wsSubmitGuess()">
+    <button class="btn-p" onclick="wsSubmitGuess()" style="padding:0 16px;font-size:16px">✓</button>
+  </div>
+  <div id="ws-guess-result" style="font-size:13px;text-align:center;min-height:20px;margin-bottom:8px"></div>
+  <div style="display:flex;gap:6px">
+    <button id="ws-clue-btn" onclick="wsRevealClue()" style="flex:2;font-size:12px;padding:9px 6px">Give me a clue (15pts if correct)</button>
+    <button onclick="wsSkipWord()" style="flex:1;font-size:12px;padding:9px 6px;color:var(--tx2)">Skip word</button>
   </div>
 </div>
 
-<!-- CRONY SEND -->
+<div id="s-ws-reveal" class="scr">
+  <div style="text-align:center;margin-bottom:14px">
+    <div id="ws-reveal-emoji" style="font-size:36px;margin-bottom:6px"></div>
+    <div class="lsb" style="display:inline-flex"><span class="ll">Final score</span><span class="lv" id="ws-reveal-score">0</span></div>
+  </div>
+  <div class="card" style="text-align:center;margin-bottom:10px">
+    <p style="font-size:12px;color:var(--tx2);margin-bottom:6px">The hidden sentence was:</p>
+    <p style="font-size:15px;font-weight:600;color:var(--tx1);margin-bottom:8px" id="ws-reveal-sentence"></p>
+    <p style="font-size:12px;color:var(--tx2);margin-bottom:4px">which spells:</p>
+    <p style="font-size:28px;font-weight:700;letter-spacing:.15em;color:var(--amber-tx)" id="ws-reveal-word"></p>
+  </div>
+  <div class="card" style="font-size:13px;font-style:italic;color:var(--tx1);text-align:center;margin-bottom:10px" id="ws-reveal-tiein"></div>
+  <div id="ws-reveal-breakdown" style="margin-bottom:14px"></div>
+  <button class="btn-p" onclick="goGame('ws')" style="width:100%;padding:10px;font-size:14px">Done</button>
+</div>
+
 <div id="s-ws-send" class="scr">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><p style="font-size:14px;font-weight:600">Send a challenge</p><button onclick="goScr('ws-home')" style="font-size:11px;padding:5px 10px">Back</button></div>
   <div class="card">
@@ -837,7 +868,7 @@ button:active{transform:scale(.98)}
     <div id="mp-daily-num" style="font-size:12px;color:var(--tx2);margin-bottom:6px"></div>
     <div id="mp-daily-grid" style="font-size:28px;margin-bottom:4px">🧩</div>
     <p style="font-size:12px;color:var(--tx2);margin-bottom:4px">Flip up to 4 pieces at a time (pay pts for more). Place them on the grid — correct placements lock green. Guess anytime for a bonus!</p>
-    <p style="font-size:11px;color:var(--tx2)">Hints: 🔒 Corners · 👁 Sneak Peek · 🏷 Category · 🕰 Era · 👁 Flash</p>
+    <p style="font-size:11px;color:var(--tx2)">Hints available: 🔒 Corners · 🕰 Era · 👁 Sneak Peek (earn it!)</p>
   </div>
   <div id="mp-already-played" style="display:none;text-align:center;padding:12px;background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:10px;margin-bottom:12px">
     <div style="font-size:18px;margin-bottom:4px">✅</div>
@@ -856,13 +887,12 @@ button:active{transform:scale(.98)}
     </div>
     <button onclick="mpQuit()" style="font-size:11px;padding:5px 10px">Quit</button>
   </div>
-  <div style="background:var(--bg2);border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:11px;color:var(--tx2);line-height:1.6"><b style="color:var(--tx1)">How to play:</b> Flip up to 4 pieces at a time. Place them on the grid — correct placements lock green. Tap a placed piece then a new cell to move it. Guess anytime for a bonus! Sneak Peek unlocks after 6 correct placements.</div>
+  <div style="background:var(--bg2);border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:11px;color:var(--tx2);line-height:1.6"><b style="color:var(--tx1)">How to play:</b> Flip up to 4 pieces at a time. Place them on the grid — correct placements lock green. Tap a placed piece then a new cell to move it. Guess anytime for a bonus! Sneak Peek unlocks after 6 placements you make yourself.</div>
   <div class="lsb" style="margin-bottom:8px"><span class="ll">Score</span><span class="lv" id="mp-score">50</span></div>
   <div style="display:flex;gap:4px;margin-bottom:6px">
     <button id="mp-h-corners" onclick="mpHintCorners()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--ok-bg);border-color:var(--ok-bd);color:var(--ok-tx);line-height:1.4">🔒 Corners<br>-20pts</button>
     <button id="mp-h-spot" onclick="mpSneakPeek()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--bg2);border-color:var(--bd2);color:var(--tx2);line-height:1.4" disabled>🔒 Keep playing<br>to unlock</button>
     <button id="mp-h-era" onclick="mpHintEra()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn-tx);line-height:1.4">🕰 Era<br>-20pts</button>
-    <button id="mp-h-flash" onclick="mpHintFlash()" style="flex:1;font-size:10px;padding:5px 2px;background:var(--err-bg);border-color:var(--err-bd);color:var(--err-tx);line-height:1.4">👁 Flash<br>-30pts</button>
   </div>
   <div id="mp-hints-bar" style="min-height:16px;margin-bottom:6px;font-size:11px;color:var(--purple-tx);text-align:center;font-style:italic"></div>
   <div id="mp-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:8px;padding:3px;border-radius:10px;background:var(--bd2)"></div>
@@ -904,7 +934,7 @@ function goGame(g){
   goScr(screens[g]);
   if(g==='st')renderStats();
   if(g==='tp')tpCheckPendingOnLoad();
-  if(g==='mp')mpSetupHome();
+  if(g==='mp')mpSetupHome();if(g==='ws')wsSetupHome();
   document.querySelectorAll('.bn').forEach(b=>b.classList.remove('on'));
   document.querySelectorAll('.bn').forEach((b,i)=>['gt','tp','bl','ws','or','mp'][i]===g&&b.classList.add('on'));
 }
@@ -1405,36 +1435,245 @@ async function wsJoin(){
   catch(e){if(btn){btn.textContent='Join challenge';btn.disabled=false}alert('Could not load challenge.')}
 }
 
-// ── SUPABASE ──────────────────────────────────────────────────────────────────
-const SB_URL='https://ulppdajtcxzaypkqsavj.supabase.co';
-const SB_KEY='sb_publishable_-SwfFUlC5JID9X7yAkaFog_UEgKGBl6';
-const SB_HDR={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
-async function sbInsert(table,data){const r=await fetch(`${SB_URL}/rest/v1/${table}`,{method:'POST',headers:{...SB_HDR,'Prefer':'return=minimal'},body:JSON.stringify(data)});if(!r.ok)throw new Error(await r.text())}
-async function sbGet(table,code){const r=await fetch(`${SB_URL}/rest/v1/${table}?code=eq.${code}&select=*`,{headers:SB_HDR});if(!r.ok)throw new Error(await r.text());const d=await r.json();return d[0]||null}
-async function sbPatch(table,code,data){const r=await fetch(`${SB_URL}/rest/v1/${table}?code=eq.${code}`,{method:'PATCH',headers:SB_HDR,body:JSON.stringify(data)});if(!r.ok)throw new Error(await r.text())}
+const CRONY_PUZZLES=[
+{id:'pasta',theme:'Food & Drink',emoji:'🍝',word:'PASTA',sentence:'Plates Arrive Steaming, Totally Aromatic',tiein:"Plates Arrive Steaming, Totally Aromatic — someones making PASTA! 🍝",words:[
+{l:'P',w:'PLATES',c:['Round surfaces where dinner lives','Spin one and you have a circus act','Rhymes with mates + PL']},
+{l:'A',w:'ARRIVE',c:['What guests do fashionably late','Show up and make an entrance','Rhymes with alive + AR']},
+{l:'S',w:'STEAMING',c:['What your coffee does on a cold morning','Hot, bothered, and delicious','Rhymes with dreaming + ST']},
+{l:'T',w:'TOTALLY',c:['Like 100% for sure','Valley girls favorite adverb','Starts with total']},
+{l:'A',w:'AROMATIC',c:['What hits you walking into a bakery','Fancy word for it smells amazing','Rhymes with dramatic + AR']}
+]},
+{id:'tiger',theme:'Animals',emoji:'🐯',word:'TIGER',sentence:'Terrific Instincts Guide Every Roar',tiein:'Terrific Instincts Guide Every Roar — definitely a TIGER! 🐯',words:[
+{l:'T',w:'TERRIFIC',c:['Absolutely fantastic, top-notch','What your report card says if you are lucky','Starts with terror but ends well']},
+{l:'I',w:'INSTINCTS',c:['Gut feelings that save your life','What animals have instead of GPS','Starts with instinct']},
+{l:'G',w:'GUIDE',c:['A helpful leader or navigation tool','What a tour operator does','Rhymes with ride + G']},
+{l:'E',w:'EVERY',c:['Each one, no exceptions','All of them, without fail','Rhymes with heavy + EV']},
+{l:'R',w:'ROAR',c:['The sound that clears a room','What a crowd does at a touchdown','Rhymes with more + R']}
+]},
+{id:'paris',theme:'Travel',emoji:'✈️',word:'PARIS',sentence:'Perfectly Arranged, Ridiculously Irresistible Streets',tiein:'Perfectly Arranged, Ridiculously Irresistible Streets — must be PARIS! 🗼',words:[
+{l:'P',w:'PERFECTLY',c:['Flawlessly, without a single flaw','Ten out of ten, no notes','Starts with perfect']},
+{l:'A',w:'ARRANGED',c:['Set up just so, like a fancy bouquet','Organized with intention','Rhymes with estranged']},
+{l:'R',w:'RIDICULOUSLY',c:['Beyond all reasonable expectation','Absurdly, preposterously good','Starts with ridiculous']},
+{l:'I',w:'IRRESISTIBLE',c:['You simply cannot say no','Like the cheese course — you were not skipping it','Starts with irresist']},
+{l:'S',w:'STREETS',c:['Where you stroll cafe to cafe','Paved paths between the buildings','Rhymes with beats + STR']}
+]},
+{id:'disco',theme:'Music',emoji:'🕺',word:'DISCO',sentence:'Dazzlingly Impressive Struts Captivate Observers',tiein:'Dazzlingly Impressive Struts Captivate Observers — it must be DISCO! 🕺',words:[
+{l:'D',w:'DAZZLINGLY',c:['In a blindingly impressive way','When the sequins catch every light in the room','Starts with dazzle']},
+{l:'I',w:'IMPRESSIVE',c:['Worthy of admiration and a double-take','What your entrance should always be','Starts with impress']},
+{l:'S',w:'STRUTS',c:['Confident, deliberate walks','What a peacock does — and so do you','Rhymes with cuts + STR']},
+{l:'C',w:'CAPTIVATE',c:['Hold the rooms complete attention','What a great performer does effortlessly','Starts with captive']},
+{l:'O',w:'OBSERVERS',c:['Those watching, the audience','People who notice everything','Starts with observe']}
+]},
+{id:'tennis',theme:'Sports',emoji:'🎾',word:'TENNIS',sentence:'Ten Eager Newbies Net Incredible Serves',tiein:'Ten Eager Newbies Net Incredible Serves — welcome to TENNIS! 🎾',words:[
+{l:'T',w:'TEN',c:['More than nine, less than eleven','Fingers on both hands combined','Rhymes with hen + T']},
+{l:'E',w:'EAGER',c:['Enthusiastic, keen, raring to go','What a puppy is, always, forever','Rhymes with meager + E']},
+{l:'N',w:'NEWBIES',c:['Beginners, first-timers, fresh faces','Day one players on any court','Starts with new']},
+{l:'N',w:'NET',c:['The thing in the middle of the court','Also what you do when you score a point','Rhymes with bet + N']},
+{l:'I',w:'INCREDIBLE',c:['Beyond belief, jaw-dropping','Unbelievably good','Starts with incred']},
+{l:'S',w:'SERVES',c:['Opens every point in the game','Also what a waiter does','Rhymes with curves + S']}
+]},
+{id:'storm',theme:'Weather',emoji:'⛈️',word:'STORM',sentence:'Strong Thunder Often Rumbles Menacingly',tiein:'Strong Thunder Often Rumbles Menacingly — theres a STORM coming! ⛈️',words:[
+{l:'S',w:'STRONG',c:['Powerful, mighty, not weak','What your coffee is when you forget to measure','Rhymes with long + STR']},
+{l:'T',w:'THUNDER',c:['What follows lightning if you count slowly','The skys way of clearing its throat','Rhymes with plunder']},
+{l:'O',w:'OFTEN',c:['Not always, not never','More frequently than sometimes','Sounds like off-ten']},
+{l:'R',w:'RUMBLES',c:['Low, rolling, grumbling sounds','What your stomach does and what the sky does','Rhymes with tumbles + R']},
+{l:'M',w:'MENACINGLY',c:['In a threatening, ominous way','What the villain does before the big reveal','Starts with menace']}
+]},
+{id:'oscar',theme:'Movies',emoji:'🏆',word:'OSCAR',sentence:'Obviously Someone Cried, Accepting Recognition',tiein:'Obviously Someone Cried, Accepting Recognition — and the OSCAR goes to... 🏆',words:[
+{l:'O',w:'OBVIOUSLY',c:['Clear as day, practically neon-lit','Did you really need to ask?','Starts with obvious']},
+{l:'S',w:'SOMEONE',c:['An unnamed individual, a mystery person','Not everyone, not no one','Some + one']},
+{l:'C',w:'CRIED',c:['What the winner always does at the podium','Eyes leaked, unexpectedly on live TV','Past tense of cry']},
+{l:'A',w:'ACCEPTING',c:['Receiving something graciously','What you do at a podium, speech in hand','Starts with accept']},
+{l:'R',w:'RECOGNITION',c:['Your moment in the spotlight, finally','Getting credit where it is absolutely due','A long word for being seen']}
+]},
+{id:'style',theme:'Fashion',emoji:'👗',word:'STYLE',sentence:'Shiny Tiaras Yell Look Everyone!',tiein:'Shiny Tiaras Yell Look Everyone! — now THATS STYLE darling! 👗',words:[
+{l:'S',w:'SHINY',c:['Gleaming, glittering, catching the light','What your shoes must be before a gala','Rhymes with tiny + SH']},
+{l:'T',w:'TIARAS',c:['Crown-like accessories for the glamorous','What beauty queens and toddlers have in common','Plural of tiara']},
+{l:'Y',w:'YELL',c:['Shout loudly, make yourself heard','What fashion does when it wants attention','Rhymes with bell + Y']},
+{l:'L',w:'LOOK',c:['A glance, a gaze, or an entire outfit','What the fashion world calls a full ensemble','Rhymes with book + L']},
+{l:'E',w:'EVERYONE',c:['Not a soul excluded','The whole room, all eyes on deck','Every + one']}
+]},
+{id:'phone',theme:'Tech',emoji:'📱',word:'PHONE',sentence:'Pretty Houses Often Need Elegance',tiein:'Pretty Houses Often Need Elegance — is it time to call that broker?! 📱',words:[
+{l:'P',w:'PRETTY',c:['Beauty is in the eye of the beholder','Think Instagram filter, Valencia preset','Rhymes with witty + PR']},
+{l:'H',w:'HOUSES',c:['A fixer-upper with real potential','Where the heart is, apparently','Rhymes with mouses']},
+{l:'O',w:'OFTEN',c:['Not always, not never','More frequently than sometimes','Sounds like off-ten']},
+{l:'N',w:'NEED',c:['Cant live without it — like this device','Want vs blank — only one is urgent','One letter from feed']},
+{l:'E',w:'ELEGANCE',c:['Grace under pressure, effortlessly','Think Audrey Hepburn, not a wrecking ball','Rhymes with at a glance']}
+]},
+{id:'bloom',theme:'Nature',emoji:'🌸',word:'BLOOM',sentence:'Beautiful Lilacs Open, Overwhelming Mothers',tiein:'Beautiful Lilacs Open, Overwhelming Mothers — they cant wait for them to BLOOM! 🌸',words:[
+{l:'B',w:'BEAUTIFUL',c:['Pleasing to every sense','What the mirror should tell you every morning','Starts with beauty']},
+{l:'L',w:'LILACS',c:['Purple flowering shrubs with an incredible scent','A color AND a flower — overachiever','Rhymes with my backs']},
+{l:'O',w:'OPEN',c:['Not closed, welcoming, blooming','What flowers do every spring without being asked','Rhymes with token minus ken']},
+{l:'O',w:'OVERWHELMING',c:['Too much in the very best possible way','What a field of flowers does to your senses','Starts with overwhelm']},
+{l:'M',w:'MOTHERS',c:['She knew you were up to something before you did','Flowers on her day, guilt trips the rest of the year','Rhymes with others + M']}
+]},
+{id:'cash',theme:'Money',emoji:'💰',word:'CASH',sentence:'Clever Accountants Save Heaps',tiein:'Clever Accountants Save Heaps — and they do it all in CASH! 💰',words:[
+{l:'C',w:'CLEVER',c:['Smart, quick-witted, sharp','What you are when you find a loophole','Rhymes with never + CL']},
+{l:'A',w:'ACCOUNTANTS',c:['Numbers people, tax season heroes','They know exactly where all the money went','Starts with account']},
+{l:'S',w:'SAVE',c:['Keep money instead of spending it','What your mom always told you to do','Rhymes with cave + S']},
+{l:'H',w:'HEAPS',c:['Lots, piles, a great deal of something','More than enough, abundantly','Rhymes with leaps + H']}
+]},
+{id:'canvas',theme:'Art',emoji:'🎨',word:'CANVAS',sentence:'Creative Artists Need Various Art Supplies',tiein:'Creative Artists Need Various Art Supplies — starting with CANVAS! 🎨',words:[
+{l:'C',w:'CREATIVE',c:['Imaginative, inventive, outside the box','What every artist claims to be — and usually is','Starts with create']},
+{l:'A',w:'ARTISTS',c:['People who make beautiful things','They see the world differently, on purpose','Starts with art']},
+{l:'N',w:'NEED',c:['Cant function without it','Want vs blank — only one stops the painting','One letter from feed']},
+{l:'V',w:'VARIOUS',c:['Many kinds, a mix, diverse','Not just one type — far more interesting','Rhymes with serious + V']},
+{l:'A',w:'ART',c:['What hangs in museums and refrigerators equally','Four letters, infinite meaning','Rhymes with heart without the H']},
+{l:'S',w:'SUPPLIES',c:['Materials, tools, the stuff you need','What runs out at the worst possible moment','Starts with supply']}
+]},
+{id:'orbit',theme:'Space',emoji:'🚀',word:'ORBIT',sentence:'Our Rocket Boosters Ignite Tonight',tiein:'Our Rocket Boosters Ignite Tonight — ORBIT achieved! 🚀',words:[
+{l:'O',w:'OUR',c:['Possessive — belongs to all of us','First person plural ownership','Sounds like hour']},
+{l:'R',w:'ROCKET',c:['NASAs bread and butter','Goes really fast, specifically upward','Rhymes with pocket + R']},
+{l:'B',w:'BOOSTERS',c:['What gives a rocket its initial thrust','The big engines that get it off the pad','Starts with boost']},
+{l:'I',w:'IGNITE',c:['Set on fire, spark up, launch','What the countdown is building toward','Starts with ignit']},
+{l:'T',w:'TONIGHT',c:['This very evening, not tomorrow','When the launch window opens','To + night']}
+]},
+{id:'gifts',theme:'Holidays',emoji:'🎁',word:'GIFTS',sentence:'Grandma Invites Family To Supper',tiein:'Grandma Invites Family To Supper — now THATS the best of GIFTS! 🎁',words:[
+{l:'G',w:'GRANDMA',c:['The one who knits and spoils you equally','Moms mom or dads mom — pick one','Grand + ma']},
+{l:'I',w:'INVITES',c:['Welcomes, requests your presence','What a party needs before it becomes one','Starts with invite']},
+{l:'F',w:'FAMILY',c:['The people youre stuck with and love anyway','Chosen or not, theyre yours','Starts with famil']},
+{l:'T',w:'TO',c:['A preposition pointing somewhere','Two letters doing a lot of work','Rhymes with do + T']},
+{l:'S',w:'SUPPER',c:['The evening meal, old-school edition','What grandma always has on the table at 5pm','Rhymes with upper + S']}
+]},
+{id:'happy',theme:'Emotions',emoji:'😊',word:'HAPPY',sentence:'Health And Prosperity Protects You',tiein:'Health And Prosperity Protects You — stay HAPPY! 😊',words:[
+{l:'H',w:'HEALTH',c:['Your body and minds wellbeing','What you toast to at New Years','Rhymes with stealth + H']},
+{l:'A',w:'AND',c:['The joining word, glue of sentences','Plus, also, in addition','Sandwiched between bread and butter']},
+{l:'P',w:'PROSPERITY',c:['Wealth, success, good fortune','What people wish each other at New Years','Starts with prosper']},
+{l:'P',w:'PROTECTS',c:['Keeps safe, shields, guards','What sunscreen does, and good friends do','Starts with protect']},
+{l:'Y',w:'YOU',c:['The person reading this right now','Second person, singular — yes, you','Rhymes with dew']}
+]}
+];
+let wsDailyPuzzle=null,wsWordIdx=0,wsCluesShown=0,wsGameScore=0,wsWordResults=[];
 
-// ── ORDERLY ───────────────────────────────────────────────────────────────────
-const OR_THEMES={numbers:{name:'Numbers',ic:'🔢',items:['1','2','3','4','5','6','7','8','9'],type:'number'},colors:{name:'Colors',ic:'🎨',items:['🔴','🟠','🟡','🟢','🔵','🟣','🟤','⚫','⚪'],type:'emoji'},emoji:{name:'Emoji',ic:'😀',items:['😀','😎','🤩','😴','🤔','😱','🥳','😡','🤖','👻','🐸','🦊'],type:'emoji'},letters:{name:'Letters',ic:'🔤',items:['A','B','C','D','E','F','G','H','I','J','K','L'],type:'letter'},shapes:{name:'Shapes',ic:'🔷',items:['🔴','🔷','⭐','🟩','🔺','🟡','💎','🌙','❤️'],type:'emoji'}};
-const OR_THEME_LIST=[{id:'numbers',n:'Numbers',ic:'🔢',d:'Digits 1–9',pv:['1','2','3','4'],type:'number'},{id:'colors',n:'Colors',ic:'🎨',d:'Color circles',pv:['🔴','🟠','🟡','🟢'],type:'emoji'},{id:'emoji',n:'Emoji',ic:'😀',d:'Fun faces & icons',pv:['😀','😎','🤩','😴'],type:'emoji'},{id:'letters',n:'Letters',ic:'🔤',d:'Alphabet letters',pv:['A','B','C','D'],type:'letter'},{id:'shapes',n:'Shapes',ic:'🔷',d:'Shapes & symbols',pv:['🔴','🔷','⭐','🟩'],type:'emoji'}];
-let orTheme='numbers',orStartLen=3,orSpeed=900,orStyle='flash';
-let orSeq=[],orInput=[],orRound=1,orStreak=0,orTotalScore=0,orPhase='idle';
-let orPassTheme='numbers',orPassStartLen=3,orPassLen=3,orPassRound=1,orPassTurn=0,orPassScores=[0,0],orPassNames=['Player 1','Player 2'];
-let orSendTheme='numbers',orSendLen=4,orChalCode='',orChalSeq=[],orChalScore=0,orSendStyle='flash';
-let orRecvSeq=[],orRecvInput=[],orRecvCode='',orRecvTheme='numbers';
-let orLinerFlashOrder=[];
-
-function orGetItems(id){return OR_THEMES[id]?.items||OR_THEMES.numbers.items}
-function orIsText(id){const t=OR_THEMES[id]?.type;return t==='number'||t==='letter'}
-function orRandSeq(len,id){const items=orGetItems(id);return Array.from({length:len},()=>items[Math.floor(Math.random()*items.length)])}
-function orCalcScore(len,round,streak){return Math.round(len*6*round*(1+streak*0.1))}
-function orEffectiveSeq(seq){if(orStyle==='liner'&&orLinerFlashOrder.length===seq.length)return orLinerFlashOrder.map(i=>seq[i]);return seq}
-function orMakeCell(val,id,size=52){const cell=document.createElement('div');const isText=orIsText(id);cell.style.cssText=`width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;border-radius:10px;border:2px solid var(--bd2);background:var(--bg2);flex-shrink:0;`;cell.innerHTML=isText?`<span style="font-size:${size>44?22:16}px;font-weight:800;color:var(--purple-tx)">${val}</span>`:`<span style="font-size:${size>44?26:20}px;line-height:1">${val}</span>`;return cell}
-function orUpdateDots(containerId,filled,total,lastCorrect=true){const c=document.getElementById(containerId);if(!c)return;c.innerHTML='';for(let i=0;i<total;i++){const dot=document.createElement('div');const sz=Math.max(8,Math.min(14,Math.floor(280/total)));let bg='var(--bg3)';if(i<filled-1)bg='var(--teal)';else if(i===filled-1)bg=lastCorrect?'var(--teal)':'var(--err-bd)';dot.style.cssText=`width:${sz}px;height:${sz}px;border-radius:50%;background:${bg};transition:background .2s`;c.appendChild(dot)}}
-
-function orBuildThemeGrid(containerId,selectedId,setter){
-  const g=document.getElementById(containerId);if(!g)return;g.innerHTML='';
-  OR_THEME_LIST.forEach(t=>{const div=document.createElement('div');div.className='tc'+(selectedId===t.id?' sel':' dim');div.dataset.id=t.id;div.onclick=()=>setter(t.id);const isText=t.type==='number'||t.type==='letter';let ph='<div class="tprev">';t.pv.forEach(e=>{if(isText)ph+=`<div class="tpc" style="font-size:11px;font-weight:700;background:var(--purple-lt);color:var(--purple-tx);border-color:var(--purple-bd)">${e}</div>`;else ph+=`<div class="tpc">${e}</div>`});ph+='</div>';div.innerHTML=`<div class="tcn">${t.ic} ${t.n}</div><div class="tcd">${t.d}</div>${ph}`+(selectedId===t.id?'<div class="ck">&#10003;</div>':'');g.appendChild(div)});
+function wsGetDailyPuzzle(){
+  const d=new Date();
+  const seed=d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
+  return CRONY_PUZZLES[seed%CRONY_PUZZLES.length];
 }
+function wsDailyKey(){const d=new Date();return 'crony_'+d.getFullYear()+'_'+(d.getMonth()+1)+'_'+d.getDate();}
+function wsSetupHome(){
+  const p=wsGetDailyPuzzle();
+  const el=document.getElementById('ws-daily-emoji');if(el)el.textContent=p.emoji;
+  const th=document.getElementById('ws-daily-theme');if(th)th.textContent=p.theme;
+  const n=CRONY_PUZZLES.findIndex(x=>x.id===p.id)+1;
+  const nu=document.getElementById('ws-daily-num');if(nu)nu.textContent='Puzzle #'+n+' · '+p.word.length+' words';
+  const played=localStorage.getItem(wsDailyKey());
+  const ap=document.getElementById('ws-already-played');
+  const btn=document.getElementById('ws-start-btn');
+  if(played){if(ap)ap.style.display='block';if(btn){btn.disabled=true;btn.style.opacity='0.4';}}
+  else{if(ap)ap.style.display='none';if(btn){btn.disabled=false;btn.style.opacity='1';}}
+}
+function wsStartDaily(){
+  wsDailyPuzzle=wsGetDailyPuzzle();
+  wsWordIdx=0;wsCluesShown=0;wsGameScore=0;wsWordResults=[];
+  goScr('ws-play');
+  wsRenderCurrentWord();
+}
+function wsRenderCurrentWord(){
+  const word=wsDailyPuzzle.words[wsWordIdx];
+  const total=wsDailyPuzzle.words.length;
+  document.getElementById('ws-progress').textContent='Word '+(wsWordIdx+1)+' of '+total;
+  const badge=document.getElementById('ws-letter-badge');if(badge)badge.textContent=word.l;
+  const mp=document.getElementById('ws-max-pts');if(mp)mp.textContent='Guess now for 20pts!';
+  document.getElementById('ws-clues-area').innerHTML='';
+  wsCluesShown=0;
+  const inp=document.getElementById('ws-guess-input');if(inp){inp.value='';inp.disabled=false;setTimeout(()=>inp.focus(),100);}
+  document.getElementById('ws-guess-result').textContent='';
+  document.getElementById('ws-play-score').textContent=wsGameScore;
+  wsUpdateClueBtn();
+  wsRenderSentenceBar();
+}
+function wsRenderSentenceBar(){
+  const bar=document.getElementById('ws-sentence-bar');if(!bar)return;
+  const parts=wsDailyPuzzle.words.map((w,i)=>{
+    if(i<wsWordIdx){
+      const r=wsWordResults[i];
+      const col=r&&r.earned>0?'var(--teal)':'var(--tx2)';
+      return '<span style="color:'+col+';font-weight:600">'+w.w+'</span>';
+    }else if(i===wsWordIdx){
+      return '<span style="color:var(--amber-tx);font-weight:700">'+w.l+'<span style="opacity:0.3">'+'_'.repeat(Math.max(0,w.w.length-1))+'</span></span>';
+    }else{
+      return '<span style="color:var(--tx3)">'+w.l+'<span style="opacity:0.3">'+'_'.repeat(Math.max(0,w.w.length-1))+'</span></span>';
+    }
+  });
+  bar.innerHTML=parts.join('<span style="color:var(--tx3)"> </span>');
+}
+function wsUpdateClueBtn(){
+  const btn=document.getElementById('ws-clue-btn');if(!btn)return;
+  if(wsCluesShown>=3){btn.textContent='No more clues';btn.disabled=true;btn.style.opacity='0.4';}
+  else{const pts=[15,10,5][wsCluesShown];btn.textContent='Give me a clue ('+pts+'pts if correct)';btn.disabled=false;btn.style.opacity='1';}
+}
+function wsRevealClue(){
+  if(wsCluesShown>=3)return;
+  wsCluesShown++;
+  const word=wsDailyPuzzle.words[wsWordIdx];
+  const clue=word.c[wsCluesShown-1];
+  const pts=[15,10,5][wsCluesShown-1];
+  const colors=['var(--ok-bg)','var(--warn-bg)','var(--err-bg)'];
+  const txcols=['var(--ok-tx)','var(--warn-tx)','var(--err-tx)'];
+  const el=document.createElement('div');
+  el.style.cssText='padding:8px 10px;margin:4px 0;border-radius:8px;font-size:13px;background:'+colors[wsCluesShown-1]+';color:'+txcols[wsCluesShown-1];
+  el.innerHTML='<strong>Clue '+wsCluesShown+':</strong> '+clue+'<span style="float:right;opacity:0.7">'+pts+'pts</span>';
+  document.getElementById('ws-clues-area').appendChild(el);
+  const mp=document.getElementById('ws-max-pts');if(mp)mp.textContent=pts+'pts if correct now';
+  wsUpdateClueBtn();
+  const inp=document.getElementById('ws-guess-input');if(inp)setTimeout(()=>inp.focus(),50);
+}
+function wsSubmitGuess(){
+  const inp=document.getElementById('ws-guess-input');if(!inp)return;
+  const guess=inp.value.trim().toUpperCase().replace(/[^A-Z]/g,'');
+  if(!guess)return;
+  const word=wsDailyPuzzle.words[wsWordIdx];
+  if(guess===word.w.toUpperCase()){
+    const earned=[20,15,10,5][wsCluesShown];
+    wsGameScore+=earned;
+    wsWordResults.push({w:word.w,earned,revealed:false});
+    wsShowWordFeedback(true,earned,word.w);
+    setTimeout(wsAdvanceWord,1400);
+  }else{
+    inp.value='';
+    const r=document.getElementById('ws-guess-result');
+    r.style.color='var(--err-tx)';r.textContent='Not quite — try again or get a clue!';
+    setTimeout(()=>{if(r.textContent.startsWith('Not'))r.textContent='';},1500);
+    setTimeout(()=>inp.focus(),50);
+  }
+}
+function wsSkipWord(){
+  const word=wsDailyPuzzle.words[wsWordIdx];
+  wsWordResults.push({w:word.w,earned:0,revealed:true});
+  wsShowWordFeedback(false,0,word.w);
+  setTimeout(wsAdvanceWord,1400);
+}
+function wsShowWordFeedback(correct,earned,wordStr){
+  const inp=document.getElementById('ws-guess-input');if(inp)inp.disabled=true;
+  document.getElementById('ws-play-score').textContent=wsGameScore;
+  const r=document.getElementById('ws-guess-result');
+  if(correct){r.style.color='var(--ok-tx)';r.textContent='+'+earned+'pts! Great job!';}
+  else{r.style.color='var(--tx2)';r.textContent='The word was "'+wordStr+'"';}
+  wsRenderSentenceBar();
+}
+function wsAdvanceWord(){
+  wsWordIdx++;
+  if(wsWordIdx>=wsDailyPuzzle.words.length)wsShowReveal();
+  else{wsCluesShown=0;wsRenderCurrentWord();}
+}
+function wsShowReveal(){
+  localStorage.setItem(wsDailyKey(),JSON.stringify({score:wsGameScore}));
+  const p=wsDailyPuzzle;
+  const em=document.getElementById('ws-reveal-emoji');if(em)em.textContent=p.emoji;
+  document.getElementById('ws-reveal-score').textContent=wsGameScore;
+  document.getElementById('ws-reveal-sentence').textContent='"'+p.sentence+'"';
+  document.getElementById('ws-reveal-word').textContent=p.word;
+  document.getElementById('ws-reveal-tiein').textContent=p.tiein;
+  const bd=document.getElementById('ws-reveal-breakdown');
+  if(bd){bd.innerHTML=p.words.map((w,i)=>{
+    const r=wsWordResults[i]||{earned:0};
+    const col=r.earned>0?'var(--ok-tx)':'var(--tx2)';
+    return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--bd);font-size:13px"><span>'+w.l+' — <strong>'+w.w+'</strong></span><span style="color:'+col+';font-weight:600">'+(r.earned>0?'+'+r.earned+'pts':'0pts')+'</span></div>';
+  }).join('');}
+  goScr('ws-reveal');
+}
+
 function orSetTheme(id){orTheme=id;orBuildThemeGrid('or-theme-grid',orTheme,orSetTheme)}
 function orPassSetTheme(id){orPassTheme=id;orBuildThemeGrid('or-pass-theme-grid',orPassTheme,orPassSetTheme)}
 function orSendSetTheme(id){orSendTheme=id;orBuildThemeGrid('or-send-theme-grid',orSendTheme,orSendSetTheme)}
@@ -1781,9 +2020,10 @@ const PEEKY_IMAGES=[
 
 let mpImage=null;
 let mpGrid=[],mpLineup=new Set(),mpFaceUp=new Set();
-let mpSelected=null,mpFaceUpMax=4,mpScore=200,mpLockedCount=0;
+let mpSelected=null,mpFaceUpMax=4,mpScore=50,mpLockedCount=0;
 let mpCorrectGuess=false,mpGuessBonusEarned=0,mpGuessCount=0;
-let mpCornersUsed=false,mpCategoryUsed=false,mpEraUsed=false,mpFlashUsed=false,mpSneakPeekUsed=false;
+let mpCornersUsed=false,mpEraUsed=false,mpSneakPeekUsed=false;
+let mpScoringPaused=false,mpManualLocks=0;
 
 function mpGetDailyImage(){
   // TEMP: locked to Mona Lisa for image path testing — restore after confirmed
@@ -1818,7 +2058,7 @@ function mpInitGame(){
   mpLineup=new Set(shuffled);mpFaceUp=new Set();mpSelected=null;mpFaceUpMax=4;
   mpScore=50;mpLockedCount=0;
   mpCorrectGuess=false;mpGuessBonusEarned=0;mpGuessCount=0;
-  mpCornersUsed=false;mpEraUsed=false;mpFlashUsed=false;mpSneakPeekUsed=false;
+  mpCornersUsed=false;mpEraUsed=false;mpSneakPeekUsed=false;mpScoringPaused=false;mpManualLocks=0;
   document.getElementById('mp-score').textContent=mpScore;
   document.getElementById('mp-cat-badge').textContent=mpImage.category;
   document.getElementById('mp-hints-bar').textContent='';
@@ -1826,7 +2066,7 @@ function mpInitGame(){
   document.getElementById('mp-result').style.display='none';
   const gi=document.getElementById('mp-guess-input');if(gi){gi.value='';gi.disabled=false}
   const gb=document.getElementById('mp-guess-btn');if(gb)gb.disabled=false;
-  ['mp-h-corners','mp-h-era','mp-h-flash'].forEach(id=>{const b=document.getElementById(id);if(b){b.disabled=false;b.style.opacity='1'}});mpUpdateSneakPeekBtn();
+  ['mp-h-corners','mp-h-era'].forEach(id=>{const b=document.getElementById(id);if(b){b.disabled=false;b.style.opacity='1'}});mpUpdateSneakPeekBtn();
   const ub=document.getElementById('mp-upgrade-btn');if(ub)ub.style.display='';
   const mpg=document.getElementById('mp-grid');if(mpg){const gs2=mpImage.grid||4;mpg.style.gridTemplateColumns=`repeat(${gs2},1fr)`}
   goScr('mp-play');mpRenderGrid();mpRenderLineup();mpUpdateFaceUpInfo();
@@ -1909,14 +2149,17 @@ function mpCheckNewLocks(){
   const prev=mpLockedCount;
   mpLockedCount=mpGrid.filter((p,i)=>p===i).length;
   const newLocks=mpLockedCount-prev;
-  if(newLocks>0){mpScore+=newLocks*5;document.getElementById('mp-score').textContent=mpScore;}
+  if(newLocks>0&&!mpScoringPaused){
+    mpScore+=newLocks*5;mpManualLocks+=newLocks;
+    document.getElementById('mp-score').textContent=mpScore;
+  }
   mpUpdateSneakPeekBtn();
   if(mpLockedCount===(mpImage?mpImage.grid*mpImage.grid:16))setTimeout(()=>mpShowResult(true),400);
 }
 function mpUpdateSneakPeekBtn(){
   const btn=document.getElementById('mp-h-spot');if(!btn)return;
   if(mpSneakPeekUsed){btn.disabled=true;btn.style.opacity='0.4';return;}
-  if(mpLockedCount>=6){
+  if(mpManualLocks>=6){
     btn.disabled=false;btn.style.opacity='1';
     btn.style.background='var(--warn-bg)';btn.style.borderColor='var(--warn-bd)';btn.style.color='var(--warn-tx)';
     btn.innerHTML='👁 Sneak Peek<br>-50pts';
@@ -1945,6 +2188,7 @@ function mpAddHintText(text){const el=document.getElementById('mp-hints-bar');if
 function mpHintCorners(){
   if(mpCornersUsed)return;mpCornersUsed=true;mpScore=Math.max(0,mpScore-20);document.getElementById('mp-score').textContent=mpScore;
   document.getElementById('mp-h-corners').disabled=true;document.getElementById('mp-h-corners').style.opacity='0.4';
+  mpScoringPaused=true;
   const gs=mpImage.grid||4;const corners=[0,gs-1,gs*(gs-1),gs*gs-1];
   corners.forEach(corner=>{
     if(mpGrid[corner]===corner)return;
@@ -1953,7 +2197,8 @@ function mpHintCorners(){
     if(mpGrid[corner]!==null&&mpGrid[corner]!==corner){const d=mpGrid[corner];mpLineup.add(d);if(mpFaceUp.size<mpFaceUpMax)mpFaceUp.add(d)}
     mpGrid[corner]=corner;
   });
-  mpCheckNewLocks();mpRenderGrid();mpRenderLineup();mpUpdateFaceUpInfo();mpAddHintText('🔒 Corners locked');
+  mpCheckNewLocks();mpRenderGrid();mpRenderLineup();mpUpdateFaceUpInfo();mpScoringPaused=false;
+  mpAddHintText('🔒 Corners locked');
 }
 function mpSneakPeek(){
   if(mpSneakPeekUsed)return;mpSneakPeekUsed=true;mpScore=Math.max(0,mpScore-50);document.getElementById('mp-score').textContent=mpScore;
@@ -1976,14 +2221,6 @@ function mpSneakPeek(){
 }
 
 function mpHintEra(){if(mpEraUsed)return;mpEraUsed=true;mpScore=Math.max(0,mpScore-20);document.getElementById('mp-score').textContent=mpScore;document.getElementById('mp-h-era').disabled=true;document.getElementById('mp-h-era').style.opacity='0.4';mpAddHintText(`🕰 Era: ${mpImage.era}`)}
-function mpHintFlash(){
-  if(mpFlashUsed)return;mpFlashUsed=true;mpScore=Math.max(0,mpScore-30);document.getElementById('mp-score').textContent=mpScore;
-  document.getElementById('mp-h-flash').disabled=true;document.getElementById('mp-h-flash').style.opacity='0.4';
-  const overlay=document.getElementById('mp-flash-overlay');const img=document.getElementById('mp-flash-img');const count=document.getElementById('mp-flash-count');
-  img.src=mpImage.url;overlay.style.display='flex';let secs=3;count.textContent=secs;
-  const t=setInterval(()=>{secs--;if(secs<=0){clearInterval(t);overlay.style.display='none'}else count.textContent=secs},1000);
-  mpAddHintText('👁 Full image flashed');
-}
 function mpSubmitGuess(){
   const inp=document.getElementById('mp-guess-input');const guess=(inp?inp.value.trim().toLowerCase():'');if(!guess)return;
   mpGuessCount++;const correct=mpImage.answers.some(ans=>guess.includes(ans)||(ans.includes(guess)&&guess.length>3));

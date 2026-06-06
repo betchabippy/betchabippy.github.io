@@ -1693,6 +1693,20 @@ function orRandSeq(len,themeId){
   for(let i=0;i<len;i++)seq.push(items[Math.floor(Math.random()*items.length)]);
   return seq;
 }
+function orGetItems(themeId){return OR_THEMES[themeId]?.items||OR_THEMES.nums.items;}
+function orIsText(themeId){return !!(OR_THEMES[themeId]?.text);}
+function orCalcScore(len,round,streak){return len*10+(round-1)*5+streak*3;}
+function orEffectiveSeq(seq){return seq;}
+function orMakeCell(val,themeId,size){
+  const isText=orIsText(themeId);
+  const cell=document.createElement('div');
+  cell.style.cssText='width:'+size+'px;height:'+size+'px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--purple-lt);border:1px solid var(--purple-bd);font-size:'+(isText?Math.round(size*.45):Math.round(size*.55))+'px;font-weight:700;color:var(--purple-tx)';
+  cell.textContent=val;return cell;
+}
+function orUpdateDots(id,filled,total){
+  const d=document.getElementById(id);if(!d)return;
+  d.innerHTML=Array.from({length:total},(_,i)=>'<span style="display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 2px;background:'+(i<filled?'var(--purple)':'var(--bg3)')+';border:1px solid var(--bd2)"></span>').join('');
+}
 function orBuildThemeGrid(gridId,selectedTheme,onSelect){
   const g=document.getElementById(gridId);if(!g)return;g.innerHTML='';
   Object.entries(OR_THEMES).forEach(([id,theme])=>{

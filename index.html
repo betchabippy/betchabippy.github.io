@@ -1992,30 +1992,21 @@ function bippyRate(sentenceLength){const bonus=sentenceLength>20?1:0;const rand=
 
 // ── MAPPY ─────────────────────────────────────────────────────────────────────
 const PEEKY_IMAGES=[
-  {id:'mona_lisa',title:'Mona Lisa',era:'1500s',category:'Painting',grid:4,url:'/images/monalisa.jpg',answers:['mona lisa','monalisa','la gioconda','gioconda']},
-  {id:'starry_night',title:'The Starry Night',era:'1880s',category:'Painting',grid:5,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg?width=500',answers:['starry night','the starry night','van gogh']},
-  {id:'scream',title:'The Scream',era:'1890s',category:'Painting',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/The_Scream_by_Edvard_Munch%2C_1893_-_Nasjonalgalleriet.png?width=500',answers:['the scream','scream','munch']},
-  {id:'pearl_earring',title:'Girl with a Pearl Earring',era:'1660s',category:'Painting',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/1665_Girl_with_a_Pearl_Earring.jpg?width=500',answers:['girl with a pearl earring','pearl earring','vermeer']},
-  {id:'great_wave',title:'The Great Wave',era:'1830s',category:'Painting',grid:5,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Katsushika_Hokusai_-_Thirty-Six_Views_of_Mount_Fuji-_The_Great_Wave_Off_the_Coast_of_Kanagawa_-_Google_Art_Project.jpg?width=500',answers:['the great wave','great wave','hokusai','great wave off kanagawa']},
-  {id:'american_gothic',title:'American Gothic',era:'1930s',category:'Painting',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Grant_DeVolson_Wood_-_American_Gothic.jpg?width=500',answers:['american gothic','grant wood']},
-  {id:'birth_venus',title:'The Birth of Venus',era:'1480s',category:'Painting',grid:5,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg?width=500',answers:['birth of venus','venus','botticelli']},
-  {id:'creation_adam',title:'The Creation of Adam',era:'1510s',category:'Painting',grid:5,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg?width=500',answers:['creation of adam','adam','michelangelo','sistine']},
-  {id:'david',title:'Statue of David',era:'1500s',category:'Sculpture',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Michelangelo%27s_David_-_right_view_2.jpg?width=500',answers:['david','statue of david','michelangelo david']},
-  {id:'thinker',title:'The Thinker',era:'1900s',category:'Sculpture',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Rodin_TheThinker.jpg?width=500',answers:['the thinker','thinker','rodin']},
-  {id:'earthrise',title:'Earthrise',era:'1960s',category:'Photo',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/NASA-Apollo8-Dec24-Earthrise.jpg?width=500',answers:['earthrise','earth rise','apollo 8','apollo']},
-  {id:'moon_landing',title:'Moon Landing',era:'1960s',category:'Photo',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Aldrin_Apollo_11_original.jpg?width=500',answers:['moon landing','apollo 11','aldrin','buzz aldrin','moon walk']},
-  {id:'migrant_mother',title:'Migrant Mother',era:'1930s',category:'Photo',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Lange-MigrantMother02.jpg?width=500',answers:['migrant mother','dorothea lange','great depression']},
-  {id:'iwo_jima',title:'Raising the Flag on Iwo Jima',era:'1940s',category:'Photo',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Raising_the_Flag_on_Iwo_Jima.jpg?width=500',answers:['iwo jima','raising the flag','flag raising','iwo']},
-  {id:'eiffel',title:'Eiffel Tower',era:'1880s',category:'Landmark',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg?width=500',answers:['eiffel tower','eiffel','paris tower']},
-  {id:'taj_mahal',title:'Taj Mahal',era:'1640s',category:'Landmark',grid:5,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Taj_Mahal%2C_Agra%2C_India_edit3.jpg?width=500',answers:['taj mahal','taj']},
-  {id:'great_wall',title:'Great Wall of China',era:'Ancient',category:'Landmark',grid:5,url:'https://commons.wikimedia.org/wiki/Special:FilePath/The_Great_Wall_of_China_at_Jinshanling-edit.jpg?width=500',answers:['great wall','great wall of china','chinese wall']},
-  {id:'opera_house',title:'Sydney Opera House',era:'1970s',category:'Landmark',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Sydney_Opera_House%2C_botanic_gardens_1.jpg?width=500',answers:['sydney opera house','opera house','sydney']},
-  {id:'colosseum',title:'Colosseum',era:'80 AD',category:'Landmark',grid:5,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Colosseo_2020.jpg?width=500',answers:['colosseum','coliseum','roman colosseum','colosseo']},
-  {id:'statue_liberty',title:'Statue of Liberty',era:'1880s',category:'Landmark',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Statue_of_Liberty_7.jpg?width=500',answers:['statue of liberty','liberty','lady liberty']},
-  {id:'golden_gate',title:'Golden Gate Bridge',era:'1930s',category:'Landmark',grid:5,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Golden_Gate_Bridge_as_seen_from_Battery_East.jpg?width=500',answers:['golden gate bridge','golden gate','san francisco bridge']},
-  {id:'machu_picchu',title:'Machu Picchu',era:'1400s',category:'Landmark',grid:6,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Machu_Picchu%2C_Peru.jpg?width=500',answers:['machu picchu','machu','picchu','inca']},
-  {id:'stonehenge',title:'Stonehenge',era:'Ancient',category:'Landmark',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Stonehenge2007_07_30.jpg?width=500',answers:['stonehenge','stone henge','stone circle']},
-  {id:'big_ben',title:'Big Ben',era:'1850s',category:'Landmark',grid:4,url:'https://commons.wikimedia.org/wiki/Special:FilePath/Big_Ben_2013-2.jpg?width=500',answers:['big ben','westminster','elizabeth tower','london clock','parliament']}
+  {id:'mona_lisa',title:'Mona Lisa',era:'1500s',category:'Painting',grid:4,url:'/images/monalisa.jpg',desc:"The world's most famous portrait, painted by Leonardo da Vinci around 1503",answers:['mona lisa','monalisa','la gioconda','gioconda']},
+  {id:'eiffel',title:'Eiffel Tower',era:'1880s',category:'Landmark',grid:4,url:'/images/EiffelTower.jpg',desc:"Paris's beloved iron lady, built for the 1889 World's Fair",answers:['eiffel tower','eiffel','paris tower']},
+  {id:'taj_mahal',title:'Taj Mahal',era:'1640s',category:'Landmark',grid:5,url:'/images/TajMahal.jpg',desc:"A Mughal emperor's monument to eternal love, built in 17th century India",answers:['taj mahal','taj']},
+  {id:'great_wall',title:'Great Wall of China',era:'Ancient',category:'Landmark',grid:5,url:'/images/TheGreatWallof%20China.jpg',desc:"Over 13,000 miles of ancient fortification stretching across northern China",answers:['great wall','great wall of china','chinese wall']},
+  {id:'colosseum',title:'Colosseum',era:'80 AD',category:'Landmark',grid:5,url:'/images/TheColosseum.jpg',desc:"Ancient Rome's iconic amphitheater, built in 80 AD for gladiatorial spectacles",answers:['colosseum','coliseum','roman colosseum']},
+  {id:'statue_liberty',title:'Statue of Liberty',era:'1880s',category:'Landmark',grid:4,url:'/images/StatueofLiberty.jpg',desc:"France's gift to America, welcoming millions to New York Harbor since 1886",answers:['statue of liberty','liberty','lady liberty']},
+  {id:'golden_gate',title:'Golden Gate Bridge',era:'1930s',category:'Landmark',grid:5,url:'/images/GoldenGateBridge.jpg',desc:"San Francisco's iconic Art Deco suspension bridge, opened in 1937",answers:['golden gate bridge','golden gate','san francisco bridge']},
+  {id:'big_ben',title:'Big Ben',era:'1850s',category:'Landmark',grid:4,url:'/images/BigBen.jpg',desc:"The beloved clock tower standing guard over London's Houses of Parliament since 1859",answers:['big ben','westminster','elizabeth tower','london clock','parliament']},
+  {id:'thinker',title:'The Thinker',era:'1900s',category:'Sculpture',grid:4,url:'/images/RodinTheThinker.jpg',desc:"Auguste Rodin's iconic bronze sculpture, a timeless symbol of deep contemplation",answers:['the thinker','thinker','rodin']},
+  {id:'pyramids',title:'Pyramids of Giza',era:'Ancient',category:'Landmark',grid:4,url:'/images/GreatPyramids.jpg',desc:"Ancient Egypt's greatest monuments, built over 4,500 years ago as royal tombs",answers:['pyramids of giza','great pyramids','pyramids','giza','pyramid']},
+  {id:'christ_redeemer',title:'Christ the Redeemer',era:'1930s',category:'Landmark',grid:4,url:'/images/ChristTheRedeemer.jpg',desc:"Rio de Janeiro's towering Art Deco Christ statue, overlooking the city since 1931",answers:['christ the redeemer','christ redeemer','redeemer','rio statue','rio']},
+  {id:'notre_dame',title:'Notre-Dame Cathedral',era:'1300s',category:'Landmark',grid:5,url:'/images/NotreDame.jpg',desc:"Paris's medieval Gothic masterpiece, standing on the Seine since the 13th century",answers:['notre dame','notre dame cathedral','notre dame paris','cathedral']},
+  {id:'leaning_tower',title:'Leaning Tower of Pisa',era:'1100s',category:'Landmark',grid:4,url:'/images/LeaningTowerofPisa.jpg',desc:"Italy's famously tilted medieval bell tower — still standing after 800 years",answers:['leaning tower of pisa','leaning tower','tower of pisa','pisa']},
+  {id:'chichen_itza',title:'Chichen Itza',era:'900s AD',category:'Landmark',grid:4,url:'/images/Chich%C3%A9n%20Itz%C3%A1.jpg',desc:"The Mayan civilization's magnificent pyramid temple, built around 900 AD in Mexico",answers:['chichen itza','chichen','itza','el castillo','mayan pyramid','mayan']},
+  {id:'marilyn',title:'Marilyn Monroe',era:'1950s',category:'Photo',grid:4,url:'/images/MarilynMonroe.jpg',desc:"Hollywood's golden age icon, whose beauty and talent made her a legend forever",answers:['marilyn monroe','marilyn','monroe']}
 ];
 
 let mpImage=null;
@@ -2026,8 +2017,6 @@ let mpCornersUsed=false,mpEraUsed=false,mpSneakPeekUsed=false;
 let mpScoringPaused=false,mpManualLocks=0;
 
 function mpGetDailyImage(){
-  // TEMP: locked to Mona Lisa for image path testing — restore after confirmed
-  return PEEKY_IMAGES[0];
   const d=new Date();
   const seed=d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
   return PEEKY_IMAGES[seed%PEEKY_IMAGES.length];
@@ -2091,6 +2080,8 @@ function mpRenderGrid(){
       im.style.width=(gs*100)+'%';im.style.height=(gs*100)+'%';im.style.objectFit='cover';
       im.style.position='absolute';im.style.top='0';im.style.left='0';
       im.style.transform='translate('+( -(c/gs)*100 )+'%,'+( -(r/gs)*100 )+'%)';
+      im.draggable=false;im.style.pointerEvents='none';im.style.webkitTouchCallout='none';im.style.userSelect='none';
+      wrap.addEventListener('contextmenu',function(e){e.preventDefault()});
       wrap.appendChild(im);cell.appendChild(wrap);
       if(locked){const ck=document.createElement('div');ck.style.cssText='position:absolute;bottom:2px;right:2px;width:14px;height:14px;border-radius:50%;background:var(--teal);color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700;z-index:2';ck.textContent='\u2713';cell.appendChild(ck)}
     }else{cell.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;color:var(--tx3);font-weight:600">'+(i+1)+'</div>'}
@@ -2111,6 +2102,8 @@ function mpRenderLineup(){
       im.style.width=(gs*100)+'%';im.style.height=(gs*100)+'%';im.style.objectFit='cover';
       im.style.position='absolute';im.style.top='0';im.style.left='0';
       im.style.transform='translate('+( -(c/gs)*100 )+'%,'+( -(r/gs)*100 )+'%)';
+      im.draggable=false;im.style.pointerEvents='none';im.style.webkitTouchCallout='none';im.style.userSelect='none';
+      wrap.addEventListener('contextmenu',function(e){e.preventDefault()});
       wrap.appendChild(im);p.appendChild(wrap);
     }else{p.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:12px;color:var(--tx3)">?</div>'}
     if(sel)p.style.outline='2px solid var(--purple)';
@@ -2175,7 +2168,7 @@ function mpShowResult(completed){
   const win=document.getElementById('mp-win');win.style.display='block';
   if(completed){win.style.background='var(--ok-bg)';win.style.borderColor='var(--ok-bd)';win.style.color='var(--ok-tx)';win.innerHTML=`🎉 Puzzle complete! <strong>${finalScore} pts</strong>${mpCorrectGuess?' · Named it! +'+mpGuessBonusEarned+' bonus':' · Guess next time for a bonus!'}`}
   else{win.style.background='var(--warn-bg)';win.style.borderColor='var(--warn-bd)';win.style.color='var(--warn-tx)';win.innerHTML=`Puzzle ended — <strong>${finalScore} pts</strong> · ${mpLockedCount}/16 correct`}
-  document.getElementById('mp-answer-reveal').innerHTML=`<img src="${mpImage.url}" style="max-width:100%;border-radius:8px;margin-bottom:8px"><br><strong style="font-size:15px">${mpImage.title}</strong><br><span style="font-size:12px;color:var(--tx2)">${mpImage.creator}, ${mpImage.year}</span>`;
+  document.getElementById('mp-answer-reveal').innerHTML=`<img src="${mpImage.url}" style="max-width:100%;border-radius:8px;margin-bottom:8px"><br><strong style="font-size:16px">${mpImage.title}</strong><br><span style="font-size:12px;color:var(--tx2);line-height:1.5;display:block;margin-top:4px">${mpImage.era} · ${mpImage.category}</span>${mpImage.desc?`<span style="font-size:12px;color:var(--tx1);line-height:1.6;display:block;margin-top:6px;font-style:italic">${mpImage.desc}</span>`:''}`;
   document.getElementById('mp-result').style.display='block';
   recordStat('mappy',{score:finalScore,detail:mpImage.title});bbSubmitScore('mappy',finalScore,mpImage.title);
   SS.mappy={score:finalScore,detail:mpImage.title};

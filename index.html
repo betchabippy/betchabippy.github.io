@@ -1693,6 +1693,17 @@ function orRandSeq(len,themeId){
   for(let i=0;i<len;i++)seq.push(items[Math.floor(Math.random()*items.length)]);
   return seq;
 }
+function orBuildThemeGrid(gridId,selectedTheme,onSelect){
+  const g=document.getElementById(gridId);if(!g)return;g.innerHTML='';
+  Object.entries(OR_THEMES).forEach(([id,theme])=>{
+    const btn=document.createElement('button');
+    btn.className='db '+(id===selectedTheme?'on':'dim');
+    btn.style.cssText='font-size:12px;padding:6px 10px';
+    btn.textContent=theme.name;
+    btn.onclick=()=>{onSelect(id);orInitThemeGrids();};
+    g.appendChild(btn);
+  });
+}
 function orSetTheme(id){orTheme=id;orBuildThemeGrid('or-theme-grid',orTheme,orSetTheme)}
 function orPassSetTheme(id){orPassTheme=id;orBuildThemeGrid('or-pass-theme-grid',orPassTheme,orPassSetTheme)}
 function orSendSetTheme(id){orSendTheme=id;orBuildThemeGrid('or-send-theme-grid',orSendTheme,orSendSetTheme)}

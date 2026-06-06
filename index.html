@@ -1718,10 +1718,33 @@ function orInitThemeGrids(){orBuildThemeGrid('or-theme-grid',orTheme,orSetTheme)
 
 function orAnimate(displayId,seq,themeId,speed,onDone,style){if((style||orStyle)==='liner')orAnimateLiner(displayId,seq,themeId,speed,onDone);else orAnimateFlash(displayId,seq,themeId,speed,onDone)}
 function orAnimateFlash(displayId,seq,themeId,speed,onDone){
-  const d=document.getElementById(displayId);if(!d)return;d.innerHTML='';let countdown=3;
-  const ctr=document.createElement('div');ctr.style.cssText='font-size:32px;font-weight:800;color:var(--purple-tx);text-align:center;width:100%;padding:8px 0';ctr.textContent=countdown;d.appendChild(ctr);
-  const cdI=setInterval(()=>{countdown--;if(countdown<=0){clearInterval(cdI);d.innerHTML='';flashNext(0)}else ctr.textContent=countdown},700);
-  function flashNext(i){if(i>=seq.length){d.innerHTML='';setTimeout(()=>{if(onDone)onDone()},300);return}d.innerHTML='';const isText=orIsText(themeId);const cell=document.createElement('div');cell.style.cssText=`width:90px;height:90px;display:flex;align-items:center;justify-content:center;border-radius:16px;background:var(--purple-lt);border:3px solid var(--purple);margin:0 auto;font-size:${isText?40:52}px;font-weight:800;color:var(--purple-tx)`;cell.textContent=seq[i];d.appendChild(cell);setTimeout(()=>{d.innerHTML='';setTimeout(()=>flashNext(i+1),speed*0.25)},speed*0.75)}
+  const d=document.getElementById(displayId);
+  if(!d||!seq||!seq.length){if(onDone)onDone();return;}
+  d.innerHTML='';
+  let step=-3;
+  function tick(){
+    d.innerHTML='';
+    if(step<0){
+      const n=step+4;
+      const ctr=document.createElement('div');
+      ctr.style.cssText='font-size:36px;font-weight:800;color:var(--purple-tx);text-align:center;width:100%;padding:12px 0';
+      ctr.textContent=String(n);
+      d.appendChild(ctr);
+      step++;
+      setTimeout(tick,700);
+    }else if(step<seq.length){
+      const isText=orIsText(themeId);
+      const cell=document.createElement('div');
+      cell.style.cssText='width:90px;height:90px;display:flex;align-items:center;justify-content:center;border-radius:16px;background:var(--purple-lt);border:3px solid var(--purple);margin:0 auto;font-size:'+(isText?'40':'52')+'px;font-weight:800;color:var(--purple-tx)';
+      cell.textContent=seq[step];
+      d.appendChild(cell);
+      step++;
+      setTimeout(()=>{d.innerHTML='';setTimeout(tick,Math.max(80,speed*0.25))},Math.max(200,speed*0.75));
+    }else{
+      if(onDone)onDone();
+    }
+  }
+  tick();
 }
 function orAnimateLiner(displayId,seq,themeId,speed,onDone){
   const d=document.getElementById(displayId);if(!d)return;d.innerHTML='';const isText=orIsText(themeId);const sz=Math.min(60,Math.floor(300/Math.ceil(Math.sqrt(seq.length))));
@@ -1739,7 +1762,7 @@ function orBuildPicker(pickerId,themeId,tapFn){
 
 function orStartSolo(){orRound=1;orStreak=0;orTotalScore=0;orPhase='idle';goScr('or-play');document.getElementById('or-theme-badge').textContent=OR_THEMES[orTheme]?.name||orTheme;document.getElementById('or-fail').style.display='none';document.getElementById('or-next-wrap').style.display='none';document.getElementById('or-done-wrap').style.display='none';document.getElementById('or-picker').style.display='none';document.getElementById('or-score').textContent='0';orDoRound()}
 function orDoRound(){
-  orSeq=orRandSeq(orStartLen+(orRound-1),orTheme);orInput=[];
+  orSeq=orRandSeq(orStartLen+(orRound-1),orTheme)||[];orInput=[];if(!orSeq.length){orSeq=['1','2','3']}
   document.getElementById('or-round').textContent=orRound;document.getElementById('or-round-badge').textContent='Round '+orRound;document.getElementById('or-len').textContent=orSeq.length;document.getElementById('or-streak').textContent=orStreak;document.getElementById('or-phase').textContent='Watch';document.getElementById('or-msg').textContent='Watch carefully...';document.getElementById('or-picker').style.display='none';document.getElementById('or-next-wrap').style.display='none';document.getElementById('or-fail').style.display='none';
   orUpdateDots('or-progress',0,orSeq.length);
   const safety=setTimeout(()=>{if(orPhase==='idle'){orPhase='input';document.getElementById('or-phase').textContent='Repeat';document.getElementById('or-msg').textContent='Tap the sequence in order';orUpdateDots('or-progress',0,orSeq.length);document.getElementById('or-seq-display').innerHTML='';orBuildPicker('or-picker',orTheme,orSoloTap)}},3000+(orSeq.length*(orSpeed+300)));

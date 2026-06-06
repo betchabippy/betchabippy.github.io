@@ -1674,6 +1674,25 @@ function wsShowReveal(){
   goScr('ws-reveal');
 }
 
+const OR_THEMES={
+  nums:{name:'Numbers 🔢',items:['1','2','3','4','5','6','7','8','9'],text:true},
+  colors:{name:'Colors 🎨',items:['🔴','🟠','🟡','🟢','🔵','🟣','🟤','⚫'],text:false},
+  animals:{name:'Animals 🐾',items:['🐶','🐱','🐻','🐼','🐨','🐯','🦊','🐸'],text:false},
+  fruits:{name:'Fruits 🍎',items:['🍎','🍊','🍋','🫐','🍇','🍓','🍑','🥝'],text:false},
+  weather:{name:'Weather ☀️',items:['☀️','🌧️','⛈️','🌈','❄️','🌪️','🌊','🌙'],text:false},
+  letters:{name:'Letters 🔤',items:['A','B','C','D','E','F','G','H'],text:true}
+};
+let orTheme='nums',orStartLen=3,orSpeed=900,orStyle='flash';
+let orRound=1,orStreak=0,orTotalScore=0,orSeq=[],orInput=[],orPhase='idle';
+let orPassTheme='nums',orPassStartLen=3,orPassLen=3,orPassRound=1,orPassTurn=0;
+let orPassScores=[0,0],orPassNames=['Player 1','Player 2'];
+let orSendTheme='nums',orSendLen=5,orSendStyle='flash';
+let orChalSeq=[],orChalCode='',orChalScore=0;
+function orRandSeq(len,themeId){
+  const items=orGetItems(themeId);const seq=[];
+  for(let i=0;i<len;i++)seq.push(items[Math.floor(Math.random()*items.length)]);
+  return seq;
+}
 function orSetTheme(id){orTheme=id;orBuildThemeGrid('or-theme-grid',orTheme,orSetTheme)}
 function orPassSetTheme(id){orPassTheme=id;orBuildThemeGrid('or-pass-theme-grid',orPassTheme,orPassSetTheme)}
 function orSendSetTheme(id){orSendTheme=id;orBuildThemeGrid('or-send-theme-grid',orSendTheme,orSendSetTheme)}

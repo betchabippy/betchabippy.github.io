@@ -203,7 +203,7 @@ button:active{transform:scale(.98)}
 <div class="hdr">
   <img src="logo.png" alt="BetchaBippy Mind Games">
   <div style="display:flex;align-items:center;gap:8px">
-    <button onclick="goGame('st')" style="background:none;border:none;cursor:pointer;padding:4px;opacity:0.7;text-align:center;line-height:1" title="Stats"><span style="font-size:18px;display:block">📊</span><span style="font-size:9px;color:var(--tx2);display:block;margin-top:1px">Stats</span></button>
+    <button onclick="goArchive()" style="background:none;border:none;cursor:pointer;padding:4px;opacity:0.7;text-align:center;line-height:1" title="Archive"><span style="font-size:18px;display:block">📁</span><span style="font-size:9px;color:var(--tx2);display:block;margin-top:1px">Archive</span></button><button onclick="goGame('st')" style="background:none;border:none;cursor:pointer;padding:4px;opacity:0.7;text-align:center;line-height:1" title="Stats"><span style="font-size:18px;display:block">📊</span><span style="font-size:9px;color:var(--tx2);display:block;margin-top:1px">Stats</span></button>
     <div id="ib" style="display:none"><button class="btn-p" onclick="installApp()" style="font-size:11px;padding:6px 12px">+ Install</button></div>
   </div>
 </div>
@@ -532,8 +532,10 @@ button:active{transform:scale(.98)}
 </div>
 
 <div id="s-ws-play" class="scr">
+  <div id="mp-archive-banner" style="display:none;text-align:center;padding:4px 10px;background:var(--info-bg);border-radius:6px;font-size:11px;color:var(--info-tx);margin-bottom:6px;border:1px solid var(--info-bd)">📁 Archive Mode — score not counted in stats</div>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <span style="font-size:12px;color:var(--tx2)" id="ws-progress">Word 1 of 5</span>
+    <div id="ws-archive-banner" style="display:none;text-align:center;padding:4px 10px;background:var(--info-bg);border-radius:6px;font-size:11px;color:var(--info-tx);margin-bottom:6px;border:1px solid var(--info-bd)">📁 Archive Mode — score not counted in stats</div>
+  <span style="font-size:12px;color:var(--tx2)" id="ws-progress">Word 1 of 5</span>
     <div class="lsb" style="margin:0"><span class="ll">Score</span><span class="lv" id="ws-play-score">0</span></div>
   </div>
   <div id="ws-sentence-bar" style="font-size:14px;font-family:monospace;letter-spacing:.04em;padding:10px 12px;background:var(--bg2);border-radius:10px;margin-bottom:14px;line-height:2;word-spacing:10px"></div>
@@ -714,6 +716,19 @@ button:active{transform:scale(.98)}
 </div>
 
 <!-- STATS -->
+<div id="s-archive" class="scr">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <p style="font-size:15px;font-weight:700">Archives</p>
+    <button onclick="goBack()" style="font-size:11px;padding:5px 10px">← Back</button>
+  </div>
+  <div style="display:flex;gap:6px;margin-bottom:14px">
+    <button id="arc-tab-mp" class="btn-p" onclick="archiveRender('mp')" style="flex:1;font-size:13px;padding:8px">🧩 Peeky</button>
+    <button id="arc-tab-ws" onclick="archiveRender('ws')" style="flex:1;font-size:13px;padding:8px;background:var(--bg2);color:var(--tx1);border:1px solid var(--bd2)">📝 Crony</button>
+  </div>
+  <p style="font-size:11px;color:var(--tx2);margin-bottom:10px">Last 30 days — titles hidden until you play. Archive scores don't affect your stats.</p>
+  <div id="archive-list" style="display:grid;gap:8px"></div>
+</div>
+
 <div id="s-st-home" class="scr">
   <div class="ghdr"><div class="gic" style="background:var(--bg2);color:var(--tx1);border-color:var(--bd2)">📊</div><div><p style="font-size:14px;font-weight:600;margin-bottom:2px">Stats</p><p style="font-size:12px;color:var(--tx1)">Your personal records across all games</p></div></div>
   <div id="stats-player-bar" style="margin-bottom:10px"></div>
@@ -1565,16 +1580,16 @@ function wsSetupHome(){
 }
 function wsStartDaily(){
   wsDailyPuzzle=wsGetDailyPuzzle();
-  wsWordIdx=0;wsCluesShown=0;wsGameScore=0;wsWordResults=[];
+  wsWordIdx=0;wsCluesShown=0;wsGameScore=75;wsWordResults=[];
   goScr('ws-play');
   wsRenderCurrentWord();
 }
 function wsRenderCurrentWord(){
   const word=wsDailyPuzzle.words[wsWordIdx];
   const total=wsDailyPuzzle.words.length;
-  document.getElementById('ws-progress').textContent='Word '+(wsWordIdx+1)+' of '+total;
+  document.getElementById('ws-progress').textContent='Word '+(wsWordIdx+1)+' of '+total;const wab=document.getElementById('ws-archive-banner');if(wab)wab.style.display=wsArchiveMode?'block':'none';
   const badge=document.getElementById('ws-letter-badge');if(badge)badge.textContent=word.l;
-  const mp=document.getElementById('ws-max-pts');if(mp)mp.textContent='Guess now for 20pts!';
+  const mp=document.getElementById('ws-max-pts');if(mp)mp.textContent='Correct now for +10pts bonus!';
   document.getElementById('ws-clues-area').innerHTML='';
   wsCluesShown=0;
   const inp=document.getElementById('ws-guess-input');if(inp){inp.value='';inp.disabled=false;setTimeout(()=>inp.focus(),100);}
@@ -1601,11 +1616,13 @@ function wsRenderSentenceBar(){
 function wsUpdateClueBtn(){
   const btn=document.getElementById('ws-clue-btn');if(!btn)return;
   if(wsCluesShown>=3){btn.textContent='No more clues';btn.disabled=true;btn.style.opacity='0.4';}
-  else{const pts=[15,10,5][wsCluesShown];btn.textContent='Give me a clue ('+pts+'pts if correct)';btn.disabled=false;btn.style.opacity='1';}
+  else{const pts=[15,10,5][wsCluesShown];btn.textContent='Give me a clue (-10pts, '+(wsCluesShown===0?'3':'2-'+(3-wsCluesShown))+' left)';btn.disabled=false;btn.style.opacity='1';}
 }
 function wsRevealClue(){
   if(wsCluesShown>=3)return;
   wsCluesShown++;
+  wsGameScore=Math.max(0,wsGameScore-10);
+  document.getElementById('ws-play-score').textContent=wsGameScore;
   const word=wsDailyPuzzle.words[wsWordIdx];
   const clue=word.c[wsCluesShown-1];
   const pts=[15,10,5][wsCluesShown-1];
@@ -1615,7 +1632,7 @@ function wsRevealClue(){
   el.style.cssText='padding:8px 10px;margin:4px 0;border-radius:8px;font-size:13px;background:'+colors[wsCluesShown-1]+';color:'+txcols[wsCluesShown-1];
   el.innerHTML='<strong>Clue '+wsCluesShown+':</strong> '+clue+'<span style="float:right;opacity:0.7">'+pts+'pts</span>';
   document.getElementById('ws-clues-area').appendChild(el);
-  const mp=document.getElementById('ws-max-pts');if(mp)mp.textContent=pts+'pts if correct now';
+  const mp=document.getElementById('ws-max-pts');if(mp)mp.textContent='Correct now — score: '+wsGameScore;
   wsUpdateClueBtn();
   const inp=document.getElementById('ws-guess-input');if(inp)setTimeout(()=>inp.focus(),50);
 }
@@ -1625,13 +1642,15 @@ function wsSubmitGuess(){
   if(!guess)return;
   const word=wsDailyPuzzle.words[wsWordIdx];
   if(guess===word.w.toUpperCase()){
-    const earned=[20,15,10,5][wsCluesShown];
-    wsGameScore+=earned;
+    const earned=wsCluesShown===0?10:0;
+    wsGameScore=Math.max(0,wsGameScore+earned);
     wsWordResults.push({w:word.w,earned,revealed:false});
     wsShowWordFeedback(true,earned,word.w);
     setTimeout(wsAdvanceWord,1400);
   }else{
     inp.value='';
+    wsGameScore=Math.max(0,wsGameScore-5);
+    document.getElementById('ws-play-score').textContent=wsGameScore;
     const r=document.getElementById('ws-guess-result');
     r.style.color='var(--err-tx)';r.textContent='Not quite — try again or get a clue!';
     setTimeout(()=>{if(r.textContent.startsWith('Not'))r.textContent='';},1500);
@@ -1640,16 +1659,17 @@ function wsSubmitGuess(){
 }
 function wsSkipWord(){
   const word=wsDailyPuzzle.words[wsWordIdx];
-  wsWordResults.push({w:word.w,earned:0,revealed:true});
-  wsShowWordFeedback(false,0,word.w);
+  wsGameScore=Math.max(0,wsGameScore-15);
+  wsWordResults.push({w:word.w,earned:-15,revealed:true});
+  wsShowWordFeedback(false,-15,word.w);
   setTimeout(wsAdvanceWord,1400);
 }
 function wsShowWordFeedback(correct,earned,wordStr){
   const inp=document.getElementById('ws-guess-input');if(inp)inp.disabled=true;
   document.getElementById('ws-play-score').textContent=wsGameScore;
   const r=document.getElementById('ws-guess-result');
-  if(correct){r.style.color='var(--ok-tx)';r.textContent='+'+earned+'pts! Great job!';}
-  else{r.style.color='var(--tx2)';r.textContent='The word was "'+wordStr+'"';}
+  if(correct){r.style.color='var(--ok-tx)';r.textContent=(earned>0?'+'+earned+'pts! Nailed it!':'Correct! (no bonus)');}
+  else{r.style.color='var(--err-tx)';r.textContent=(earned<0?earned+'pts — word was "'+wordStr+'"':'Word was "'+wordStr+'"');}
   wsRenderSentenceBar();
 }
 function wsAdvanceWord(){
@@ -1658,7 +1678,7 @@ function wsAdvanceWord(){
   else{wsCluesShown=0;wsRenderCurrentWord();}
 }
 function wsShowReveal(){
-  localStorage.setItem(wsDailyKey(),JSON.stringify({score:wsGameScore}));
+  localStorage.setItem(wsArchiveMode?'archive_crony_'+archiveDateKey:wsDailyKey(),JSON.stringify({score:wsGameScore}));if(wsArchiveMode){wsArchiveMode=false;archiveDateKey=null;}
   const p=wsDailyPuzzle;
   const em=document.getElementById('ws-reveal-emoji');if(em)em.textContent=p.emoji;
   document.getElementById('ws-reveal-score').textContent=wsGameScore;
@@ -1839,10 +1859,12 @@ async function orRecvTap(val){
 
 // ── SCRAMBLER ─────────────────────────────────────────────────────────────────
 const SC_SENTENCES={
-  3:[['hit','the','gas'],['pet','the','dog'],['eat','your','food'],['hold','the','line'],['turn','the','page'],['find','the','key'],['pass','the','ball'],['cut','the','cake'],['drop','the','mic'],['save','the','day'],['walk','the','dog'],['ring','the','bell']],
-  4:[['my','kitty','is','pretty'],['the','sun','shines','bright'],['the','fox','runs','fast'],['the','clock','ticks','slow'],['the','wind','blows','cold'],['the','kite','flies','high'],['the','river','flows','deep'],['the','rose','smells','sweet'],['the','bird','sings','sweet'],['the','fire','burns','hot'],['time','flies','so','fast'],['the','moon','glows','bright']],
-  5:[['the','cat','sat','on','mat'],['he','ran','down','the','hill'],['they','played','in','the','park'],['the','dog','barked','all','night'],['she','baked','a','sweet','cake'],['he','threw','the','ball','high'],['they','swam','in','the','lake'],['she','drew','a','big','star'],['the','snow','fell','very','fast'],['he','climbed','up','the','tree'],['the','kids','ran','to','school'],['she','wore','a','red','dress']],
-  6:[['she','walked','alone','down','the','road'],['the','old','clock','struck','midnight','twice'],['she','baked','fresh','bread','every','morning'],['he','wrote','a','long','letter','today'],['they','sat','quietly','by','the','fire'],['the','little','girl','chased','a','butterfly'],['the','waves','crashed','against','the','shore'],['he','jumped','over','the','garden','wall'],['the','wind','howled','through','the','trees'],['she','danced','alone','under','the','stars'],['they','ran','laughing','through','the','rain'],['he','cooked','dinner','for','his','family']]
+  3:[['hit','the','gas'],['pet','the','dog'],['eat','your','food'],['hold','the','line'],['turn','the','page'],['find','the','key'],['drop','the','mic'],['save','the','day'],['pass','the','ball'],['ring','the','bell'],['cut','the','cake'],['walk','the','dog']],
+  4:[['cold','wind','blows','hard'],['birds','sing','at','dawn'],['waves','crash','on','shore'],['wild','geese','fly','south'],['dark','clouds','gather','fast'],['stars','fade','at','dawn'],['old','bridge','creaks','loud'],['fresh','bread','smells','good'],['the','fox','leaps','high'],['snow','drifts','grow','deep'],['rain','soaks','the','earth'],['fire','climbs','the','wall']],
+  5:[['brave','sailors','crossed','the','storm'],['wild','horses','ran','through','fields'],['she','found','a','hidden','path'],['the','candle','flickered','and','died'],['cold','rivers','carve','deep','valleys'],['thunder','shook','the','fragile','glass'],['the','fox','outran','the','hounds'],['she','whispered','into','the','dark'],['he','climbed','the','ancient','tower'],['broken','clocks','keep','no','time'],['mist','clung','to','the','ridge'],['the','lantern','swayed','in','wind']],
+  6:[['beyond','the','ridge','lay','quiet','valleys'],['the','weary','monk','rang','the','bell'],['beneath','old','stones','sleep','forgotten','kings'],['wild','ivy','crept','across','the','archway'],['her','laughter','echoed','through','empty','halls'],['the','narrow','path','wound','through','pines'],['a','lone','wolf','howled','at','dusk'],['the','merchant','counted','coins','by','candlelight'],['old','maps','hide','more','than','words'],['the','ferryman','crossed','the','dark','river'],['fog','swallowed','the','weary','lantern','carrier'],['broken','glass','reflected','a','twisted','world']],
+  7:[['the','crumbling','tower','stood','against','the','sky'],['she','traced','the','old','route','through','memory'],['cold','mist','rose','from','the','sunken','garden'],['he','read','the','warning','carved','in','stone'],['the','crowd','fell','silent','at','her','entrance'],['distant','thunder','rattled','the','old','window'],['moonlight','filtered','through','the','ancient','glass'],['the','youngest','traveler','found','the','hidden','marker'],['she','folded','the','map','along','its','crease'],['a','restless','tide','pulled','the','small','boats'],['the','hermit','burned','letters','one','by','one'],['dark','water','rose','beneath','the','rotting','planks']],
+  8:[['she','opened','the','letter','with','trembling','careful','hands'],['beyond','the','frozen','tundra','lay','the','cursed','valley'],['beneath','the','surface','of','the','pond','lay','secrets'],['the','broken','compass','pointed','toward','the','ruined','tower'],['a','strange','fog','rolled','in','from','the','harbor'],['the','wooden','bridge','swayed','above','the','rushing','torrent'],['cold','waves','erased','the','message','written','in','sand'],['she','found','a','hidden','key','beneath','the','statue'],['the','narrow','canyon','echoed','with','the','long','cry'],['the','village','elder','spoke','in','measured','careful','tones'],['he','mapped','every','road','that','the','army','destroyed'],['the','clockmaker','wound','the','spring','one','last','time']]
 };
 const SC_DECOYS={verbs:['run','fly','sit','eat','hit','get','put','see','let','set','cut','bat','day','bus','cup','key','tea','bee'],nouns:['car','bar','jar','gas','map','cap','lap','tap','dog','fog','log','toy'],adj:['big','old','cold','bold','gold','told'],common:['the','a','an','is','are','was','has','do','will','can','for','and','but','or','at','by','in','of','on','to','up','it','him','her','his','my','we','they','he','she','this','that']};
 function scGetDecoys(realWords,count){const real=new Set(realWords.map(w=>w.toLowerCase()));const pool=[...SC_DECOYS.verbs,...SC_DECOYS.nouns,...SC_DECOYS.adj,...SC_DECOYS.common];const decoys=[];const used=new Set(realWords.map(w=>w.toLowerCase()));for(const w of pool){if(!real.has(w)&&!used.has(w)){decoys.push(w);used.add(w)}if(decoys.length>=count)break}return decoys}
@@ -1858,7 +1880,7 @@ function scSendSetDecoys(n,btn){scSendDecoys=n;dimOthers('sc-send-decoy-btns',bt
 function scSendSetSpeed(s,btn){scSendSpeed=s;dimOthers('sc-send-speed-btns',btn)}
 function scStartSolo(){scRound=1;scTotalScore=0;scIsChallenge=false;scUsedSentences=new Set();goScr('sc-play');scDoRound()}
 function scDoRound(){
-  const len=Math.min(scStartLen+(scRound-1),6);const pool=SC_SENTENCES[len]||SC_SENTENCES[3];const available=pool.filter(s=>!scUsedSentences.has(s.join('|')));const source=available.length>0?available:pool;const sentence=source[Math.floor(Math.random()*source.length)];
+  const len=Math.min(scStartLen+(scRound-1),8);const pool=SC_SENTENCES[len]||SC_SENTENCES[3];const available=pool.filter(s=>!scUsedSentences.has(s.join('|')));const source=available.length>0?available:pool;const sentence=source[Math.floor(Math.random()*source.length)];
   scUsedSentences.add(sentence.join('|'));scCurrentWords=[...sentence];scCorrectOrder=[...sentence];
   document.getElementById('sc-round-badge').textContent='Round '+scRound;document.getElementById('sc-words-badge').textContent=len+' words';document.getElementById('sc-score').textContent=scTotalScore;document.getElementById('sc-msg').textContent='Watch the words carefully...';['sc-sentence-area','sc-picker-area','sc-result','sc-penalty'].forEach(id=>document.getElementById(id).style.display='none');document.getElementById('sc-submit-btn').style.display='none';document.getElementById('sc-flash-display').innerHTML='';
   scBuiltSentence=[];scPenaltyTotal=0;scPhase='flash';scFlashWords(scCurrentWords,scFlashSpeed,()=>scBeginRecall(len));
@@ -2125,7 +2147,7 @@ function mpInitGame(){
   ['mp-h-corners','mp-h-era'].forEach(id=>{const b=document.getElementById(id);if(b){b.disabled=false;b.style.opacity='1'}});mpUpdateSneakPeekBtn();
   const ub=document.getElementById('mp-upgrade-btn');if(ub)ub.style.display='';
   const mpg=document.getElementById('mp-grid');if(mpg){const gs2=mpImage.grid||4;mpg.style.gridTemplateColumns=`repeat(${gs2},1fr)`}
-  goScr('mp-play');mpRenderGrid();mpRenderLineup();mpUpdateFaceUpInfo();
+  goScr('mp-play');mpRenderGrid();mpRenderLineup();mpUpdateFaceUpInfo();const arcBanner=document.getElementById('mp-archive-banner');if(arcBanner)arcBanner.style.display=mpArchiveMode?'block':'none';
 }
 function mpBgStyle(pieceId){
   
@@ -2231,7 +2253,7 @@ function mpUpdateSneakPeekBtn(){
 }
 function mpShowResult(completed){
   const finalScore=mpScore;document.getElementById('mp-score').textContent=finalScore;
-  localStorage.setItem(mpDailyKey(),JSON.stringify({score:finalScore,completed}));
+  localStorage.setItem(mpArchiveMode?'archive_peeky_'+archiveDateKey:mpDailyKey(),JSON.stringify({score:finalScore,completed}));if(mpArchiveMode){mpArchiveMode=false;archiveDateKey=null;}
   const win=document.getElementById('mp-win');win.style.display='block';
   if(completed){win.style.background='var(--ok-bg)';win.style.borderColor='var(--ok-bd)';win.style.color='var(--ok-tx)';win.innerHTML=`🎉 Puzzle complete! <strong>${finalScore} pts</strong>${mpCorrectGuess?' · Named it! +'+mpGuessBonusEarned+' bonus':' · Guess next time for a bonus!'}`}
   else{win.style.background='var(--warn-bg)';win.style.borderColor='var(--warn-bd)';win.style.color='var(--warn-tx)';win.innerHTML=`Puzzle ended — <strong>${finalScore} pts</strong> · ${mpLockedCount}/16 correct`}
@@ -2320,6 +2342,85 @@ try{aiqCheckDaily()}catch(e){console.error('aiqCheckDaily:',e)}
     else if(g==='aiq'){document.getElementById('splash').style.display='none';goScr('aiq-home');aiqCheckDaily();nav5()}
   },300);
 })();
+
+// ── ARCHIVE ────────────────────────────────────────────────────────────────
+let archiveCurrentGame='mp',mpArchiveMode=false,wsArchiveMode=false,archiveDateKey=null;
+
+function goArchive(){goScr('s-archive');archiveRender('mp');}
+function goBack(){history.back();}
+
+function archiveSeed(y,m,d){return y*10000+m*100+d;}
+function archiveDateStr(date){
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return days[date.getDay()]+' '+months[date.getMonth()]+' '+date.getDate();
+}
+function archiveDailyKey(game,dateKey){return game+'_'+dateKey;}
+
+function archiveRender(game){
+  archiveCurrentGame=game;
+  const tabMp=document.getElementById('arc-tab-mp');
+  const tabWs=document.getElementById('arc-tab-ws');
+  if(tabMp&&tabWs){
+    tabMp.style.cssText=game==='mp'?'flex:1;font-size:13px;padding:8px':'flex:1;font-size:13px;padding:8px;background:var(--bg2);color:var(--tx1);border:1px solid var(--bd2)';
+    tabWs.style.cssText=game==='ws'?'flex:1;font-size:13px;padding:8px':'flex:1;font-size:13px;padding:8px;background:var(--bg2);color:var(--tx1);border:1px solid var(--bd2)';
+    if(game==='mp'){tabMp.className='btn-p';tabWs.className='';}else{tabWs.className='btn-p';tabMp.className='';}
+  }
+  const list=document.getElementById('archive-list');if(!list)return;
+  list.innerHTML='';
+  const today=new Date();
+  for(let i=1;i<=30;i++){
+    const d=new Date(today);d.setDate(d.getDate()-i);
+    const y=d.getFullYear(),m=d.getMonth()+1,day=d.getDate();
+    const dk=y+'_'+m+'_'+day;
+    const seed=archiveSeed(y,m,day);
+    const pool=game==='mp'?PEEKY_IMAGES:CRONY_PUZZLES;
+    const puzzle=pool[seed%pool.length];
+    const pNum=(seed%pool.length)+1;
+    const savedRaw=localStorage.getItem(archiveDailyKey(game,dk));
+    const saved=savedRaw?JSON.parse(savedRaw):null;
+    const isToday=(i===0);
+
+    const card=document.createElement('div');
+    card.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg2);border-radius:10px;border:1px solid var(--bd2)';
+
+    const left=document.createElement('div');
+    left.innerHTML='<div style="font-size:12px;font-weight:600;color:var(--tx1)">'+archiveDateStr(d)+'</div>'+
+      '<div style="font-size:11px;color:var(--tx2);margin-top:2px">'+(game==='mp'?'🧩':'📝')+' Puzzle #'+pNum+(saved?' · <span style="color:var(--ok-tx)">Played</span>':'')+'</div>'+
+      (saved&&saved.score!==undefined?'<div style="font-size:11px;color:var(--tx2)">Score: '+saved.score+'pts</div>':'');
+
+    const btn=document.createElement('button');
+    btn.style.cssText='font-size:12px;padding:6px 12px;white-space:nowrap';
+    btn.textContent=saved?'Play again':'Play →';
+    btn.className=saved?'':'btn-p';
+    btn.onclick=(function(dateKey,g){return function(){archivePlay(dateKey,g);};})(dk,game);
+
+    card.appendChild(left);card.appendChild(btn);
+    list.appendChild(card);
+  }
+}
+
+function archivePlay(dateKey,game){
+  archiveDateKey=dateKey;
+  const parts=dateKey.split('_').map(Number);
+  const seed=archiveSeed(parts[0],parts[1],parts[2]);
+  if(game==='mp'){
+    mpArchiveMode=true;
+    mpImage=PEEKY_IMAGES[seed%PEEKY_IMAGES.length];
+    const pb=document.getElementById('mp-play-btn');
+    if(pb){pb.disabled=false;pb.textContent='Play Archive Puzzle →';}
+    goScr('s-mp-home');
+    // show archive banner
+    const ap=document.getElementById('mp-already-played');if(ap)ap.style.display='none';
+    setTimeout(()=>mpStartGame(),100);
+  }else{
+    wsArchiveMode=true;
+    wsDailyPuzzle=CRONY_PUZZLES[seed%CRONY_PUZZLES.length];
+    wsWordIdx=0;wsCluesShown=0;wsGameScore=75;wsWordResults=[];
+    goScr('ws-play');
+    wsRenderCurrentWord();
+  }
+}
 </script>
 </body>
 </html>

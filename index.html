@@ -1879,9 +1879,11 @@ function scSetSpeed(s,btn){scFlashSpeed=s;dimOthers('sc-speed-btns',btn)}
 function scSendSetDecoys(n,btn){scSendDecoys=n;dimOthers('sc-send-decoy-btns',btn)}
 function scSendSetSpeed(s,btn){scSendSpeed=s;dimOthers('sc-send-speed-btns',btn)}
 function scStartSolo(){scRound=1;scTotalScore=0;scIsChallenge=false;scUsedSentences=new Set();goScr('sc-play');scDoRound()}
+function scGetUsedSentences(){try{return new Set(JSON.parse(localStorage.getItem('sc_used')||'[]'))}catch{return new Set()}}
+function scMarkSentenceUsed(sentence){const used=scGetUsedSentences();used.add(sentence.join('|'));localStorage.setItem('sc_used',JSON.stringify([...used]))}
 function scDoRound(){
-  const len=Math.min(scStartLen+(scRound-1),8);const pool=SC_SENTENCES[len]||SC_SENTENCES[3];const available=pool.filter(s=>!scUsedSentences.has(s.join('|')));const source=available.length>0?available:pool;const sentence=source[Math.floor(Math.random()*source.length)];
-  scUsedSentences.add(sentence.join('|'));scCurrentWords=[...sentence];scCorrectOrder=[...sentence];
+  const len=Math.min(scStartLen+(scRound-1),8);const pool=SC_SENTENCES[len]||SC_SENTENCES[3];const globalUsed=scGetUsedSentences();const available=pool.filter(s=>!globalUsed.has(s.join('|')));if(available.length===0)localStorage.removeItem('sc_used');const source=available.length>0?available:pool;const sentence=source[Math.floor(Math.random()*source.length)];
+  scMarkSentenceUsed(sentence);scCurrentWords=[...sentence];scCorrectOrder=[...sentence];
   document.getElementById('sc-round-badge').textContent='Round '+scRound;document.getElementById('sc-words-badge').textContent=len+' words';document.getElementById('sc-score').textContent=scTotalScore;document.getElementById('sc-msg').textContent='Watch the words carefully...';['sc-sentence-area','sc-picker-area','sc-result','sc-penalty'].forEach(id=>document.getElementById(id).style.display='none');document.getElementById('sc-submit-btn').style.display='none';document.getElementById('sc-flash-display').innerHTML='';
   scBuiltSentence=[];scPenaltyTotal=0;scPhase='flash';scFlashWords(scCurrentWords,scFlashSpeed,()=>scBeginRecall(len));
 }
@@ -1895,16 +1897,16 @@ function scBeginRecall(len){
   scPhase='recall';document.getElementById('sc-msg').textContent='Find the words and arrange them into a sentence!';document.getElementById('sc-flash-display').innerHTML='';document.getElementById('sc-sentence-area').style.display='block';document.getElementById('sc-picker-area').style.display='block';document.getElementById('sc-submit-btn').style.display='block';
   const decoys=scGetDecoys(scCurrentWords,scDecoyCount);scPickerWords=[...scCurrentWords,...decoys].sort(()=>Math.random()-.5);
   const picker=document.getElementById('sc-word-picker');picker.innerHTML='';scPickerWords.forEach(word=>{const btn=document.createElement('button');btn.className='seq-pk';btn.style.cssText='height:auto;width:auto;padding:8px 14px;font-size:14px;font-weight:600;border-radius:8px';btn.textContent=word;btn.dataset.word=word;btn.onclick=()=>scTapWord(word,btn);picker.appendChild(btn)});
-  const tmap={3:10,4:15,5:20,6:30};scTimeLeft=tmap[len]||15;scUpdateTimer();clearInterval(scTimerInterval);scTimerInterval=setInterval(()=>{scTimeLeft--;scUpdateTimer();if(scTimeLeft<=0){clearInterval(scTimerInterval);scAutoSubmit()}},1000);scRenderSentence();
+  const tmap={3:10,4:15,5:20,6:30,7:40,8:50};scTimeLeft=tmap[len]||30;scUpdateTimer();clearInterval(scTimerInterval);scTimerInterval=setInterval(()=>{scTimeLeft--;scUpdateTimer();if(scTimeLeft<=0){clearInterval(scTimerInterval);scAutoSubmit()}},1000);scRenderSentence();
 }
 function scUpdateTimer(){const el=document.getElementById('sc-timer');if(el){el.textContent=scTimeLeft;el.style.color=scTimeLeft<=5?'var(--err-tx)':'var(--warn-tx)'}}
 function scTapWord(word,btn){
-  if(scPhase!=='recall')return;const isReal=scCurrentWords.includes(word)&&!scBuiltSentence.includes(word);
+  if(scPhase!=='recall')return;const needed=scCurrentWords.filter(w=>w===word).length;const placed=scBuiltSentence.filter(w=>w===word).length;const isReal=placed<needed;
   if(!isReal){scPenaltyTotal+=10;const p=document.getElementById('sc-penalty');p.textContent='-10 pts';p.style.display='block';btn.style.background='var(--err-bg)';btn.style.borderColor='var(--err-bd)';setTimeout(()=>{p.style.display='none';btn.style.background='';btn.style.borderColor=''},700);return}
   scBuiltSentence.push(word);btn.classList.add('used');scRenderSentence();if(scBuiltSentence.length===scCurrentWords.length){clearInterval(scTimerInterval);scSubmit()}
 }
 function scRenderSentence(){const slots=document.getElementById('sc-sentence-slots');slots.innerHTML='';if(!scBuiltSentence.length){const ph=document.createElement('span');ph.style.cssText='font-size:12px;color:var(--tx2);padding:8px';ph.textContent='Tap words below to build your sentence...';slots.appendChild(ph);return}scBuiltSentence.forEach((word,i)=>{const chip=document.createElement('div');chip.style.cssText='padding:6px 12px;background:var(--purple-lt);border:1px solid var(--purple-bd);border-radius:8px;font-size:14px;font-weight:700;color:var(--purple-tx);cursor:pointer';chip.textContent=word;chip.onclick=()=>scRemoveWord(i);slots.appendChild(chip)})}
-function scRemoveWord(idx){if(scPhase!=='recall')return;const word=scBuiltSentence[idx];scBuiltSentence.splice(idx,1);document.querySelectorAll('#sc-word-picker button').forEach(btn=>{if(btn.dataset.word===word&&btn.classList.contains('used')){btn.classList.remove('used')}});scRenderSentence()}
+function scRemoveWord(idx){if(scPhase!=='recall')return;const word=scBuiltSentence[idx];scBuiltSentence.splice(idx,1);let _found=false;[...document.querySelectorAll('#sc-word-picker button')].reverse().forEach(btn=>{if(!_found&&btn.dataset.word===word&&btn.classList.contains('used')){btn.classList.remove('used');_found=true;}});scRenderSentence()}
 function scUndoLast(){if(!scBuiltSentence.length)return;scRemoveWord(scBuiltSentence.length-1)}
 function scAutoSubmit(){scPhase='done';scSubmit()}
 function scSubmit(){
@@ -2346,7 +2348,7 @@ try{aiqCheckDaily()}catch(e){console.error('aiqCheckDaily:',e)}
 // ── ARCHIVE ────────────────────────────────────────────────────────────────
 let archiveCurrentGame='mp',mpArchiveMode=false,wsArchiveMode=false,archiveDateKey=null;
 
-function goArchive(){goScr('s-archive');archiveRender('mp');}
+function goArchive(){goScr('archive');archiveRender('mp');}
 function goBack(){history.back();}
 
 function archiveSeed(y,m,d){return y*10000+m*100+d;}
@@ -2407,12 +2409,9 @@ function archivePlay(dateKey,game){
   if(game==='mp'){
     mpArchiveMode=true;
     mpImage=PEEKY_IMAGES[seed%PEEKY_IMAGES.length];
-    const pb=document.getElementById('mp-play-btn');
-    if(pb){pb.disabled=false;pb.textContent='Play Archive Puzzle →';}
-    goScr('s-mp-home');
-    // show archive banner
-    const ap=document.getElementById('mp-already-played');if(ap)ap.style.display='none';
-    setTimeout(()=>mpStartGame(),100);
+    const pre=new Image();
+    pre.onload=pre.onerror=()=>{mpInitGame();};
+    pre.src=mpImage.url;
   }else{
     wsArchiveMode=true;
     wsDailyPuzzle=CRONY_PUZZLES[seed%CRONY_PUZZLES.length];

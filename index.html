@@ -890,7 +890,10 @@ button:active{transform:scale(.98)}
     <p style="font-size:13px;font-weight:600;color:var(--ok-tx)">You've done today's Peeky!</p>
     <p style="font-size:11px;color:var(--ok-tx);margin-top:4px">Come back tomorrow for a new one.</p>
   </div>
-  <button class="btn-p" id="mp-play-btn" onclick="mpStartGame()" style="width:100%;padding:12px;font-size:15px">Play Today's Peeky →</button>
+  <div style="display:flex;gap:8px">
+    <button onclick="htpOpen('peeky')" style="padding:12px 14px;font-size:13px">? How to Play</button>
+    <button class="btn-p" id="mp-play-btn" onclick="mpStartGame()" style="flex:1;padding:12px;font-size:15px">Play Today's Peeky →</button>
+  </div>
 </div>
 
 <!-- MAPPY PLAY -->
@@ -1984,7 +1987,7 @@ function aiqGetDailyQuote(){const d=new Date();const day=Math.floor((d-new Date(
 function aiqCheckDaily(){
   const today=aiqTodayKey();const saved=localStorage.getItem(AIQ_STORE);const data=saved?JSON.parse(saved):null;const content=document.getElementById('aiq-home-content');if(!content)return;
   if(data&&data.date===today){const q=aiqGetDailyQuote();content.innerHTML=`<div class="card" style="text-align:center;padding:20px 14px;margin-bottom:10px"><div style="font-size:36px;margin-bottom:8px">✅</div><p style="font-size:15px;font-weight:700;margin-bottom:4px">You've played today!</p><p style="font-size:12px;color:var(--tx1);line-height:1.7;margin-bottom:12px">Today's quote: <em>"${q.words.join(' ')}"</em><br><strong>— ${q.author}</strong></p><div style="font-size:13px;font-weight:700;color:var(--purple-tx);margin-bottom:4px">Your score: ${data.score} pts</div><div style="font-size:11px;color:var(--tx2)">Next quote unlocks in <span id="aiq-cd">${aiqMidnightCountdown()}</span></div></div><button class="cb" onclick="aiqShareDaily(${data.score})">📤 Share my score</button>`;const tick=setInterval(()=>{const el=document.getElementById('aiq-cd');if(el)el.textContent=aiqMidnightCountdown();else clearInterval(tick)},1000)}
-  else{const q=aiqGetDailyQuote();content.innerHTML=`<div class="card" style="margin-bottom:10px"><div class="st">Today's quote</div><p style="font-size:13px;color:var(--tx1);line-height:1.6">Category: <strong>${q.category}</strong></p><p style="font-size:12px;color:var(--tx2);margin-top:4px">One shot. Score as high as you can.</p></div><button class="btn-p" onclick="aiqStart()" style="width:100%;padding:10px;font-size:14px">Play today's quote →</button>`}
+  else{const q=aiqGetDailyQuote();content.innerHTML=`<div class="card" style="margin-bottom:10px"><div class="st">Today's quote</div><p style="font-size:13px;color:var(--tx1);line-height:1.6">Category: <strong>${q.category}</strong></p><p style="font-size:12px;color:var(--tx2);margin-top:4px">One shot. Score as high as you can.</p></div><div style="display:flex;gap:8px"><button onclick="htpOpen('aiq')" style="padding:10px 14px;font-size:13px">? How to Play</button><button class="btn-p" onclick="aiqStart()" style="flex:1;padding:10px;font-size:14px">Play today's quote →</button></div>`}
 }
 function aiqShareDaily(score){const txt=`💡 BetchaBippy® Mind Games\n💬 And I Quote\n\n🏆 ${score} pts\n\nCan you beat it?`+GAME_LINK;if(navigator.share)navigator.share({text:txt}).catch(()=>{});else navigator.clipboard.writeText(txt).then(()=>showToast('Score copied!')).catch(()=>{})}
 function aiqStart(){
@@ -2419,6 +2422,222 @@ function archivePlay(dateKey,game){
     goScr('ws-play');
     wsRenderCurrentWord();
   }
+}
+
+// ── HOW TO PLAY ────────────────────────────────────────────────────────────
+let htpGame='',htpStep=0;
+
+const HTP={
+peeky:{
+  title:'🧩 How to Play Peeky',
+  steps:[
+    {
+      text:'A famous image is scrambled into 36 pieces. Your goal is to reassemble it — and guess what it is!',
+      anim:`<div style="position:relative">
+        <div style="display:grid;grid-template-columns:repeat(4,42px);gap:3px;margin:0 auto;width:fit-content">
+          ${Array.from({length:16},(_,i)=>`<div style="width:42px;height:42px;border-radius:5px;overflow:hidden;border:2px solid var(--bd2);${i<6?`background-image:url('/images/monalisa.jpg');background-size:400% 400%;background-position:${(i%4)/3*100}% ${Math.floor(i/4)/3*100}%`:'background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--tx3)'}">${i>=6?'?':''}</div>`).join('')}
+        </div>
+        <div style="margin-top:10px;text-align:center;font-size:11px;color:var(--tx2)">Some pieces placed — others still hidden in lineup</div>
+      </div>`
+    },
+    {
+      text:'Tap a piece in the <b>lineup</b> to flip it face-up. Tap it again to select it, then tap a grid cell to place it. Correct placements lock green and earn <span style="color:var(--ok-tx);font-weight:700">+5pts</span>!',
+      anim:`<div style="text-align:center">
+        <div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">
+          <div style="width:52px;height:52px;border-radius:8px;background:var(--bg3);border:2px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--tx3)">?</div>
+          <div style="width:52px;height:52px;border-radius:8px;background-image:url('/images/monalisa.jpg');background-size:400%;background-position:0 0;border:3px solid var(--purple);animation:htpPulse 1.5s infinite"></div>
+          <div style="width:52px;height:52px;border-radius:8px;background:var(--bg3);border:2px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--tx3)">?</div>
+        </div>
+        <div style="font-size:22px;margin:4px 0">↓</div>
+        <div style="display:grid;grid-template-columns:repeat(3,52px);gap:4px;margin:0 auto;width:fit-content">
+          <div style="height:52px;border-radius:8px;background:var(--bg2);border:2px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--tx3);font-weight:600">1</div>
+          <div style="height:52px;border-radius:8px;background:var(--teal-lt);border:3px solid var(--teal);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--teal)">✓ +5pts</div>
+          <div style="height:52px;border-radius:8px;background:var(--bg2);border:2px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--tx3);font-weight:600">3</div>
+        </div>
+      </div>`
+    },
+    {
+      text:'Tap a <b>placed piece</b> to select it, then tap another grid cell to <b>swap</b> positions — or tap an empty cell to move it there. Locked green pieces cannot be moved.',
+      anim:`<div style="text-align:center">
+        <div style="display:grid;grid-template-columns:repeat(3,52px);gap:4px;margin:0 auto 10px;width:fit-content">
+          <div style="height:52px;border-radius:8px;background-image:url('/images/monalisa.jpg');background-size:400%;background-position:0 50%;border:3px solid var(--purple);animation:htpPulse 1.5s infinite;position:relative">
+            <div style="position:absolute;inset:0;background:rgba(124,58,237,0.15);border-radius:6px"></div>
+          </div>
+          <div style="height:52px;border-radius:8px;background-image:url('/images/monalisa.jpg');background-size:400%;background-position:50% 0;border:2px solid var(--bd2)"></div>
+          <div style="height:52px;border-radius:8px;background:var(--bg2);border:2px dashed var(--purple);display:flex;align-items:center;justify-content:center;font-size:20px">↙</div>
+        </div>
+        <p style="font-size:11px;color:var(--tx2)">Selected piece → tap empty cell to move it<br>or tap another piece to swap</p>
+      </div>`
+    },
+    {
+      text:'<b>Guess the image</b> at any time for a bonus! Correct guess = <span style="color:var(--ok-tx);font-weight:700">+bonus pts</span> based on pieces remaining. Wrong guess = <span style="color:var(--err-tx);font-weight:700">-5pts</span>. Guess early for the biggest reward!',
+      anim:`<div style="text-align:center">
+        <div style="background:var(--bg2);border-radius:10px;padding:10px 14px;margin-bottom:10px;border:1px solid var(--bd2)">
+          <div style="font-size:12px;color:var(--tx2);margin-bottom:6px">What is this image?</div>
+          <div style="display:flex;gap:6px">
+            <div style="flex:1;background:var(--bg0);border:1px solid var(--bd2);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--tx1);text-align:left">Mona Lisa</div>
+            <div style="background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;color:var(--ok-tx)">✓</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:center">
+          <div style="background:var(--ok-bg);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;color:var(--ok-tx);animation:htpScoreUp 1s ease infinite">+20pts bonus!</div>
+          <div style="background:var(--err-bg);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;color:var(--err-tx)">Wrong = -5pts</div>
+        </div>
+      </div>`
+    }
+  ]
+},
+crony:{
+  title:'📝 How to Play Crony',
+  steps:[
+    {
+      text:'Each letter of a secret word starts a word in a hidden sentence. Today\'s word might be <b>PHONE</b> — your job is to guess each word one letter at a time.',
+      anim:`<div style="text-align:center">
+        <div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">
+          ${['P','H','O','N','E'].map((l,i)=>`<div style="width:44px;height:52px;border-radius:10px;background:var(--amber-lt);border:2px solid var(--amber-bd);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:var(--amber-tx);animation:htpFadeIn 0.4s ${i*0.15}s both">${l}</div>`).join('')}
+        </div>
+        <div style="font-size:12px;color:var(--tx2)">Each letter = one word in the sentence</div>
+      </div>`
+    },
+    {
+      text:'Try to guess each word <b>before asking for clues</b> — a correct guess with no clues earns <span style="color:var(--ok-tx);font-weight:700">+10pts</span>. A wrong guess costs <span style="color:var(--err-tx);font-weight:700">-5pts</span>. Start at 75pts.',
+      anim:`<div style="text-align:center">
+        <div style="background:var(--bg2);border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;gap:4px;align-items:center;justify-content:center;margin-bottom:8px">
+            <div style="width:44px;height:44px;border-radius:50%;background:var(--amber-lt);border:2px solid var(--amber-bd);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:var(--amber-tx)">P</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <input style="flex:1;background:var(--bg0);border:1px solid var(--bd2);border-radius:8px;padding:8px;font-size:13px;text-transform:uppercase;color:var(--tx1)" value="PRETTY" readonly>
+            <div style="background:var(--ok-bg);border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;color:var(--ok-tx)">✓</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:center">
+          <div style="background:var(--ok-bg);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--ok-tx);animation:htpScoreUp 1.2s ease infinite">+10pts!</div>
+          <div style="background:var(--err-bg);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--err-tx)">Wrong = -5pts</div>
+        </div>
+      </div>`
+    },
+    {
+      text:'Stuck? Tap <b>Give me a clue</b> — each clue costs <span style="color:var(--err-tx);font-weight:700">-10pts</span> from your total score immediately. Up to 3 clues per word. Use them wisely!',
+      anim:`<div style="text-align:center">
+        <div style="background:var(--bg2);border-radius:10px;padding:12px;margin-bottom:10px">
+          <div style="display:flex;gap:6px;flex-direction:column">
+            <div style="background:var(--ok-bg);border-radius:8px;padding:7px 10px;font-size:12px;color:var(--ok-tx)"><b>Clue 1:</b> Beauty is in the eye of the beholder</div>
+            <div style="background:var(--warn-bg);border-radius:8px;padding:7px 10px;font-size:12px;color:var(--warn-tx)"><b>Clue 2:</b> Think Instagram filter</div>
+            <div style="background:var(--err-bg);border-radius:8px;padding:7px 10px;font-size:12px;color:var(--err-tx)"><b>Clue 3:</b> Rhymes with witty</div>
+          </div>
+        </div>
+        <div style="background:var(--err-bg);border-radius:8px;padding:5px 14px;display:inline-block;font-size:12px;font-weight:700;color:var(--err-tx);animation:htpBounce 1s ease infinite">-10pts per clue used</div>
+      </div>`
+    },
+    {
+      text:'Solve all the words to reveal the full hidden sentence — and the punchline! Skip a word and <span style="color:var(--err-tx);font-weight:700">-15pts</span>.',
+      anim:`<div style="text-align:center">
+        <div style="background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:12px;padding:14px;margin-bottom:10px;animation:htpFadeIn 0.6s ease">
+          <div style="font-size:14px;font-weight:600;color:var(--ok-tx);margin-bottom:6px">"Pretty Houses Often Need Elegance"</div>
+          <div style="font-size:22px;font-weight:800;letter-spacing:0.15em;color:var(--amber-tx)">PHONE</div>
+        </div>
+        <div style="font-size:12px;color:var(--tx2);font-style:italic">Is it time to call that broker?! 📱</div>
+      </div>`
+    }
+  ]
+},
+aiq:{
+  title:'💬 How to Play And I Quote',
+  steps:[
+    {
+      text:'A famous quote is hidden — its words are scrambled in a grid. Tap words from the grid and place them into the correct blank slots to complete the quote.',
+      anim:`<div style="text-align:center">
+        <div style="background:var(--bg2);border-radius:10px;padding:10px;margin-bottom:10px">
+          <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:8px">
+            ${['wisdom','begin','with','wonder','all','knowledge','does'].map(w=>`<div style="padding:5px 10px;background:var(--bg0);border:1px solid var(--bd2);border-radius:8px;font-size:12px;font-weight:600;color:var(--tx1)">${w}</div>`).join('')}
+          </div>
+          <div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap">
+            ${['All','knowledge','begins','with','wonder'].map((w,i)=>`<div style="padding:5px 10px;background:${i<2?'var(--purple-lt)':'var(--bg2)'};border:1px solid ${i<2?'var(--purple-bd)':'var(--bd2)'};border-radius:8px;font-size:12px;font-weight:600;color:${i<2?'var(--purple-tx)':'var(--tx3)'}">${i<2?w:'___'}</div>`).join('')}
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--tx2)">Tap a word in the grid → tap a blank slot</div>
+      </div>`
+    },
+    {
+      text:'Tap <b>First word</b> or <b>Last word</b> to reveal that word as a hint — each costs <span style="color:var(--err-tx);font-weight:700">-5pts</span>. A great way to anchor the quote!',
+      anim:`<div style="text-align:center">
+        <div style="display:flex;gap:6px;justify-content:center;margin-bottom:12px">
+          <button style="flex:1;padding:8px;font-size:12px;background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:8px;color:var(--ok-tx);font-weight:600">First word (-5pts)</button>
+          <button style="flex:1;padding:8px;font-size:12px;background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:8px;color:var(--ok-tx);font-weight:600">Last word (-5pts)</button>
+        </div>
+        <div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-bottom:8px">
+          <div style="padding:5px 10px;background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:8px;font-size:13px;font-weight:700;color:var(--ok-tx);animation:htpFadeIn 0.5s ease">All ✓</div>
+          <div style="padding:5px 10px;background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;font-size:13px;color:var(--tx3)">___</div>
+          <div style="padding:5px 10px;background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;font-size:13px;color:var(--tx3)">___</div>
+          <div style="padding:5px 10px;background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;font-size:13px;color:var(--tx3)">___</div>
+          <div style="padding:5px 10px;background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:8px;font-size:13px;font-weight:700;color:var(--ok-tx);animation:htpFadeIn 0.5s 0.3s both">wonder ✓</div>
+        </div>
+        <div style="background:var(--err-bg);border-radius:8px;padding:4px 12px;display:inline-block;font-size:11px;font-weight:700;color:var(--err-tx)">Score: -5pts each</div>
+      </div>`
+    },
+    {
+      text:'Tap <b>Connector word</b> to reveal one conjunction or article (and, but, the, a…) — each costs <span style="color:var(--err-tx);font-weight:700">-15pts</span>. Tap again for the next one.',
+      anim:`<div style="text-align:center">
+        <button style="width:100%;padding:9px;font-size:12px;background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:8px;color:var(--warn-tx);font-weight:600;margin-bottom:12px">Connector word (-15pts)</button>
+        <div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-bottom:8px">
+          <div style="padding:5px 10px;background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:8px;font-size:13px;font-weight:700;color:var(--ok-tx)">All ✓</div>
+          <div style="padding:5px 10px;background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;font-size:13px;color:var(--tx3)">___</div>
+          <div style="padding:5px 10px;background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:8px;font-size:13px;font-weight:700;color:var(--warn-tx);animation:htpFadeIn 0.5s ease">with ✓</div>
+          <div style="padding:5px 10px;background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;font-size:13px;color:var(--tx3)">___</div>
+          <div style="padding:5px 10px;background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:8px;font-size:13px;font-weight:700;color:var(--ok-tx)">wonder ✓</div>
+        </div>
+        <div style="background:var(--err-bg);border-radius:8px;padding:4px 12px;display:inline-block;font-size:11px;font-weight:700;color:var(--err-tx)">-15pts per connector revealed</div>
+      </div>`
+    },
+    {
+      text:'Tap a <b>placed word</b> in the quote to return it to the grid for free. You can swap words around without penalty — only hints cost points!',
+      anim:`<div style="text-align:center;margin-bottom:8px">
+        <div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-bottom:10px">
+          <div style="padding:5px 10px;background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:8px;font-size:13px;font-weight:700;color:var(--ok-tx)">All</div>
+          <div style="padding:5px 10px;background:var(--purple-lt);border:2px solid var(--purple-bd);border-radius:8px;font-size:13px;font-weight:700;color:var(--purple-tx);animation:htpPulse 1.5s infinite;cursor:pointer">knowledge</div>
+          <div style="padding:5px 10px;background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:8px;font-size:13px;font-weight:700;color:var(--warn-tx)">with</div>
+          <div style="padding:5px 10px;background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;font-size:13px;color:var(--tx3)">___</div>
+          <div style="padding:5px 10px;background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:8px;font-size:13px;font-weight:700;color:var(--ok-tx)">wonder</div>
+        </div>
+        <div style="font-size:11px;color:var(--tx2)">Tap placed word → returns to grid (free!)<br>Tap word → tap different slot to move it</div>
+        <div style="margin-top:8px;background:var(--ok-bg);border-radius:8px;padding:5px 12px;display:inline-block;font-size:11px;font-weight:600;color:var(--ok-tx)">Moving words is always free ✓</div>
+      </div>`
+    }
+  ]
+}
+};
+
+let htpSteps=[];
+
+function htpOpen(game){
+  htpGame=game;htpStep=0;
+  const d=HTP[game];if(!d)return;
+  htpSteps=d.steps;
+  document.getElementById('htp-title').textContent=d.title;
+  document.getElementById('htp-overlay').style.display='flex';
+  htpRender();
+}
+function htpClose(){document.getElementById('htp-overlay').style.display='none';}
+function htpNext(){if(htpStep<htpSteps.length-1){htpStep++;htpRender();}else htpClose();}
+function htpPrev(){if(htpStep>0){htpStep--;htpRender();}}
+function htpRender(){
+  const step=htpSteps[htpStep];
+  const anim=document.getElementById('htp-anim');
+  anim.style.opacity='0';
+  setTimeout(()=>{
+    anim.innerHTML=step.anim;
+    anim.style.transition='opacity 0.3s';
+    anim.style.opacity='1';
+  },150);
+  document.getElementById('htp-text').innerHTML=step.text;
+  const isLast=htpStep===htpSteps.length-1;
+  const prev=document.getElementById('htp-prev');
+  const next=document.getElementById('htp-next');
+  prev.style.display=htpStep===0?'none':'block';
+  next.textContent=isLast?'Got it!':'Next →';
+  const dots=document.getElementById('htp-dots');
+  dots.innerHTML=htpSteps.map((_,i)=>`<span style="display:inline-block;width:8px;height:8px;border-radius:50%;margin:0 3px;background:${i===htpStep?'var(--purple)':'var(--bg3)'};border:1px solid var(--bd2);transition:background 0.2s"></span>`).join('');
 }
 </script>
 </body>
